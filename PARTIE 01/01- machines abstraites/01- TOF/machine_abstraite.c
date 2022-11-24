@@ -88,7 +88,7 @@ int Entete_TOF(fichier_TOF f, int i)
 
 /*********************************************|
 |                                             |
-|  Retoure la i ème valeur de l'entete  TOF   |
+|  modifie la i ème valeur de l'entete  TOF   |
 |                                             |
 |*********************************************/
 void Aff_Entete_TOF(fichier_TOF *f, int i, int val)

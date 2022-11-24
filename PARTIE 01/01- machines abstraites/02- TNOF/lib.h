@@ -71,4 +71,4 @@ void LireDir_TnOF(fichier_TnOF f, int i, Tampon *buf, int *cpt_lect);
 void EcrireDir_TnOF(fichier_TnOF f, int i, Tampon *buf, int *cpt_ecr);
 int Entete_TnOF(fichier_TnOF f, int i);
 void Aff_Entete_TnOF(fichier_TnOF *f, int i, int val);
-int Alloc_bloc_TOF(fichier_TnOF f)
+int Alloc_bloc_TOF(fichier_TnOF f);

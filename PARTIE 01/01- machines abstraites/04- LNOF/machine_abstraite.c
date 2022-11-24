@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include "lib.h"
 
-/************************OUVERTURE***************************/
-// ouvrir un fichier de type LNOF en mode voulu
+/*************************************************************|
+|                                                             |
+|  Ouvrir fichier nom_fichier avec le mode correspondant LnOF |
+|                                                             |
+|*************************************************************/
 void Ouvrir_LnOF(fichier_LNOF *fichier, char nom_fichier[], const char mode)
 {
     fichier->en_tete = malloc(sizeof(entete_LNOF)); // allouer dynamiquement une zone en memoire centrale pour l'entete
@@ -34,8 +37,12 @@ void Ouvrir_LnOF(fichier_LNOF *fichier, char nom_fichier[], const char mode)
         printf("le mode errone.");
 }
 
-/****************************FERMITURE****************************/
-void Fermer_LnOF(fichier_LNOF *fichier) // fermer un fichier
+/*************************************|
+|                                     |
+|       Fermer le fichier LnOF        |
+|                                     |
+|*************************************/
+void Fermer_LnOF(fichier_LNOF *fichier)
 {
     rewind(fichier->fichier);                                           // on se positionne au debut de fichier
     fwrite(fichier->en_tete, sizeof(entete_LNOF), 1, fichier->fichier); // on enregistre les modifications effectuees sur l'entete
@@ -43,25 +50,37 @@ void Fermer_LnOF(fichier_LNOF *fichier) // fermer un fichier
     free(fichier->en_tete);                                             // liberer la zone en_tete reservees
 }
 
-/**************************ECRITURE DIRECTE*************************/
-void EcrireDir_LnOF(fichier_LNOF *fichier, int i, LBloc *buf, int *cpt_ecr) // ecriture directe du contenu de buf dans le fichier a la position i
+/*********************************************|
+|                                             |
+|      Ecrire buf dans le i eme bloc LnOF     |
+|                                             |
+|********************************************/
+void EcrireDir_LnOF(fichier_LNOF *fichier, int i, TBloc_LnOF *buf, int *cpt_ecr) // ecriture directe du contenu de buf dans le fichier a la position i
 {
     rewind(fichier->fichier);
-    fseek(fichier->fichier, sizeof(entete_LNOF) + i * sizeof(LBloc), SEEK_SET); // se positionner a la place exacte
-    fwrite(buf, sizeof(LBloc), 1, fichier->fichier);                            // ecriture
+    fseek(fichier->fichier, sizeof(entete_LNOF) + i * sizeof(TBloc_LnOF), SEEK_SET); // se positionner a la place exacte
+    fwrite(buf, sizeof(TBloc_LnOF), 1, fichier->fichier);                            // ecriture
     (*cpt_ecr) = (*cpt_ecr) + 1;
 }
 
-/**************************LECTURE DIRECTE*************************/
-void LireDir_LnOF(fichier_LNOF *fichier, int i, LBloc *buf, int *cpt_lect) // lecture directe du contenu de fichier a la position i dans le buf
+/********************************************|
+|                                            |
+|      Lire le i eme bloc dans buf LnOF      |
+|                                            |
+|********************************************/
+void LireDir_LnOF(fichier_LNOF *fichier, int i, TBloc_LnOF *buf, int *cpt_lect) // lecture directe du contenu de fichier a la position i dans le buf
 {
     rewind(fichier->fichier);
-    fseek(fichier->fichier, sizeof(entete_LNOF) + i * sizeof(LBloc), SEEK_SET); // se positionner a la place exacte
-    fread(buf, sizeof(LBloc), 1, fichier->fichier);                             // lecture
+    fseek(fichier->fichier, sizeof(entete_LNOF) + i * sizeof(TBloc_LnOF), SEEK_SET); // se positionner a la place exacte
+    fread(buf, sizeof(TBloc_LnOF), 1, fichier->fichier);                             // lecture
     (*cpt_lect) = (*cpt_lect) + 1;
 }
 
-/****************************AFF_ENTETE****************************/
+/*********************************************|
+|                                             |
+|  Retoure la i ème valeur de l'entete  LnOF  |
+|                                             |
+|*********************************************/
 void aff_entete_LnOF(fichier_LNOF *fichier, int num_caract, int val) // affecter a la caracteristique num_caract la val
 {
     if (num_caract == 1)
@@ -74,7 +93,11 @@ void aff_entete_LnOF(fichier_LNOF *fichier, int num_caract, int val) // affecter
         fichier->en_tete->num_dernier_bloc = val;
 }
 
-/*******************************EN_TETE******************************/
+/********************************************|
+|                                            |
+|  Retoure la i ème valeur del'entete  LnOF  |
+|                                            |
+|********************************************/
 int entete_LnOF(fichier_LNOF *fichier, int num_caract) // retourner la cracterstique num_caract ds val
 {
     if (num_caract == 1)
@@ -89,8 +112,12 @@ int entete_LnOF(fichier_LNOF *fichier, int num_caract) // retourner la cracterst
         printf("\n\t\t<<Le numero errone>>");
 }
 
-/*******************************ALLOC BLOC******************************/
-void alloc_bloc_LnOF(fichier_LNOF *fichier, char nom_fichier[], LBloc *buf) // initialise un buffer
+/********************************************|
+|                                            |
+|   Retourne le numéro du nouveau bloc LnOF  |
+|                                            |
+|********************************************/
+void alloc_bloc_LnOF(fichier_LNOF *fichier, char nom_fichier[], TBloc_LnOF *buf) // initialise un buffer
 {
     int i;
     (*buf).suivant = -1;     // initialiser le champs suivant a NIL

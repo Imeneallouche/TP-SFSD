@@ -88,7 +88,7 @@ int Entete_TnOF(fichier_TnOF f, int i)
 
 /**********************************************|
 |                                              |
-|  Retoure la i ème valeur de l'entete  TnOF   |
+|  Modifie la i ème valeur de l'entete  TnOF   |
 |                                              |
 |**********************************************/
 void Aff_Entete_TnOF(fichier_TnOF *f, int i, int val)
