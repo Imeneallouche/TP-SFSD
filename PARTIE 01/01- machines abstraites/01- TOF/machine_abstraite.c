@@ -2,7 +2,11 @@
 #include <stdio.h>
 #include "lib.h"
 
-// ouvrir le fichier TOF dans le mode correspondant
+/************************************************************|
+|                                                            |
+|  Ouvrir fichier nom_fichier avec le mode correspondant TOF |
+|                                                            |
+|************************************************************/
 void Ouvrir_TOF(fichier_TOF *f, char nom_fichier[], char mode)
 {
     if (tolower(mode) == 'a')
@@ -27,24 +31,36 @@ void Ouvrir_TOF(fichier_TOF *f, char nom_fichier[], char mode)
     }
 }
 
-// fermer le fichier TOF
+/*************************************|
+|                                     |
+|       Fermer le fichier TOF         |
+|                                     |
+|*************************************/
 void Fermer_TOF(fichier_TOF f)
 {
     fseek(f.fichier, 0, SEEK_SET);
-    fwrite(&(f.entete), sizeof(entete_TOF), 1, f.fichier); //
+    fwrite(&(f.entete), sizeof(entete_TOF), 1, f.fichier);
     fclose(f.fichier);
 }
 
-// lire le i ème bloc
+/********************************************|
+|                                            |
+|      Lire le i eme bloc dans buf TOF       |
+|                                            |
+|********************************************/
 void LireDir_TOF(fichier_TOF f, int i, Tampon *buf, int *cpt_lect)
 {
     rewind(f.fichier);
-    fseek(f.fichier, sizeof(fichier_TOF) + (i) * sizeof(Tampon), SEEK_SET); //
+    fseek(f.fichier, sizeof(fichier_TOF) + (i) * sizeof(Tampon), SEEK_SET);
     fread(buf, sizeof(Tampon), 1, f.fichier);
     (*cpt_lect) = (*cpt_lect) + 1;
 }
 
-// ecrire un bloc
+/*********************************************|
+|                                             |
+|      Ecrire buf dans le i eme bloc TOF      |
+|                                             |
+|********************************************/
 void EcrireDir_TOF(fichier_TOF f, int i, Tampon *buf, int *cpt_ecr)
 {
     rewind(f.fichier);
@@ -53,33 +69,46 @@ void EcrireDir_TOF(fichier_TOF f, int i, Tampon *buf, int *cpt_ecr)
     (*cpt_ecr) = (*cpt_ecr) + 1;
 }
 
-// retoure la i ème valeur del'entete
+/********************************************|
+|                                            |
+|  Retoure la i ème valeur del'entete  TOF   |
+|                                            |
+|********************************************/
 int Entete_TOF(fichier_TOF f, int i)
 {
-    if (i == 1)
+    if (i == 1) // nombre de blocs total
         return f.entete.blocs_total;
-    else if (i == 2)
+    else if (i == 2) // nombre d'enregistrements inseres
         return f.entete.enreg_inseres;
-    else if (i == 3)
+    else if (i == 3) // nombre d'enregistrements supprimes
         return f.entete.enreg_supprimes;
     else
         return -1;
 }
 
-// 1 pour le nombre de bloc total
-// 2 pour le nombre d'enregistrement inseres
-// 3 pour le nombre d'enregistrements supprimes
+/*********************************************|
+|                                             |
+|  Retoure la i ème valeur de l'entete  TOF   |
+|                                             |
+|*********************************************/
 void Aff_Entete_TOF(fichier_TOF *f, int i, int val)
 {
-    if (i == 1)
+    if (i == 1) // nombre de blocs total
         f->entete.blocs_total = val;
-    else if (i == 2)
+    if (i == 2) // nombre d'enregistrements inseres
         f->entete.enreg_inseres = val;
-    else if (i == 3)
+    if (i == 3) // nombre d'enregistrements supprimes
         f->entete.enreg_supprimes = val;
     else
         printf("Parametre inexistant dans l'entete\n");
-} /*
- int Alloc_bloc(fichier f)
- {
- }*/
+}
+
+/********************************************|
+|                                            |
+|   Retourne le numéro du nouveau bloc TOF   |
+|                                            |
+|********************************************/
+int Alloc_bloc_TOF(fichier_TOF f)
+{
+    return Entete_TOF(f, 1) + 1;
+}
