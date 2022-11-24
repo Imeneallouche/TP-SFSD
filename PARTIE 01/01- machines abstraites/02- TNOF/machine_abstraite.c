@@ -2,7 +2,11 @@
 #include <stdio.h>
 #include "lib.h"
 
-// ouvrir le fichier TnOF dans le mode correspondant
+/*************************************************************|
+|                                                             |
+|  Ouvrir fichier nom_fichier avec le mode correspondant TnOF |
+|                                                             |
+|*************************************************************/
 void Ouvrir_TnOF(fichier_TnOF *f, char nom_fichier[30], char mode)
 {
     if (tolower(mode) == 'a')
@@ -27,7 +31,11 @@ void Ouvrir_TnOF(fichier_TnOF *f, char nom_fichier[30], char mode)
     }
 }
 
-// fermer le fichier TnOF
+/*************************************|
+|                                     |
+|      Fermer le fichier TnOF         |
+|                                     |
+|*************************************/
 void Fermer_TnOF(fichier_TnOF f)
 {
     fseek(f.fichier, 0, SEEK_SET);
@@ -35,7 +43,11 @@ void Fermer_TnOF(fichier_TnOF f)
     fclose(f.fichier);
 }
 
-// lire le i ème bloc
+/********************************************|
+|                                            |
+|     Lire le i eme bloc dans buf TnOF       |
+|                                            |
+|********************************************/
 void LireDir_TnOF(fichier_TnOF f, int i, Tampon *buf, int *cpt_lect)
 {
     rewind(f.fichier);
@@ -44,7 +56,11 @@ void LireDir_TnOF(fichier_TnOF f, int i, Tampon *buf, int *cpt_lect)
     (*cpt_lect) = (*cpt_lect) + 1;
 }
 
-// ecrire un bloc
+/*********************************************|
+|                                             |
+|     Ecrire buf dans le i eme bloc TnOF      |
+|                                             |
+|********************************************/
 void EcrireDir_TnOF(fichier_TnOF f, int i, Tampon *buf, int *cpt_ecr)
 {
     rewind(f.fichier);
@@ -53,46 +69,46 @@ void EcrireDir_TnOF(fichier_TnOF f, int i, Tampon *buf, int *cpt_ecr)
     (*cpt_ecr) = (*cpt_ecr) + 1;
 }
 
-// retoure la i ème valeur del'entete
+/*********************************************|
+|                                             |
+|  Retoure la i ème valeur del'entete  TnOF   |
+|                                             |
+|*********************************************/
 int Entete_TnOF(fichier_TnOF f, int i)
 {
-    if (i == 1)
+    if (i == 1) // nombre de blocs total (numero du dernier bloc)
         return f.entete.blocs_total;
-    else if (i == 2)
+    if (i == 2) // nombre d'enregistrement inseres
         return f.entete.enreg_inseres;
-    else if (i == 3)
+    if (i == 3) // nombre d'enregistrements supprimes
         return f.entete.enreg_supprimes;
     else
         return -1;
 }
 
-// 1 pour le nombre de bloc total
-// 2 pour le nombre d'enregistrement inseres
-// 3 pour le nombre d'enregistrements supprimes
+/**********************************************|
+|                                              |
+|  Retoure la i ème valeur de l'entete  TnOF   |
+|                                              |
+|**********************************************/
 void Aff_Entete_TnOF(fichier_TnOF *f, int i, int val)
 {
-    if (i == 1)
+    if (i == 1) // nombre de blocs total (numero du dernier bloc)
         f->entete.blocs_total = val;
-    else if (i == 2)
+    if (i == 2) // nombre d'enregistrement inseres
         f->entete.enreg_inseres = val;
-    else if (i == 3)
+    if (i == 3) // nombre d'enregistrements supprimes
         f->entete.enreg_supprimes = val;
     else
         printf("Parametre inexistant dans l'entete\n");
 }
 
-// it extracts a key according to its index that is given in the variable number
-int extract_nbr(int nbr)
+/*********************************************|
+|                                             |
+|   Retourne le numéro du nouveau bloc TnOF   |
+|                                             |
+|*********************************************/
+int Alloc_bloc_TOF(fichier_TnOF f)
 {
-    char chaine[20];
-    int cpt = 1;
-    fichier_TnOF *fichier = fopen("chargement_init.txt", "r");
-    if (!fichier)
-        printf("erreur\n");
-    while (fgets(chaine, 20, fichier) && (cpt < nbr))
-        cpt++;
-    int nb;
-    sscanf(chaine, "%d\n", &nb);
-    fclose(fichier);
-    return nb;
+    return Entete_TOF(f, 1) + 1;
 }
