@@ -51,7 +51,7 @@ typedef Tbloc_TOF Tampon; // definition du type Tampon TOF(un alias du type tblo
 
 /*********************************************|
 |                                             |
-|          structure de fichier TOF           |
+|          structure du fichier TOF           |
 |                                             |
 |*********************************************/
 typedef struct fichier_TOF
@@ -72,4 +72,4 @@ void LireDir_TOF(fichier_TOF f, int i, Tampon *buf, int *cpt_lect);
 void EcrireDir_TOF(fichier_TOF f, int i, Tampon *buf, int *cpt_ecr);
 int Entete_TOF(fichier_TOF f, int i);
 void Aff_Entete_TOF(fichier_TOF *f, int i, int val);
-int Alloc_bloc_TOF(fichier_TOF f);
+int Alloc_bloc_TOF(fichier_TOF *f);

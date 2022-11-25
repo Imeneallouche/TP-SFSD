@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <ctype.h>
 #include "lib.h"
 
 /************************************************************|
@@ -20,9 +21,9 @@ void Ouvrir_TOF(fichier_TOF *f, char nom_fichier[], char mode)
     else if (tolower(mode) == 'n')
     {
         f->fichier = fopen(nom_fichier, "wb+");
-        Aff_Entete(f, 1, 0); // mettre le nombre de blocs à 0
-        Aff_Entete(f, 2, 0); // mettre le nombre d'enregistrements inseres à 0
-        Aff_Entete(f, 3, 0); // mettre le nombre d'enregistrements supprimes à 0
+        Aff_Entete_TOF(f, 1, 0); // mettre le nombre de blocs à 0
+        Aff_Entete_TOF(f, 2, 0); // mettre le nombre d'enregistrements inseres à 0
+        Aff_Entete_TOF(f, 3, 0); // mettre le nombre d'enregistrements supprimes à 0
     }
     else
     {
