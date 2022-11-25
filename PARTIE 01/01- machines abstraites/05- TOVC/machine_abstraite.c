@@ -3,16 +3,6 @@
 #include <string.h>
 #include "lib.h"
 
-/*
-
-
-
-
-
-
-
-
-
 /************************************************************
  |                                                          |
  |               Ouvrir fichier de nom_fichier              |
@@ -196,5 +186,8 @@ void Aff_Entete(TOVC *fichier, int i, int val)
  |                                                          |
  ***********************************************************/
 /// permet d'allouer un nouveau bloc ---------------------------------------------------------------------------------------------------
-void Alloc_bloc(TOVC *fichier) { Aff_Entete(fichier, 1, Entete(fichier, 1) + 1); }
+void Alloc_bloc(TOVC *fichier)
+{
+    Aff_Entete(fichier, 1, Entete(fichier, 1) + 1);
+}
 ///-------------------------------------------------------------------------------------------------------------------------------------

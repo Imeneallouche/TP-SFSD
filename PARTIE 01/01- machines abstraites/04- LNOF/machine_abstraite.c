@@ -95,7 +95,7 @@ void aff_entete_LnOF(fichier_LNOF *fichier, int num_caract, int val) // affecter
 
 /********************************************|
 |                                            |
-|  Retoure la i ème valeur del'entete  LnOF  |
+|  Retoure la i ème valeur de l'entete  LnOF  |
 |                                            |
 |********************************************/
 int entete_LnOF(fichier_LNOF *fichier, int num_caract) // retourner la cracterstique num_caract ds val
@@ -109,7 +109,7 @@ int entete_LnOF(fichier_LNOF *fichier, int num_caract) // retourner la cracterst
     else if (num_caract == 4)
         return fichier->en_tete->num_dernier_bloc;
     else
-        printf("\n\t\t<<Le numero errone>>");
+        printf("\n\t\t<<Le numero est errone>>");
 }
 
 /********************************************|
@@ -117,13 +117,7 @@ int entete_LnOF(fichier_LNOF *fichier, int num_caract) // retourner la cracterst
 |   Retourne le numéro du nouveau bloc LnOF  |
 |                                            |
 |********************************************/
-void alloc_bloc_LnOF(fichier_LNOF *fichier, char nom_fichier[], TBloc_LnOF *buf) // initialise un buffer
+int alloc_bloc_LnOF(fichier_LNOF *fichier, char nom_fichier[], TBloc_LnOF *buf) // initialise un buffer
 {
-    int i;
-    (*buf).suivant = -1;     // initialiser le champs suivant a NIL
-    (*buf).nombre_enreg = 0; // initialiser le nombre de blocs a 0
-    for (i = 0; i < maxBloc; i++)
-    {
-        (*buf).tab[i].supprimer = 1; // initialiser tout les champs efface de tableau a vrai
-    }
+    // not yet released
 }

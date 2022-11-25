@@ -108,7 +108,8 @@ void Aff_Entete_TOF(fichier_TOF *f, int i, int val)
 |   Retourne le numéro du nouveau bloc TOF   |
 |                                            |
 |********************************************/
-int Alloc_bloc_TOF(fichier_TOF f)
+int Alloc_bloc_TOF(fichier_TOF *f)
 {
-    return Entete_TOF(f, 1) + 1;
+    Aff_Entete_TOF(f, 1, Entete_TOF(*f, 1) + 1);
+    return Entete_TOF(*f, 1);
 }

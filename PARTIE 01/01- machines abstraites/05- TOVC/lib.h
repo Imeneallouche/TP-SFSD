@@ -146,5 +146,3 @@ void Suppression_physique(TOVC *fichier, int cle); /// big probleme
 void insertion_pos_rec(TOVC *fichier, int *i, int *j, Semi_enreg SE);
 void insertion_TOVC(TOVC *fichier, Enregistrement E);
 void reorganisation_TOVC(TOVC *fichier, char *nouveau_fichier);
-
-#endif /// MODELE_H_INCLUDED

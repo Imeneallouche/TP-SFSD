@@ -108,7 +108,8 @@ void Aff_Entete_TnOF(fichier_TnOF *f, int i, int val)
 |   Retourne le numéro du nouveau bloc TnOF   |
 |                                             |
 |*********************************************/
-int Alloc_bloc_TOF(fichier_TnOF f)
+int Alloc_bloc_TnOF(fichier_TnOF *f)
 {
+    Aff_Entete_TnOF(f, 1, Entete_TnOF(*f, 1) + 1);
     return Entete_TOF(f, 1) + 1;
 }
