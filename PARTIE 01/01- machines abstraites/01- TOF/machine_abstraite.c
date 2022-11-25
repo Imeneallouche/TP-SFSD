@@ -14,7 +14,7 @@ void Ouvrir_TOF(fichier_TOF *f, char nom_fichier[], char mode)
     {
         f->fichier = fopen(nom_fichier, "rb+");
         if (f->fichier == NULL)
-            printf("error interrupted the program ... check fichier's name");
+            printf("Erreur lors de l'ouverture du fichier... verifier le nom du fichier");
         else
             fread(&(f->entete), sizeof(entete_TOF), 1, f->fichier);
     }
@@ -28,7 +28,7 @@ void Ouvrir_TOF(fichier_TOF *f, char nom_fichier[], char mode)
     else
     {
         f->fichier = NULL;
-        printf("Mode d'ouverture erronné\n");
+        printf("Mode d'ouverture erronne\n");
     }
 }
 

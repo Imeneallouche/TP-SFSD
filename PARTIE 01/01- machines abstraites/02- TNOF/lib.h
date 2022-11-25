@@ -65,10 +65,10 @@ typedef struct fichier_TnOF
 |           Machine Abstraite TnOF            |
 |                                             |
 |*********************************************/
-void Ouvrir_TnOF(fichier_TnOF *f, char nom_fichier[20], char mode);
+void Ouvrir_TnOF(fichier_TnOF *f, char nom_fichier[], char mode);
 void Fermer_TnOF(fichier_TnOF f);
 void LireDir_TnOF(fichier_TnOF f, int i, Tampon *buf, int *cpt_lect);
 void EcrireDir_TnOF(fichier_TnOF f, int i, Tampon *buf, int *cpt_ecr);
 int Entete_TnOF(fichier_TnOF f, int i);
 void Aff_Entete_TnOF(fichier_TnOF *f, int i, int val);
-int Alloc_bloc_TOF(fichier_TnOF f);
+int Alloc_bloc_TnOF(fichier_TnOF *f);

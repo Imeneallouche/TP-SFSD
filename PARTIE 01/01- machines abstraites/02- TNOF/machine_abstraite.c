@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <ctype.h>
 #include "lib.h"
 
 /*************************************************************|
@@ -13,21 +14,21 @@ void Ouvrir_TnOF(fichier_TnOF *f, char nom_fichier[30], char mode)
     {
         f->fichier = fopen(nom_fichier, "rb+");
         if (f->fichier == NULL)
-            printf("error interrupted the program ... check fichier's name");
+            printf("Erreur lors de l'ouverture du fichier... verifier le nom du fichier");
         else
             fread(&(f->entete), sizeof(entete_TnOF), 1, f->fichier);
     }
     else if (tolower(mode) == 'n')
     {
         f->fichier = fopen(nom_fichier, "wb+");
-        Aff_Entete(f, 1, 0); // mettre le nombre de blocs à 0
-        Aff_Entete(f, 2, 0); // mettre le nombre d'enregistrements inseres à 0
-        Aff_Entete(f, 3, 0); // mettre le nombre d'enregistrements supprimes à 0
+        Aff_Entete_TnOF(f, 1, 0); // mettre le nombre de blocs à 0
+        Aff_Entete_TnOF(f, 2, 0); // mettre le nombre d'enregistrements inseres à 0
+        Aff_Entete_TnOF(f, 3, 0); // mettre le nombre d'enregistrements supprimes à 0
     }
     else
     {
         f->fichier = NULL;
-        printf("Mode d'ouverture erronné\n");
+        printf("Mode d'ouverture erronne\n");
     }
 }
 
@@ -110,6 +111,5 @@ void Aff_Entete_TnOF(fichier_TnOF *f, int i, int val)
 |*********************************************/
 int Alloc_bloc_TnOF(fichier_TnOF *f)
 {
-    Aff_Entete_TnOF(f, 1, Entete_TnOF(*f, 1) + 1);
-    return Entete_TOF(f, 1) + 1;
+    // not released yet
 }
