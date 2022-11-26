@@ -1,4 +1,6 @@
+#include <stdlib.h>
 #include <stdio.h>
+#include <ctype.h>
 #include "lib.h"
 
 /*************************************************************|
@@ -26,8 +28,8 @@ void Ouvrir_LnOF(fichier_LNOF *fichier, char nom_fichier[], const char mode)
     {
         fichier->fichier = fopen(nom_fichier, "rb+"); // ouvrir le fichier en mode lecture binaire
         if (fichier->fichier == NULL)
-            printf("\n\t\t<<Le fichier n'existe pas...>>"); // si erreur d'ouverture
-        else                                                // sinon
+            printf("\n Erreur lors de l'ouverture du fichier... verifier le nom du fichier"); // si erreur d'ouverture
+        else                                                                                  // sinon
         {
             fread(fichier->en_tete, sizeof(entete_LNOF), 1, fichier->fichier);
         } // recuperer le contenu de l'entete ds la variable en_tete
@@ -55,7 +57,7 @@ void Fermer_LnOF(fichier_LNOF *fichier)
 |      Ecrire buf dans le i eme bloc LnOF     |
 |                                             |
 |********************************************/
-void EcrireDir_LnOF(fichier_LNOF *fichier, int i, TBloc_LnOF *buf, int *cpt_ecr) // ecriture directe du contenu de buf dans le fichier a la position i
+void EcrireDir_LnOF(fichier_LNOF *fichier, int i, TBloc_LnOF *buf, int *cpt_ecr)
 {
     rewind(fichier->fichier);
     fseek(fichier->fichier, sizeof(entete_LNOF) + i * sizeof(TBloc_LnOF), SEEK_SET); // se positionner a la place exacte
@@ -93,11 +95,11 @@ void aff_entete_LnOF(fichier_LNOF *fichier, int num_caract, int val) // affecter
         fichier->en_tete->num_dernier_bloc = val;
 }
 
-/********************************************|
-|                                            |
+/*********************************************|
+|                                             |
 |  Retoure la i ème valeur de l'entete  LnOF  |
-|                                            |
-|********************************************/
+|                                             |
+|*********************************************/
 int entete_LnOF(fichier_LNOF *fichier, int num_caract) // retourner la cracterstique num_caract ds val
 {
     if (num_caract == 1)
@@ -117,7 +119,15 @@ int entete_LnOF(fichier_LNOF *fichier, int num_caract) // retourner la cracterst
 |   Retourne le numéro du nouveau bloc LnOF  |
 |                                            |
 |********************************************/
-int alloc_bloc_LnOF(fichier_LNOF *fichier, char nom_fichier[], TBloc_LnOF *buf) // initialise un buffer
+int alloc_bloc_LnOF(fichier_LNOF *fichier, char nom_fichier[], TBloc_LnOF *buf, int *cpt_lect, int *cpt_ecr)
 {
-    // not yet released
+    int i = entete_LnOF(fichier, 4);          // numero du dernier bloc
+    LireDir_LnOF(fichier, i, buf, cpt_lect);  // lire le dernier bloc
+    buf->suivant = i + 1;                     // mettre a jour son suivant(le nouveau bloc)
+    EcrireDir_LnOF(fichier, i, buf, cpt_ecr); // ecrire le bloc
+    aff_entete_LnOF(fichier, 4, i + 1);       // mettre a jour le nombre de blocs dans l'entete
+    (*buf).suivant = -1;                      // initialiser le champs suivant a nil
+    (*buf).nombre_enreg = 0;                  // initialiser le nombre d'enregistrement a 0
+    for (i = 0; i < maxBloc; i++)             // initialiser le champs supprimé a vrai pour tous les enreg
+        (*buf).tab[i].supprimer = 1;
 }

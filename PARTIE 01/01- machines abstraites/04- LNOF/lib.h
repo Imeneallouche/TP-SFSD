@@ -71,4 +71,4 @@ void EcrireDir_LnOF(fichier_LNOF *fichier, int i, TBloc_LnOF *buf, int *cpt_ecr)
 void LireDir_LnOF(fichier_LNOF *fichier, int i, TBloc_LnOF *buf, int *cpt_lect);
 void aff_entete_LnOF(fichier_LNOF *fichier, int num_caract, int val);
 int entete_LnOF(fichier_LNOF *fichier, int num_caract);
-int alloc_bloc_LnOF(fichier_LNOF *fichier, char nom_fichier[], TBloc_LnOF *buf);
+int alloc_bloc_LnOF(fichier_LNOF *fichier, char nom_fichier[], TBloc_LnOF *buf, int *cpt_lect, int *cpt_ecr);
