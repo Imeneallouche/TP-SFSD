@@ -36,7 +36,7 @@ void Ouvrir_LnOF(fichier_LNOF *fichier, char nom_fichier[], const char mode)
     }
 
     else
-        printf("le mode errone.");
+        printf("Mode d'ouverture erronne\n");
 }
 
 /*************************************|
@@ -111,7 +111,7 @@ int entete_LnOF(fichier_LNOF *fichier, int num_caract) // retourner la cracterst
     else if (num_caract == 4)
         return fichier->en_tete->num_dernier_bloc;
     else
-        printf("\n\t\t<<Le numero est errone>>");
+        printf("Parametre inexistant dans l'entete\n");
 }
 
 /********************************************|
