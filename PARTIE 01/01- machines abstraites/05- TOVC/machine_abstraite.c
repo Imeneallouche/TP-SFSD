@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <string.h>
 #include "lib.h"
 
@@ -8,25 +9,22 @@
  |               Ouvrir fichier de nom_fichier              |
  |                                                          |
  ************************************************************/
-TOVC *Ouvrir(char nom_fichier[30], char mode_ouverture)
+void Ouvrir_TOVC(fichier_TOVC *f, char nom_fichier[], char mode_ouverture)
 {
-    TOVC *fichier = malloc(sizeof(TOVC));
-
     /// si on ouvre en mode nouveau
-    if ((mode_ouverture == 'n') || (mode_ouverture == 'N'))
+    if (tolower(mode_ouverture) == 'n')
     {
-        fichier->f = fopen(nom_fichier, "wb+");
-        if (fichier->f != NULL)
+        f->fichier = fopen(nom_fichier, "wb+");
+        if (f->fichier != NULL)
         {
-            printf(" ouverture du fichier reussie\n\n");
             /// initialisation de l'entête :
-            fichier->entete.adr_dernier_bloc = 0;
-            fichier->entete.pos_libre_dernier_bloc = 0;
-            fichier->entete.nbr_caract_insert = 0;
-            fichier->entete.nbr_caract_supp = 0;
+            f->entete.adr_dernier_bloc = 0;
+            f->entete.pos_libre_dernier_bloc = 0;
+            f->entete.nbr_caract_insert = 0;
+            f->entete.nbr_caract_supp = 0;
 
-            rewind(fichier->f);                                          /// positionnement au début du fichier
-            fwrite(&(fichier->entete), sizeof(S_Entete), 1, fichier->f); /// pourqoui il n'a pas fait directement size_of(entete)
+            rewind(f->fichier); /// positionnement au début du fichier
+            fwrite(&(f->entete), sizeof(entete_TOVC), 1, f->fichier);
         }
         else
             printf("fichier mal cree\n");
@@ -34,159 +32,99 @@ TOVC *Ouvrir(char nom_fichier[30], char mode_ouverture)
     /// si on ouvre en mode ancien
     else
     {
-        if ((mode_ouverture == 'a') || (mode_ouverture == 'A'))
+        if (tolower(mode_ouverture) == 'a')
         {
-            fichier->f = fopen(nom_fichier, "rb+");
-            if (fichier->f != NULL)
+            f->fichier = fopen(nom_fichier, "rb+");
+            if (f->fichier != NULL)
             {
                 printf(" ouverture du fichier reussie\n");
-                rewind(fichier->f);
-                fread(&(fichier->entete), sizeof(S_Entete), 1, fichier->f);
-                Affichage_Entete(fichier);
+                rewind(f->fichier);
+                fread(&(f->entete), sizeof(entete_TOVC), 1, f->fichier);
+                Affichage_Entete(f);
             }
             else
                 printf(" fichier mal ouvert, creer le fichier avant de continuer\n");
         }
     }
-    // rewind(fichier->f);
-    return (fichier);
 }
-
-/*
-
-
-
 
 /************************************************************
  |                                                          |
  |       Procedure de fermeture d'un fichier TOVC           |
  |                                                          |
  ************************************************************/
-void Fermer(TOVC *fichier)
+void Fermer(fichier_TOVC *f)
 {
-    rewind(fichier->f);
-    fwrite(&(fichier->entete), sizeof(S_Entete), 1, fichier->f);
-    fclose(fichier->f);
-    free(fichier);
+    rewind(f->fichier);
+    fwrite(&(f->entete), sizeof(entete_TOVC), 1, f->fichier);
+    fclose(f->fichier);
+    free(f);
 }
-
-/*
-
-
-
-
 
 /************************************************************
  |                                                          |
  |       Procedure de lecture d'un bloc methode TOVC        |
  |                                                          |
  ************************************************************/
-/// permet de lire le i ème bloc du fichier TOVC pointé par fichier dans le Tbloc buf --------------------------------------------------
-void Liredir(TOVC *fichier, int i, Tbloc *buf)
+void Liredir(fichier_TOVC *f, int i, Tbloc_TOVC *buf)
 {
     /// on se jitionne au début du i ème bloc puis on le lit dans buf
-    fseek(fichier->f, sizeof(S_Entete) + (sizeof(Tbloc) * (i - 1)), SEEK_SET);
-    fread(buf, sizeof(Tbloc), 1, fichier->f);
+    fseek(f->fichier, sizeof(entete_TOVC) + (sizeof(Tbloc_TOVC) * (i - 1)), SEEK_SET);
+    fread(buf, sizeof(Tbloc_TOVC), 1, f->fichier);
 }
-
-/*
-
-
-
-
-
 
 /************************************************************
  |                                                          |
  |      Fonction de lecture de l'entete methode TOVC        |
  |                                                          |
  ************************************************************/
-/// Entete : retourne la caractèristique i du fichier TOVC -----------------------------------------------------------------------------
-int Entete(TOVC *fichier, int i)
+int Entete(fichier_TOVC *f, int i)
 {
     if (i == 1)
-    {
-        return (fichier->entete.adr_dernier_bloc);
-    }
-    else if (i == 2)
-    {
-        return (fichier->entete.pos_libre_dernier_bloc);
-    }
-    else if (i == 3)
-    {
-        return (fichier->entete.nbr_caract_insert);
-    }
+        return (f->entete.adr_dernier_bloc);
+    if (i == 2)
+        return (f->entete.pos_libre_dernier_bloc);
+    if (i == 3)
+        return (f->entete.nbr_caract_insert);
     else
-    {
-        return (fichier->entete.nbr_caract_supp);
-    }
+        return (f->entete.nbr_caract_supp);
 }
-
-/*
-
-
-
-
 
 /************************************************************
  |                                                          |
  |       Procedure d'ecriture d'un bloc methode TOVC        |
  |                                                          |
- ************************************************************/
-/// permet d'écrire le Tbloc buf au i ème bloc du fichier de type TOVC -----------------------------------------------------------------
-void Ecriredir(TOVC *fichier, int i, Tbloc buf)
+ ***********************************************************/
+void Ecriredir(fichier_TOVC *f, int i, Tbloc_TOVC buf)
 {
     /// on se positionne au début du i ème bloc puis on écrit dans fichier->f
-    fseek(fichier->f, sizeof(S_Entete) + (sizeof(Tbloc) * (i - 1)), SEEK_SET);
-    fwrite(&buf, sizeof(Tbloc), 1, fichier->f);
+    fseek(f->fichier, sizeof(entete_TOVC) + (sizeof(Tbloc_TOVC) * (i - 1)), SEEK_SET);
+    fwrite(&buf, sizeof(Tbloc_TOVC), 1, f->fichier);
 }
-
-/*
-
-
-
-
 
 /************************************************************
  |                                                          |
  |    Procedure de modification de l'entete methode TOVC    |
  |                                                          |
  ***********************************************************/
-/// Aff-Entete : permet d'affecter val à la caractéristique i choisie ------------------------------------------------------------------
-void Aff_Entete(TOVC *fichier, int i, int val)
+void Aff_Entete(fichier_TOVC *f, int i, int val)
 {
     if (i == 1)
-    {
-        fichier->entete.adr_dernier_bloc = val;
-    }
-    else if (i == 2)
-    {
-        fichier->entete.pos_libre_dernier_bloc = val;
-    }
-    else if (i == 3)
-    {
-        fichier->entete.nbr_caract_insert = val;
-    }
+        f->entete.adr_dernier_bloc = val;
+    if (i == 2)
+        f->entete.pos_libre_dernier_bloc = val;
+    if (i == 3)
+        f->entete.nbr_caract_insert = val;
     else
-    {
-        fichier->entete.nbr_caract_supp = val;
-    }
+        f->entete.nbr_caract_supp = val;
 }
-
-/*
-
-
-
-
-
 
 /************************************************************
  |                                                          |
  |         allocation d'un nouveau bloc methode TOVC        |
  |                                                          |
  ***********************************************************/
-/// permet d'allouer un nouveau bloc ---------------------------------------------------------------------------------------------------
-void Alloc_bloc(TOVC *fichier)
+void Alloc_bloc(fichier_TOVC *f)
 {
-    Aff_Entete(fichier, 1, Entete(fichier, 1) + 1);
+    Aff_Entete(f, 1, Entete(f, 1) + 1);
 }
