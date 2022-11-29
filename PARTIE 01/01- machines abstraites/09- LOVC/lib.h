@@ -9,28 +9,27 @@
 
 /*********************************************|
 |                                             |
-|   STRUCTURES ET VARIABLES GLOBALES TOF      |
+|   STRUCTURES ET VARIABLES GLOBALES LOVC     |
 |                                             |
 |*********************************************/
 
 /*********************************************|
 |                                             |
-|       structure de l'enregistrement TOF     |
+|      structure de l'enregistrement LOVC     |
 |                                             |
 |*********************************************/
 typedef struct Tbloc_LOVC
 {
     char tab[MAX2]; // le tableau de caracteres
     int suivant;    // le numero du bloc suivant dans la liste
-    int nb;         // le nombre de caracteres occupes dans le bloc (effaces inclus)
-                    // correspend ainsi au premier indice libre dans le bloc
+
 } Tbloc_LOVC;
 
 typedef struct Tbloc_LOVC Buffer_LOVC; // identique a la structure du bloc en methode LOVC
 
 /*********************************************|
 |                                             |
-|          Structure d'en_tete TOF            |
+|         Structure d'en_tete LOVC            |
 |                                             |
 |*********************************************/
 typedef struct Entete_LOVC
@@ -44,7 +43,7 @@ typedef struct Entete_LOVC
 
 /*********************************************|
 |                                             |
-|          structure du fichier TOF           |
+|         structure du fichier LOVC           |
 |                                             |
 |*********************************************/
 typedef struct fichier_LOVC
@@ -55,7 +54,7 @@ typedef struct fichier_LOVC
 
 /*********************************************|
 |                                             |
-|            Machine Abstraite TOF            |
+|           Machine Abstraite LOVC            |
 |                                             |
 |*********************************************/
 void Ouvrir_LOVC(fichier_LOVC *f, const char nomFichier[], char mode);

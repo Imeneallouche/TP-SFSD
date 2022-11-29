@@ -13,7 +13,7 @@
 |*********************************************/
 typedef struct entete_TOVC
 {
-    int adr_dernier_bloc;       // adresse du dernier bloc
+    int adr_dernier_bloc;       // adresse du dernier bloc / nombre de bloc -1
     int pos_libre_dernier_bloc; // position libre dans le dernier bloc
     int nbr_caract_insert;      // nombre de caracteres inseres (nous aidera dans la reorganisation)
     int nbr_caract_supp;        // nombre de caracteres supprimes (nous aidera dans la reorganisation)
@@ -47,7 +47,7 @@ typedef Tbloc_TOVC Tampon; // definition du type Tampon TOF(un alias du type tbl
 
 /*********************************************|
 |                                             |
-|            Machine Abstraite TOF            |
+|            Machine Abstraite TOVC           |
 |                                             |
 |*********************************************/
 void Ouvrir_TOVC(fichier_TOVC *f, char nom_fichier[], char mode_ouverture);

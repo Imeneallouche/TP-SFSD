@@ -61,7 +61,7 @@ void LireDir_TOF(fichier_TOF f, int i, Tampon *buf, int *cpt_lect)
 |                                             |
 |      Ecrire buf dans le i eme bloc TOF      |
 |                                             |
-|********************************************/
+|*********************************************/
 void EcrireDir_TOF(fichier_TOF f, int i, Tampon *buf, int *cpt_ecr)
 {
     rewind(f.fichier);

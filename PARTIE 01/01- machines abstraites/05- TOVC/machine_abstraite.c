@@ -4,11 +4,11 @@
 #include <string.h>
 #include "lib.h"
 
-/************************************************************
- |                                                          |
- |               Ouvrir fichier de nom_fichier              |
- |                                                          |
- ************************************************************/
+/*************************************************************|
+|                                                             |
+|  Ouvrir fichier nom_fichier avec le mode correspondant TOVC |
+|                                                             |
+|*************************************************************/
 void Ouvrir_TOVC(fichier_TOVC *f, char nom_fichier[], char mode_ouverture)
 {
     /// si on ouvre en mode nouveau
@@ -48,11 +48,11 @@ void Ouvrir_TOVC(fichier_TOVC *f, char nom_fichier[], char mode_ouverture)
     }
 }
 
-/************************************************************
- |                                                          |
- |       Procedure de fermeture d'un fichier TOVC           |
- |                                                          |
- ************************************************************/
+/*************************************|
+|                                     |
+|      Fermer le fichier TOVC         |
+|                                     |
+|*************************************/
 void Fermer_TOVC(fichier_TOVC *f)
 {
     rewind(f->fichier);
@@ -61,11 +61,11 @@ void Fermer_TOVC(fichier_TOVC *f)
     free(f);
 }
 
-/************************************************************
- |                                                          |
- |       Procedure de lecture d'un bloc methode TOVC        |
- |                                                          |
- ************************************************************/
+/********************************************|
+|                                            |
+|     Lire le i eme bloc dans buf TOVC       |
+|                                            |
+|********************************************/
 void LireDir_TOVC(fichier_TOVC *f, int i, Tbloc_TOVC *buf)
 {
     /// on se jitionne au début du i ème bloc puis on le lit dans buf
@@ -73,11 +73,11 @@ void LireDir_TOVC(fichier_TOVC *f, int i, Tbloc_TOVC *buf)
     fread(buf, sizeof(Tbloc_TOVC), 1, f->fichier);
 }
 
-/************************************************************
- |                                                          |
- |      Fonction de lecture de l'entete methode TOVC        |
- |                                                          |
- ************************************************************/
+/********************************************|
+|                                            |
+| Retoure la i ème valeur del'entete  TOVC   |
+|                                            |
+|********************************************/
 int Entete_TOVC(fichier_TOVC *f, int i)
 {
     if (i == 1)
@@ -92,11 +92,11 @@ int Entete_TOVC(fichier_TOVC *f, int i)
         printf("Parametre inexistant dans l'entete\n");
 }
 
-/************************************************************
- |                                                          |
- |       Procedure d'ecriture d'un bloc methode TOVC        |
- |                                                          |
- ***********************************************************/
+/*********************************************|
+|                                             |
+|     Ecrire buf dans le i eme bloc TOVC      |
+|                                             |
+|*********************************************/
 void EcrireDir_TOVC(fichier_TOVC *f, int i, Tbloc_TOVC buf)
 {
     /// on se positionne au début du i ème bloc puis on écrit dans fichier->f
@@ -104,11 +104,11 @@ void EcrireDir_TOVC(fichier_TOVC *f, int i, Tbloc_TOVC buf)
     fwrite(&buf, sizeof(Tbloc_TOVC), 1, f->fichier);
 }
 
-/************************************************************
- |                                                          |
- |    Procedure de modification de l'entete methode TOVC    |
- |                                                          |
- ***********************************************************/
+/*********************************************|
+|                                             |
+| modifie la i ème valeur de l'entete  TOVC   |
+|                                             |
+|*********************************************/
 void Aff_Entete_TOVC(fichier_TOVC *f, int i, int val)
 {
     if (i == 1)
@@ -123,11 +123,11 @@ void Aff_Entete_TOVC(fichier_TOVC *f, int i, int val)
         printf("Parametre inexistant dans l'entete\n");
 }
 
-/************************************************************
- |                                                          |
- |         allocation d'un nouveau bloc methode TOVC        |
- |                                                          |
- ***********************************************************/
+/********************************************|
+|                                            |
+|  Retourne le numéro du nouveau bloc TOVC   |
+|                                            |
+|********************************************/
 int Alloc_bloc_TOVC(fichier_TOVC *f)
 {
     Aff_Entete_TOVC(f, 1, Entete_TOVC(f, 1) + 1);
