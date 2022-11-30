@@ -1,7 +1,10 @@
-#define B 300                                              // le nombre max de caractère que peut contenir le bloc
-#define FICHIER_ORIGINAL "Materiel_informatique_TOVĈ.bin"; // le nom du fichier original
-#define NB_TYPE_MATERIEL 3                                 // nombre de types de materiel qui existent
 #include <stdio.h>
+#define B 300                                             // le nombre max de caractère que peut contenir le bloc
+#define FICHIER_ORIGINAL "Materiel_informatique_TOVĈ.bin" // le nom du fichier original
+#define NB_TYPE_MATERIEL 6                                // nombre de types de materiel qui existent
+#define TAILLE_IDENTIFIANT 5                              // la taille du champs identifiant (la cle) sur 5 octets
+#define TAILLE_PRIX 8                                     // la taille du champs prix du materiel
+#define PRIX_MAX 99999999                                 // le prix max d'un materiel
 
 /***********************************************|
 |                                               |
@@ -81,13 +84,19 @@ int Alloc_bloc_TOVnC(fichier_TOVnC *f);
 |          VARIABLES GLOBALES DU TP             |
 |                                               |
 |***********************************************/
-char *MATERIAL[] = {"Imprimante",
-                    "PC Bureau",
-                    "PC Portable"};
+char *MATERIAL_LIST[] = {
+    "Imprimante",
+    "PC Bureau",
+    "PC Portable",
+    "Television",
+    "Telephone",
+    "Projecteur"};
 
 /***********************************************|
 |                                               |
 |     FONCTIONS IMPLEMENTES POUR PARTIE 01      |
 |                                               |
 |***********************************************/
-void Chargement_initial_TOVnC(char nom_fichier[], int n, float u);
+void Chargement_initial_TOVnC(char nom_fichier[], int n);
+void Generer_Chaine(char chaine[], int length, int number);
+int Randomizeed_Numbers(int lower, int upper);

@@ -3,55 +3,29 @@
 #include "lib.h"
 
 // n est le nombre de valeur (enregistrements) qu'on veut inserer
-void Chargement_initial_TOVnC(char nom_fichier[], int n, float u)
+void Chargement_initial_TOVnC(char nom_fichier[], int n)
 // chargement initial du fichier TOF
 {
-    fichier_TOVnC F;
+    fichier_TOVnC *F;
+    Ouvrir_TOVnC(F, FICHIER_ORIGINAL, 'N');
     Tampon buf;
-    char *IDENTIFIANT = "00000";
-
-    /*
-    typeval valeur;
-    Tenreg enregistrement;
-    Ouvrir_TOF(&F, nom_fichier, 'N');
-    int i = 1, j = 0, cpt_ecr;
-
-    for (int k = 0; k < n; k++)
+    int i, j;
+    for (i = 0; i < n; i++)
     {
-        // enregistrement.cle = extract_nbr(k + 1);
-        enregistrement.cle = k;
-        // enregistrement.valeur = extract_nbr(k + 1);
-        printf("entrez la valeur numero %i : ", k + 1);
-        scanf("%i", &valeur);
-        enregistrement.supprimer = 0;
-        if (j < u * maxBloc)
-        {
-            buf.tab[j] = enregistrement;
-            j++;
-        }
-        else
-        {
-            buf.nombre_enreg = j;
-            EcrireDir_TOF(F, i, &buf, &cpt_ecr);
-            buf.tab[0] = enregistrement;
-            i++;
-
-            j = 1;
-        }
-        // nb+=pas;
+        char IDENTIFIANT[TAILLE_IDENTIFIANT];                                // la chaine ou l'identifiant du materiel est stocke
+        Generer_Chaine(IDENTIFIANT, TAILLE_IDENTIFIANT, i);                  // generer l'identifiant unique (numero successives pour garder l'ordre)
+        j = Randomizeed_Numbers(0, NB_TYPE_MATERIEL - 1);                    // generer l'index du type de materiel aleatoirement
+        char *MATERIAL = MATERIAL_LIST[j];                                   // tirer le type du materiel de la liste  des materiels
+        char *PRIX;                                                          // la chaine ou le prix du materiel est stocke
+        Generer_Chaine(PRIX, TAILLE_PRIX, Randomizeed_Numbers(0, PRIX_MAX)); // generer le prix du materiel aleartoirement
+        printf("\n Entrez les caracteristiques de votre materiel: ");        // demander la description du materiel de l'utilisateur
+        char *DESCRIPTION;                                                   // la chaine ou l'identifiant du materiel est stocke
+        scanf("%s", DESCRIPTION);                                            // Lire la description de l'utilisateur
+        printf("l'identifiant: %s\n material: %s\n prix: %s\n description: %s\n", IDENTIFIANT, MATERIAL, PRIX, DESCRIPTION);
     }
-
-    buf.nombre_enreg = j;
-    EcrireDir_TOF(F, i, &buf, &cpt_ecr);
-    Aff_Entete_TOF(&F, 1, i); // nombre de blocs dans le fichier
-    Aff_Entete_TOF(&F, 2, n); // nombre d'enregistrements inseres dans le fichier
-    Aff_Entete_TOF(&F, 3, 0); // nombre d'enregistrement supprimes dans le fichier
-    Fermer_TOF(F);
-    */
 }
 
 int main(void)
 {
-    printf("heho am here ");
-    sprintf(buffer, "%05lx", INDENTIFIER);
+    Chargement_initial_TOVnC(FICHIER_ORIGINAL, 3);
 }

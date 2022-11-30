@@ -125,6 +125,7 @@ void Aff_Entete_TOVnC(fichier_TOVnC *f, int i, int val)
 |**********************************************/
 int Alloc_bloc_TOVnC(fichier_TOVnC *f)
 {
-    Aff_entete_TOVnC(f, 1, Entete_TOVnC(f, 1) + 1);
-    return Entete_TOVnC(f, 1);
+    int i = Entete_TOVnC(f, 1);    // le nombre de bloc = le numero du dernier bloc -1
+    Aff_Entete_TOVnC(f, 1, i + 1); // mettre a jour le nombre de bloc dans l'entete
+    return i;                      // le nombre anciens de bloc = numero du dernier bloc
 }

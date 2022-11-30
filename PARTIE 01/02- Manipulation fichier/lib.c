@@ -176,25 +176,16 @@ int Randomizeed_Numbers(int lower, int upper)
 
 /**********************************************|
 |                                              |
-|     Generer identifiant sur 5 caracteres     |
-|            a partir d'un entier              |
+|     Generer une chaine de longueur length    |
+|         a partir d'un entier number          |
 |                                              |
 |**********************************************/
-void Generer_identifiant()
+void Generer_Chaine(char chaine[], int length, int number)
 {
-    unsigned char bytes[4];
-    unsigned long n = 78;
-
-    bytes[0] = (n >> 24) & 0xFF;
-    bytes[1] = (n >> 16) & 0xFF;
-    bytes[2] = (n >> 8) & 0xFF;
-    bytes[3] = n & 0xFF;
-    bytes[4] = n & 0xFF;
-    for (int i = 0; i < 5; i++)
-        printf("%c", bytes[i]);
-}
-
-int main(void)
-{
-    Generer_identifiant();
+    for (int i = length - 1; i >= 0; i--)
+    {
+        chaine[i] = number % 10 + '0';
+        number = number / 10;
+    }
+    chaine[length] = '\0';
 }

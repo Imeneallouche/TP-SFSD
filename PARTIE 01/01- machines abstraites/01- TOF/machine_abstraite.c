@@ -111,6 +111,7 @@ void Aff_Entete_TOF(fichier_TOF *f, int i, int val)
 |********************************************/
 int Alloc_bloc_TOF(fichier_TOF *f)
 {
-    Aff_Entete_TOF(f, 1, Entete_TOF(*f, 1) + 1);
-    return Entete_TOF(*f, 1);
+    int i = Entete_TOF(*f, 1);   // le nombre de bloc = le numero du dernier bloc -1
+    Aff_Entete_TOF(f, 1, i + 1); // mettre a jour le nombre de bloc dans l'entete
+    return i;                    // le nombre anciens de bloc = numero du dernier bloc
 }

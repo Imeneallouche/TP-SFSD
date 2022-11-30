@@ -130,6 +130,7 @@ void Aff_Entete_TOVC(fichier_TOVC *f, int i, int val)
 |********************************************/
 int Alloc_bloc_TOVC(fichier_TOVC *f)
 {
-    Aff_Entete_TOVC(f, 1, Entete_TOVC(f, 1) + 1);
-    return Entete_TOVC(f, 1);
+    int i = Entete_TOVC(f, 1);    // le nombre de bloc = le numero du dernier bloc -1
+    Aff_Entete_TOVC(f, 1, i + 1); // mettre a jour le nombre de bloc dans l'entete
+    return i;                     // le nombre anciens de bloc = numero du dernier bloc
 }
