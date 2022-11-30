@@ -1,12 +1,16 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "lib.h"
 
 // n est le nombre de valeur (enregistrements) qu'on veut inserer
-void Chargement_initial_TOF(char nom_fichier[], int n, float u)
+void Chargement_initial_TOVnC(char nom_fichier[], int n, float u)
 // chargement initial du fichier TOF
 {
-    fichier_TOF F;
+    fichier_TOVnC F;
     Tampon buf;
+    char IDENTIFIANT = "00000";
+
+    /*
     typeval valeur;
     Tenreg enregistrement;
     Ouvrir_TOF(&F, nom_fichier, 'N');
@@ -43,4 +47,10 @@ void Chargement_initial_TOF(char nom_fichier[], int n, float u)
     Aff_Entete_TOF(&F, 2, n); // nombre d'enregistrements inseres dans le fichier
     Aff_Entete_TOF(&F, 3, 0); // nombre d'enregistrement supprimes dans le fichier
     Fermer_TOF(F);
+    */
+}
+
+int main(void)
+{
+    printf(rand());
 }
