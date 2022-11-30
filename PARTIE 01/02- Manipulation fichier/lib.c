@@ -126,8 +126,9 @@ void Aff_Entete_TOVnC(fichier_TOVnC *f, int i, int val)
 |**********************************************/
 int Alloc_bloc_TOVnC(fichier_TOVnC *f)
 {
-    Aff_entete_TOVnC(f, 1, Entete_TOVnC(f, 1) + 1);
-    return Entete_TOVnC(f, 1);
+    int i = Entete_TOVnC(f, 1);    // le nombre de bloc = le numero du dernier bloc -1
+    Aff_Entete_TOVnC(f, 1, i + 1); // mettre a jour le nombre de bloc dans l'entete
+    return i;                      // le nombre anciens de bloc = numero du dernier bloc
 }
 
 /*
@@ -161,11 +162,11 @@ int Alloc_bloc_TOVnC(fichier_TOVnC *f)
 
 /**********************************************|
 |                                              |
-|    Generates and prints 'count' random       |
-|      numbers in range [lower, upper]         |
+|     Generer un nombre aleatoire qui se       |
+|   trouve entre les bornes [lower, upper]     |
 |                                              |
 |**********************************************/
-int Randomize(int lower, int upper)
+int Randomizeed_Numbers(int lower, int upper)
 {
     int num = (rand() %
                (upper - lower + 1)) +
@@ -173,7 +174,27 @@ int Randomize(int lower, int upper)
     return num;
 }
 
+/**********************************************|
+|                                              |
+|     Generer identifiant sur 5 caracteres     |
+|            a partir d'un entier              |
+|                                              |
+|**********************************************/
+void Generer_identifiant()
+{
+    unsigned char bytes[4];
+    unsigned long n = 78;
+
+    bytes[0] = (n >> 24) & 0xFF;
+    bytes[1] = (n >> 16) & 0xFF;
+    bytes[2] = (n >> 8) & 0xFF;
+    bytes[3] = n & 0xFF;
+    bytes[4] = n & 0xFF;
+    for (int i = 0; i < 5; i++)
+        printf("%c", bytes[i]);
+}
+
 int main(void)
 {
-    printf("%i", Randomize(0, NB_TYPE_MATERIEL - 1));
+    Generer_identifiant();
 }

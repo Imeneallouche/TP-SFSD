@@ -91,4 +91,3 @@ char *MATERIAL[] = {"Imprimante",
 |                                               |
 |***********************************************/
 void Chargement_initial_TOVnC(char nom_fichier[], int n, float u);
-int Randomize(int lower, int upper);

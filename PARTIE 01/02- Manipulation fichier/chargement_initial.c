@@ -8,7 +8,7 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n, float u)
 {
     fichier_TOVnC F;
     Tampon buf;
-    char IDENTIFIANT = "00000";
+    char *IDENTIFIANT = "00000";
 
     /*
     typeval valeur;
@@ -52,5 +52,6 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n, float u)
 
 int main(void)
 {
-    printf(rand());
+    printf("heho am here ");
+    sprintf(buffer, "%05lx", INDENTIFIER);
 }
