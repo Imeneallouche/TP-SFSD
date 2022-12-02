@@ -79,7 +79,7 @@ void Affichage_E(TOVnC_fichier *f,int i,j)
     printf("\n Les informations du materiel:  ----------------------------------------\n\n");
     printf(" -> L'identifiant : %s\n",   buf.tableau[j+4..j+8);
     printf(" -> Le type matériel : %s\n",buf.tableau[j+9..j+20]);
-    printf(" -> Fonctionnement du materiel: %s\n", buf.tableau[j+21]);
+    printf(" -> Fonctionnement du materiel: %c\n", buf.tableau[j+21]);
     printf(" -> Le prix d’achat du matériel : %s\n", buf.tableau[j+22..j+27]);
     printf(" -> La Description : %s\n",buf.tableau[j+28..j+299]);
 }
