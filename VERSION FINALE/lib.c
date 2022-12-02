@@ -659,21 +659,28 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
     fichier_TOVnC *F;
     Ouvrir_TOVnC(F, FICHIER_ORIGINAL, 'N');
     Tampon_TOVnC buf;
-    int i, j;
-    char *MATERIAL, *IDENTIFIANT, *PRIX, *DESCRIPTION;
+    int i, // le numero du bloc pour le parcours entre bloc
+        j, // la position dans le bloc pour le parcours interbloc
+        k; // le numero de l'element insere de 1 a n
+
+    char Identifiant[TAILLE_IDENTIFIANT],        // numero d'identifiant(cle)
+        Materiel[TAILLE_MATERIEL],               // le type du materiel
+        Fonctionne[TAILLE_FONCTIONNEMENT] = 'f', // fonctionne = 'f', le materiel marche fonctionne = 'n' sinon
+        Prix[TAILLE_PRIX],                       // le ptix du materiel
+        Description[TAILLE_MAX_DESCRIPTION];     // la description (caracteristiques) du materiel
+
     for (i = 0; i < n; i++)
     {
-        Generer_Chaine(IDENTIFIANT, TAILLE_IDENTIFIANT, 10 * i); // generer l'identifiant unique (numero successives pour garder l'ordre)
-        printf(" %s", IDENTIFIANT);
+        Generer_Chaine(Identifiant, TAILLE_IDENTIFIANT, 10 * i);             // generer l'identifiant unique (numero successives pour garder l'ordre)
         j = Randomizeed_Numbers(0, NB_TYPE_MATERIEL - 1);                    // generer l'index du type de materiel aleatoirement
-        MATERIAL = MATERIAL_LIST[j];                                         // tirer le type du materiel de la liste  des materiels
-        Generer_Chaine(PRIX, TAILLE_PRIX, Randomizeed_Numbers(0, PRIX_MAX)); // generer le prix du materiel aleartoirement
+        Materiel = MATERIAL_LIST[j];                                         // tirer le type du materiel de la liste  des materiels
+        Generer_Chaine(Prix, TAILLE_PRIX, Randomizeed_Numbers(0, PRIX_MAX)); // generer le prix du materiel aleartoirement
         printf("\nEntrez les caracteristiques de votre materiel: ");         // demander la description du materiel de l'utilisateur
-        scanf(" %[^\n]", DESCRIPTION);                                       // Lire la description de l'utilisateur
-        printf("identifiant: %s\n", IDENTIFIANT);
-        printf("material: %s\n", MATERIAL);
-        printf("prix: %s\n", PRIX);
-        printf("description: %s\n", DESCRIPTION);
+        scanf(" %[^\n]", Description);                                       // Lire la description de l'utilisateur
+        printf("identifiant: %s\n", Identifiant);
+        printf("material: %s\n", Materiel);
+        printf("prix: %s\n", Prix);
+        printf("description: %s\n", Description);
     }
 }
 
