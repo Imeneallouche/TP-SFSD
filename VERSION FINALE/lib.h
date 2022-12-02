@@ -1,11 +1,14 @@
-#define B 300                // le nombre max de caractère que peut contenir le bloc
-#define NB_TYPE_MATERIEL 6   // nombre de types de materiel qui existent
-#define TAILLE_IDENTIFIANT 5 // la taille du champs identifiant (la cle) sur 5 octets
-#define TAILLE_PRIX 8        // la taille du champs prix du materiel
-#define PRIX_MAX 99999999    // le prix max d'un materiel
-#define maxBloc 10           // max d'enregistrement dans un seul bloc (TOF)
-#define maxNomFichier 30
-#define facteur_reorganisation 0.5
+#define B 300                      // le nombre max de caractère que peut contenir le bloc
+#define NB_TYPE_MATERIEL 6         // nombre de types de materiel qui existent
+#define TAILLE_IDENTIFIANT 5       // la taille du champs identifiant (la cle) sur 5 octets
+#define TAILLE_MATERIEL 12         // la taille du champ type du materiel
+#define TAILLE_FONCTIONNEMENT 1    // la taille du champs qui indique si le materiel fonctionne ou pas
+#define TAILLE_PRIX 6              // la taille du champs prix du materiel
+#define TAILLE_MAX_DESCRIPTION 276 // taille maximal du champs description (le nombre max de chars dans le bloc - la taille des autres champs)
+#define PRIX_MAX 999999            // le prix max d'un materiel
+#define maxBloc 10                 // max d'enregistrement dans un seul bloc (TOF)
+#define maxNomFichier 30           // la taille max d'un nom du fichier
+#define facteur_reorganisation 0.5 // le facteur de reorganisation du fichier
 
 /***********************************************|
 |                                               |
@@ -32,8 +35,9 @@ typedef struct entete_TOVnC
 |*********************************************/
 typedef struct Tbloc_TOVnC
 {
-    char tableau[B]; // taille variable
-    int nb;          // la position libre dans le bloc
+    char tableau[B];                // taille variable
+    int nb;                         // la position libre dans le bloc
+    char cleMax[TAILLE_IDENTIFIANT] // la cle max dans le bloc afin de pouvoir faire une recherche dichotomique dans le bloc
 
 } Tbloc_TOVnC;
 
@@ -49,7 +53,7 @@ typedef struct fichier_TOVnC
 
 } fichier_TOVnC;
 
-typedef Tbloc_TOVnC Tampon; // definition du type Tampon TOF(un alias du type tbloc)
+typedef Tbloc_TOVnC Tampon_TOVnC; // definition du type Tampon TOF(un alias du type tbloc)
 
 /*********************************************|
 |                                             |
@@ -121,7 +125,7 @@ typedef struct entete_TOF
 
 } entete_TOF;
 
-typedef Tbloc_TOF Tampon; // definition du type Tampon TOF(un alias du type tbloc)
+typedef Tbloc_TOF Tampon_TOF; // definition du type Tampon TOF(un alias du type tbloc)
 
 /*********************************************|
 |                                             |
@@ -142,8 +146,8 @@ typedef struct fichier_TOF
 |*********************************************/
 void Ouvrir_TOF(fichier_TOF *f, char nom_fichier[], char mode);
 void Fermer_TOF(fichier_TOF f);
-void LireDir_TOF(fichier_TOF f, int i, Tampon *buf, int *cpt_lect);
-void EcrireDir_TOF(fichier_TOF f, int i, Tampon *buf, int *cpt_ecr);
+void LireDir_TOF(fichier_TOF f, int i, Tampon_TOF *buf, int *cpt_lect);
+void EcrireDir_TOF(fichier_TOF f, int i, Tampon_TOF *buf, int *cpt_ecr);
 int Entete_TOF(fichier_TOF f, int i);
 void Aff_Entete_TOF(fichier_TOF *f, int i, int val);
 int Alloc_bloc_TOF(fichier_TOF *f);
@@ -202,7 +206,7 @@ typedef struct fichier_TOVC
 
 } fichier_TOVC;
 
-typedef Tbloc_TOVC Tampon; // definition du type Tampon TOF(un alias du type tbloc)
+typedef Tbloc_TOVC Tampon_TOVC; // definition du type Tampon TOF(un alias du type tbloc)
 
 /*********************************************|
 |                                             |
@@ -243,12 +247,12 @@ int Alloc_bloc_TOVC(fichier_TOVC *f);
 |*********************************************/
 typedef struct Tbloc_LOVC
 {
-    char tab[MAX2]; // le tableau de caracteres
-    int suivant;    // le numero du bloc suivant dans la liste
+    char tab[B]; // le tableau de caracteres
+    int suivant; // le numero du bloc suivant dans la liste
 
 } Tbloc_LOVC;
 
-typedef struct Tbloc_LOVC Buffer_LOVC; // identique a la structure du bloc en methode LOVC
+typedef struct Tbloc_LOVC Tampon_LOVC; // identique a la structure du bloc en methode LOVC
 
 /*********************************************|
 |                                             |
@@ -282,11 +286,11 @@ typedef struct fichier_LOVC
 |*********************************************/
 void Ouvrir_LOVC(fichier_LOVC *f, const char nomFichier[], char mode);
 void fermer_LOVC(fichier_LOVC *f);
-void LireDir_LOVC(fichier_LOVC *f, int i, Buffer_LOVC *buf, int *cpt_lect);
-void ecrireDir_LOVC(fichier_LOVC *f, int i, Buffer_LOVC *buf, int *cpt_ecr);
+void LireDir_LOVC(fichier_LOVC *f, int i, Tampon_LOVC *buf, int *cpt_lect);
+void ecrireDir_LOVC(fichier_LOVC *f, int i, Tampon_LOVC *buf, int *cpt_ecr);
 int entete_LOVC(fichier_LOVC *f, int i);
 void aff_entete_LOVC(fichier_LOVC *f, int i, int val);
-int alloc_bloc_LOVC(fichier_LOVC *fichier, int *cpt_lect, int *cpt_ecr, Buffer_LOVC *buf);
+int alloc_bloc_LOVC(fichier_LOVC *fichier, int *cpt_lect, int *cpt_ecr, Tampon_LOVC *buf);
 
 /*
 
@@ -321,7 +325,7 @@ char *MATERIAL_LIST[] = {
     "Telephone",
     "Projecteur"};
 
-char *FICHIER_ORIGINAL = "Materiel_informatique_TOVĈ.bin"; // le nom du fichier original
+char *FICHIER_ORIGINAL = "Materiel_informatique_TOVnC.bin"; // le nom du fichier original
 
 /***********************************************|
 |                                               |

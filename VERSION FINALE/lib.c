@@ -205,11 +205,11 @@ void Fermer_TOF(fichier_TOF f)
 |      Lire le i eme bloc dans buf TOF       |
 |                                            |
 |********************************************/
-void LireDir_TOF(fichier_TOF f, int i, Tampon *buf, int *cpt_lect)
+void LireDir_TOF(fichier_TOF f, int i, Tampon_TOF *buf, int *cpt_lect)
 {
     rewind(f.fichier);
-    fseek(f.fichier, sizeof(fichier_TOF) + (i) * sizeof(Tampon), SEEK_SET);
-    fread(buf, sizeof(Tampon), 1, f.fichier);
+    fseek(f.fichier, sizeof(fichier_TOF) + (i) * sizeof(Tampon_TOF), SEEK_SET);
+    fread(buf, sizeof(Tampon_TOF), 1, f.fichier);
     (*cpt_lect) = (*cpt_lect) + 1;
 }
 
@@ -218,11 +218,11 @@ void LireDir_TOF(fichier_TOF f, int i, Tampon *buf, int *cpt_lect)
 |      Ecrire buf dans le i eme bloc TOF      |
 |                                             |
 |*********************************************/
-void EcrireDir_TOF(fichier_TOF f, int i, Tampon *buf, int *cpt_ecr)
+void EcrireDir_TOF(fichier_TOF f, int i, Tampon_TOF *buf, int *cpt_ecr)
 {
     rewind(f.fichier);
-    fseek(f.fichier, sizeof(entete_TOF) + (i) * sizeof(Tampon), SEEK_SET);
-    fwrite(buf, sizeof(Tampon), 1, f.fichier);
+    fseek(f.fichier, sizeof(entete_TOF) + (i) * sizeof(Tampon_TOF), SEEK_SET);
+    fwrite(buf, sizeof(Tampon_TOF), 1, f.fichier);
     (*cpt_ecr) = (*cpt_ecr) + 1;
 }
 
@@ -497,12 +497,12 @@ void fermer_LOVC(fichier_LOVC *f)
 |      Lire le i eme bloc dans buf TOVC       |
 |                                         ,   |
 |*********************************************/
-void LireDir_LOVC(fichier_LOVC *f, int i, Buffer_LOVC *buf, int *cpt_lect)
+void LireDir_LOVC(fichier_LOVC *f, int i, Tampon_LOVC *buf, int *cpt_lect)
 {
     // positionnement au debut du bloc numero i
     fseek(f->fichier, (sizeof(Entete_LOVC) + sizeof(Tbloc_LOVC) * (i - 1)), SEEK_SET);
     // lecture d'un bloc de caractere correspondant a la taille du bloc dans le buffer
-    fread(buf, sizeof(Buffer_LOVC), 1, f->fichier);
+    fread(buf, sizeof(Tampon_LOVC), 1, f->fichier);
     (*cpt_lect) = (*cpt_lect) + 1;
 }
 
@@ -511,13 +511,13 @@ void LireDir_LOVC(fichier_LOVC *f, int i, Buffer_LOVC *buf, int *cpt_lect)
 |      Ecrire buf dans le i eme bloc TOVC      |
 |                                              |
 |*********************************************/
-void ecrireDir_LOVC(fichier_LOVC *f, int i, Buffer_LOVC *buf, int *cpt_ecr)
+void ecrireDir_LOVC(fichier_LOVC *f, int i, Tampon_LOVC *buf, int *cpt_ecr)
 {
 
     // positionnement au debut du bloc num�ro i
     fseek(f->fichier, sizeof(Entete_LOVC) + sizeof(Tbloc_LOVC) * (i - 1), SEEK_SET);
     // ecriture du contenu du buffer dans le bloc numero i du fichier
-    fwrite(buf, sizeof(Buffer_LOVC), 1, f->fichier);
+    fwrite(buf, sizeof(Tampon_LOVC), 1, f->fichier);
     (*cpt_ecr) = (*cpt_ecr) + 1;
 }
 
@@ -541,7 +541,7 @@ int entete_LOVC(fichier_LOVC *f, int i)
     else
     {
         printf("Parametre inexistant dans l'entete\n");
-        return NULL;
+        return -1;
     }
 }
 
@@ -571,7 +571,7 @@ void aff_entete_LOVC(fichier_LOVC *f, int i, int val)
 |   Retourne le numéro du nouveau bloc TOVC   |
 |                                             |
 |*********************************************/
-int alloc_bloc_LOVC(fichier_LOVC *fichier, int *cpt_lect, int *cpt_ecr, Buffer_LOVC *buf)
+int alloc_bloc_LOVC(fichier_LOVC *fichier, int *cpt_lect, int *cpt_ecr, Tampon_LOVC *buf)
 {
     LireDir_LOVC(fichier, entete_LOVC(fichier, 2), buf, cpt_lect);  // lecture du bloc correspondant a la queue
     buf->suivant = entete_LOVC(fichier, 1) + 1;                     // mise a jour dui suvant de la queue au bloc correspondant a la nouvelle queue
@@ -618,9 +618,7 @@ int alloc_bloc_LOVC(fichier_LOVC *fichier, int *cpt_lect, int *cpt_ecr, Buffer_L
 |**********************************************/
 int Randomizeed_Numbers(int lower, int upper)
 {
-    int num = (rand() %
-               (upper - lower + 1)) +
-              lower;
+    int num = (rand() % (upper - lower + 1)) + lower;
     return num;
 }
 
@@ -649,46 +647,38 @@ void Generer_Chaine(char chaine[], int length, int number)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 */
-// n est le nombre de valeur (enregistrements) qu'on veut inserer
+/**********************************************|
+|                                              |
+|       initialiser fichier nom_fichier        |
+|        de type TOVnC avec n valeurs          |
+|                                              |
+|**********************************************/
 void Chargement_initial_TOVnC(char nom_fichier[], int n)
-// chargement initial du fichier TOF
 {
     fichier_TOVnC *F;
     Ouvrir_TOVnC(F, FICHIER_ORIGINAL, 'N');
-    Tampon buf;
+    Tampon_TOVnC buf;
     int i, j;
+    char *MATERIAL, *IDENTIFIANT, *PRIX, *DESCRIPTION;
     for (i = 0; i < n; i++)
     {
-        char IDENTIFIANT[TAILLE_IDENTIFIANT];                                // la chaine ou l'identifiant du materiel est stocke
-        Generer_Chaine(IDENTIFIANT, TAILLE_IDENTIFIANT, i);                  // generer l'identifiant unique (numero successives pour garder l'ordre)
+        Generer_Chaine(IDENTIFIANT, TAILLE_IDENTIFIANT, 10 * i); // generer l'identifiant unique (numero successives pour garder l'ordre)
+        printf(" %s", IDENTIFIANT);
         j = Randomizeed_Numbers(0, NB_TYPE_MATERIEL - 1);                    // generer l'index du type de materiel aleatoirement
-        char *MATERIAL = MATERIAL_LIST[j];                                   // tirer le type du materiel de la liste  des materiels
-        char *PRIX;                                                          // la chaine ou le prix du materiel est stocke
+        MATERIAL = MATERIAL_LIST[j];                                         // tirer le type du materiel de la liste  des materiels
         Generer_Chaine(PRIX, TAILLE_PRIX, Randomizeed_Numbers(0, PRIX_MAX)); // generer le prix du materiel aleartoirement
-        char *DESCRIPTION;                                                   // la chaine ou l'identifiant du materiel est stocke
-        printf("\n Entrez les caracteristiques de votre materiel: ");        // demander la description du materiel de l'utilisateur
-        scanf("%s", DESCRIPTION);                                            // Lire la description de l'utilisateur
-        printf("l'identifiant: %s\n material: %s\n prix: %s\n description: %s\n", IDENTIFIANT, MATERIAL, PRIX, DESCRIPTION);
+        printf("\nEntrez les caracteristiques de votre materiel: ");         // demander la description du materiel de l'utilisateur
+        scanf(" %[^\n]", DESCRIPTION);                                       // Lire la description de l'utilisateur
+        printf("identifiant: %s\n", IDENTIFIANT);
+        printf("material: %s\n", MATERIAL);
+        printf("prix: %s\n", PRIX);
+        printf("description: %s\n", DESCRIPTION);
     }
 }
 
 int main(void)
 {
-    printf("%s", FICHIER_ORIGINAL);
+    printf("here we enter the function\n");
     Chargement_initial_TOVnC(FICHIER_ORIGINAL, 3);
 }
