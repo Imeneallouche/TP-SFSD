@@ -637,6 +637,41 @@ void Generer_Chaine(char chaine[], int length, int number)
     }
 }
 
+void concatenate(char destination[], char *identifiant, char *materiel, char fonctionne, char *prix, char *taille, char *description)
+{
+    destination[0] = '\0';
+    strncat(destination, identifiant, TAILLE_IDENTIFIANT);
+    strncat(destination, materiel, TAILLE_MATERIEL);
+    strncat(destination, &fonctionne, TAILLE_FONCTIONNEMENT);
+    strncat(destination, prix, TAILLE_PRIX);
+    strncat(destination, taille, TAILLE_TAILLE);
+    strcat(destination, description);
+}
+
+void Ecrire_chaine_TOVnC(char nom_fichier, char chaine[], int *i, int *j, Tampon_TOVnC *Buf)
+{
+    fichier_TOVnC *F;
+    if (j + strlen(chaine) > B) // inserer le nouvel element dans un nouveau bloc
+    {
+        // 3-write the bloc
+        i = Alloc_bloc_TOVnC(F);
+        j = 0;
+        // we will insert the string here
+        // update the j ou hiya rayha
+        // 2- update the bloc: la premiere pos libre
+        // 3- update the bloc: la cle max
+        // 3- update l'entete: number of chars inserted
+    }
+    else // inserer dans le bloc courant
+    {
+        // 1- inserer dans la premiere pos libre
+        strcat(Buf->tableau, chaine);
+        // 2- update the bloc: la premiere pos libre
+        // 3- update the bloc: la cle max
+        // 3- update l'entete: number of chars inserted
+    }
+}
+
 /*
 
 
@@ -658,62 +693,50 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
     fichier_TOVnC *F;
     Ouvrir_TOVnC(F, FICHIER_ORIGINAL, 'N');
     Tampon_TOVnC buf;
-    int i = 0, // le numero du bloc pour le parcours entre bloc
-        j = 0, // la position dans le bloc pour le parcours interbloc
-        k,     // le numero de l'element insere de 1 a n
-        l;     // la longueur total de l'enregistrement ajoute
+    int *i = 0, // le numero du bloc pour le parcours entre bloc
+        *j = 0, // la position dans le bloc pour le parcours interbloc
+        k,      // le numero de l'element insere de 1 a n
+        l;      // la longueur total de l'enregistrement ajoute
 
     char Identifiant[TAILLE_IDENTIFIANT],    // numero d'identifiant(cle)
+        Supprimer = 'f',                     // supprimer='f' l'element n'a pas ete supprime supprimer='t' sinon
         Materiel[TAILLE_MATERIEL],           // le type du materiel
-        Fonctionne = 'f',                    // fonctionne = 'f', le materiel marche fonctionne = 'n' sinon
+        Fonctionne,                          // fonctionne = 'f', le materiel marche, fonctionne = 'n' sinon
         Prix[TAILLE_PRIX],                   // le ptix du materiel
         Taille[TAILLE_TAILLE],               // taille du champs description
         Description[TAILLE_MAX_DESCRIPTION]; // la description (caracteristiques) du materiel
 
     for (k = 0; k < n; k++)
     {
-        Generer_Chaine(Identifiant, TAILLE_IDENTIFIANT, 10 * k);                 // generer l'identifiant unique (numero successives pour garder l'ordre)
+        int cle = 10 * k;                                                        // l'identifiant= multiple de 10 pour garder l'ordre et possibilité d'insertion
+        Generer_Chaine(Identifiant, TAILLE_IDENTIFIANT, cle);                    // generer l'identifiant sous forme de chaine sur 5 positions
         strcpy(Materiel, MATERIAL_LIST[Random_Number(0, NB_TYPE_MATERIEL - 1)]); // tirer un materiel de la liste  des materiels selon index genere aleartoirement
         Generer_Chaine(Prix, TAILLE_PRIX, Random_Number(0, PRIX_MAX));           // generer le prix du materiel aleartoirement
-        printf("\nEntrez les caracteristiques de votre materiel: ");             // demander la description du materiel de l'utilisateur
-        scanf(" %[^\n]", Description);                                           // Lire la description de l'utilisateur
-        Generer_Chaine(Taille, TAILLE_TAILLE, strlen(Description));              // taille du champs de la description
 
+        printf("\n\n.........................\n");
+        printf(".                       .\n");
+        printf(". element numero : %i    .\n", k);
+        printf(".                       .\n");
+        printf(".........................\n");
         printf("identifiant: %.5s\n", Identifiant);
-        printf("material: %.12s\n", Materiel);
+        printf("materiel: %.12s\n", Materiel);
         printf("prix: %.6s\n", Prix);
-        printf("length of description: %.3s\n", Taille);
+        printf("Description de votre materiel: ");                  // demander la description du materiel de l'utilisateur
+        scanf(" %[^\n]", Description);                              // Lire la description de l'utilisateur
+        Generer_Chaine(Taille, TAILLE_TAILLE, strlen(Description)); // taille du champs de la description
+        printf("taille de description: %.3s\n", Taille);
         printf("description: %s\n", Description);
 
-        l = TAILLE_IDENTIFIANT + TAILLE_MATERIEL + TAILLE_FONCTIONNEMENT + TAILLE_PRIX + TAILLE_TAILLE + strlen(Description);
-        /*
-                if (j + l > B) // inserer le nouvel element dans un nouveau bloc
-                {
-                    // 3-write the bloc
-                    i = Alloc_bloc_TOVnC(F);
-                    j = 0;
-                    // we will insert the string here
-                    // update the j ou hiya rayha
-                    // 2- update the bloc: la premiere pos libre
-                    // 3- update the bloc: la cle max
-                    // 3- update l'entete: number of chars inserted
-                }
-                else // inserer dans le bloc courant
-                {
-                    printf("the bloc fits the content");
-                    // 1- inserer dans la premiere pos libre
-                    sprintf(buf.tableau, "%s%.5s%.12s%c%.6s%.3s", buf.tableau, Identifiant, Materiel, Fonctionne, Prix, Taille);
-                    printf("%s", buf.tableau);
-                    // 2- update the bloc: la premiere pos libre
-                    // 3- update the bloc: la cle max
-                    // 3- update l'entete: number of chars inserted
-                }
-        */
+        l = TAILLE_IDENTIFIANT + strlen(Materiel) + TAILLE_FONCTIONNEMENT + TAILLE_PRIX + TAILLE_TAILLE + strlen(Description);
+        char Enreg[l];
+        concatenate(Enreg, Identifiant, Materiel, Fonctionne, Prix, Taille, Description);
+        printf("l'element sera insere sous cette forme: %s\n", Enreg);
+        // Ecrire_chaine_TOVnC();
     }
 }
 
 int main(void)
 {
-    printf("here we enter the function\n");
+    printf("a printing is needed");
     Chargement_initial_TOVnC(FICHIER_ORIGINAL, 3);
 }

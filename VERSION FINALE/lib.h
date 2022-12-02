@@ -1,20 +1,21 @@
 #define B 300                      // le nombre max de caractère que peut contenir le bloc
 #define NB_TYPE_MATERIEL 6         // nombre de types de materiel qui existent
 #define TAILLE_IDENTIFIANT 5       // la taille du champs identifiant (la cle) sur 5 octets
+#define TAILLE_SUPPRIMER 1         // la taille du champs supprime sur 1 octets
 #define TAILLE_MATERIEL 12         // la taille du champ type du materiel sur 12 octets
-#define TAILLE_FONCTIONNEMENT 1    // la taille du champs qui indique si le materiel fonctionne ou pas
+#define TAILLE_FONCTIONNEMENT 1    // la taille du champs qui indique si le materiel fonctionne ou pas (f-> fonctionne n-> ne fonctionne pas)
 #define TAILLE_PRIX 6              // la taille du champs prix du materiel
 #define TAILLE_TAILLE 3            // la taille du champs taille (taille du champs description)
-#define TAILLE_MAX_DESCRIPTION 273 // taille maximal du champs description (le nombre max de chars dans le bloc - la taille des autres champs)
+#define TAILLE_MAX_DESCRIPTION 272 // taille maximal du champs description (le nombre max de chars dans le bloc - la taille des autres champs)
 #define PRIX_MAX 999999            // le prix max d'un materiel
 #define maxBloc 10                 // max d'enregistrement dans un seul bloc (TOF)
 #define maxNomFichier 30           // la taille max d'un nom du fichier
 #define facteur_reorganisation 0.5 // le facteur de reorganisation du fichier
 
-/*******************************************************************************************|
-| Identifiant| Type materiel | fonctionne |    Prix   |   taille   | Description (variable) |
-|  (5 bytes) |  (12 bytes)   | (1 bytes)  | (6 bytes) |  (3 bytes) |  (max sur 273 bytes)   |
-|*******************************************************************************************/
+/**************************************************************************************************************|
+| Identifiant | champs supprime | Type materiel | fonctionne |    Prix   |   taille   | Description (variable) |
+|  (5 bytes)  |   (1 bytes)     |  (12 bytes)   |  (1 bytes) | (6 bytes) |  (3 bytes) |  (max sur 272 bytes)   |
+|**************************************************************************************************************/
 
 /***********************************************|
 |                                               |
