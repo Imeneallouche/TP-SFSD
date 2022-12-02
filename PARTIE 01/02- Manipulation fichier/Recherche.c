@@ -15,7 +15,7 @@ void Recheche (fichier_TOVnc *f ,int clerecherch , int i,j )
     bsup=Entete_TOVnC(f,1) ;                                   //le dernier bloc
     while (!trouve && inf <= sup)                             //enreg non trouve et recherche possible
     {
-        i = (inf+sup)/2;                                     //numero de bloc a parcourir
+        i = (binf+bsup)/2;                                     //numero de bloc a parcourir
         j=1;
 
         LireDir_TOVnC(fichier_TOVnC *f, int i, Tbloc_TOVnC *buf);
