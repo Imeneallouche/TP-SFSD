@@ -13,7 +13,7 @@ void Recheche (fichier_TOVnc *f ,int clerecherch , int i,j )
     Tbloc_TOVnC buff;
     binf=1;                                                   //le premier bloc
     bsup=Entete_TOVnC(f,1) ;                                   //le dernier bloc
-    while (!trouve && inf <= sup)                             //enreg non trouve et recherche possible
+    while (!trouve && inf <= sup)                             //enregistrement non trouvé et recherche possible
     {
         i = (binf+bsup)/2;                                     //numero de bloc a parcourir
         j=1;
@@ -28,10 +28,10 @@ void Recheche (fichier_TOVnc *f ,int clerecherch , int i,j )
                 while (!trouve && j!= buff.pos_libre )
                 {
                     taille = buf.tableau[j..j+2]; 				//récupérer un tableau de 3 caractères, la taille d'enregistrement
-				    eff = buf.tab[j+3];              			// récupérer un caractère d'effacement
-				    clecourante =buf.tableau[j+4..j+8];           	//récupérer 5 caractères:la taille du champ identifiant (la cle) sur 5 octets
+	            eff = buf.tab[j+3];              			       // récupérer un caractère d'effacement
+		    clecourante =buf.tableau[j+4..j+8];           	     //récupérer 5 caractères:la taille du champ identifiant (la cle) sur 5 octets
                     cle=Generer_Chaine(clecourante);
-                    if ( clerecherch == clecourante && !eff)    //la cle st donc trouveée dans le bloc i
+                    if ( clerecherch == clecourante && !eff)               //la cle st donc trouveée dans le bloc i
                     {
                         trouv =Vrai;                           
                     }
@@ -58,7 +58,7 @@ void Recheche (fichier_TOVnc *f ,int clerecherch , int i,j )
 
     if (!trouve)
     {
-        printf("\nEnregistrement introuvable!, vous devez l'inserez si vous voulez!\n");
+        printf("\nEnregistrement n'existe pas!, vous devez l'inserez si vous voulez!\n");
     }
     else
     {
@@ -81,9 +81,9 @@ void Affichage_E(TOVnC_fichier *f,int i,j)
     printf(" -> Le type matériel : %s\n",buf.tableau[j+9..j+20]);
     printf(" -> Fonctionnement du materiel: %s\n", buf.tableau[j+21]);
     printf(" -> Le prix d’achat du matériel : %s\n", buf.tableau[j+22..j+27]);
-    printf(" -> La Description : %s\n",buf.tableau[j+23..j+298]);
+    printf(" -> La Description : %s\n",buf.tableau[j+23..j+295]);
 }
-// Eregistrement = |longueur de l'info(3)|eff(1)|cle(5)|l'information (from j+4 TO j+298) *cle est inclue dans l'information*|
+// Eregistrement = |longueur de l'info(3)|eff(1)|cle(5)|l'information (from j+4 TO j+295) *cle est inclue dans l'information*|
 
 
 
