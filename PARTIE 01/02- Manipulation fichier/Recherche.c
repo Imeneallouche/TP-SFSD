@@ -20,7 +20,7 @@ void Recheche (fichier_TOVnc *f ,int clerecherch , int i,j )
 
         LireDir_TOVnC(fichier_TOVnC *f, int i, Tbloc_TOVnC *buf);
 
-        cle1=Generer_Chaine(buff.tableau[j..j+2]);                 // Generer_Chaine est une fonction pour faire la conversion,
+        cle1=Generer_Chaine(buff.tableau[j+4..j+8]);                 // Generer_Chaine est une fonction pour faire la conversion,
         cle2=Generer_Chaine(buff.cleMax);                         //d'une chaine contenant un nombre vers l'entier qu'elle contienne
         if ( clerecherch>=cle1 && clerecherch<=cle2)             //si la cle à recherchee est entre cle1 et cle2 du bloc on fait le recherche sequentielle dans le bloc
             {
