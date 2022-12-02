@@ -83,7 +83,6 @@ void Affichage_E(TOVnC_fichier *f,int i,j)
     printf(" -> Le prix d’achat du matériel : %s\n", buf.tableau[j+22..j+27]);
     printf(" -> La Description : %s\n",buf.tableau[j+23..j+295]);
 }
-// Eregistrement = |longueur de l'info(3)|eff(1)|cle(5)|l'information (from j+4 TO j+295) *cle est inclue dans l'information*|
-
-
+// Eregistrement = | longueur de l'info|   eff      | clé(identifiant) | l'information (from j+4 TO j+295) *cle est inclue dans l'information* | 
+//                 |    (3 bits)       |  (1 bit)   |     (5bits)      |               (296bits) :300-(3+1)                  |
 
