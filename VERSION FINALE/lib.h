@@ -340,4 +340,4 @@ char *FICHIER_ORIGINAL = "Materiel_informatique_TOVnC.bin"; // le nom du fichier
 |***********************************************/
 void Chargement_initial_TOVnC(char nom_fichier[], int n);
 void Generer_Chaine(char chaine[], int length, int number);
-int Randomizeed_Numbers(int lower, int upper);
+int Random_Number(int lower, int upper);

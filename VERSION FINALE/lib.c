@@ -616,7 +616,7 @@ int alloc_bloc_LOVC(fichier_LOVC *fichier, int *cpt_lect, int *cpt_ecr, Tampon_L
 |   trouve entre les bornes [lower, upper]     |
 |                                              |
 |**********************************************/
-int Randomizeed_Numbers(int lower, int upper)
+int Random_Number(int lower, int upper)
 {
     int num = (rand() % (upper - lower + 1)) + lower;
     return num;
@@ -635,7 +635,6 @@ void Generer_Chaine(char chaine[], int length, int number)
         chaine[i] = number % 10 + '0';
         number = number / 10;
     }
-    chaine[length] = '\0';
 }
 
 /*
@@ -659,28 +658,57 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
     fichier_TOVnC *F;
     Ouvrir_TOVnC(F, FICHIER_ORIGINAL, 'N');
     Tampon_TOVnC buf;
-    int i, // le numero du bloc pour le parcours entre bloc
-        j, // la position dans le bloc pour le parcours interbloc
-        k; // le numero de l'element insere de 1 a n
+    int i = 0, // le numero du bloc pour le parcours entre bloc
+        j = 0, // la position dans le bloc pour le parcours interbloc
+        k,     // le numero de l'element insere de 1 a n
+        l;     // la longueur total de l'enregistrement ajoute
 
-    char Identifiant[TAILLE_IDENTIFIANT],        // numero d'identifiant(cle)
-        Materiel[TAILLE_MATERIEL],               // le type du materiel
-        Fonctionne[TAILLE_FONCTIONNEMENT] = 'f', // fonctionne = 'f', le materiel marche fonctionne = 'n' sinon
-        Prix[TAILLE_PRIX],                       // le ptix du materiel
-        Description[TAILLE_MAX_DESCRIPTION];     // la description (caracteristiques) du materiel
+    char Identifiant[TAILLE_IDENTIFIANT],    // numero d'identifiant(cle)
+        Materiel[TAILLE_MATERIEL],           // le type du materiel
+        Fonctionne = 'f',                    // fonctionne = 'f', le materiel marche fonctionne = 'n' sinon
+        Prix[TAILLE_PRIX],                   // le ptix du materiel
+        Taille[TAILLE_TAILLE],               // taille du champs description
+        Description[TAILLE_MAX_DESCRIPTION]; // la description (caracteristiques) du materiel
 
-    for (i = 0; i < n; i++)
+    for (k = 0; k < n; k++)
     {
-        Generer_Chaine(Identifiant, TAILLE_IDENTIFIANT, 10 * i);             // generer l'identifiant unique (numero successives pour garder l'ordre)
-        j = Randomizeed_Numbers(0, NB_TYPE_MATERIEL - 1);                    // generer l'index du type de materiel aleatoirement
-        Materiel = MATERIAL_LIST[j];                                         // tirer le type du materiel de la liste  des materiels
-        Generer_Chaine(Prix, TAILLE_PRIX, Randomizeed_Numbers(0, PRIX_MAX)); // generer le prix du materiel aleartoirement
-        printf("\nEntrez les caracteristiques de votre materiel: ");         // demander la description du materiel de l'utilisateur
-        scanf(" %[^\n]", Description);                                       // Lire la description de l'utilisateur
-        printf("identifiant: %s\n", Identifiant);
-        printf("material: %s\n", Materiel);
-        printf("prix: %s\n", Prix);
+        Generer_Chaine(Identifiant, TAILLE_IDENTIFIANT, 10 * k);                 // generer l'identifiant unique (numero successives pour garder l'ordre)
+        strcpy(Materiel, MATERIAL_LIST[Random_Number(0, NB_TYPE_MATERIEL - 1)]); // tirer un materiel de la liste  des materiels selon index genere aleartoirement
+        Generer_Chaine(Prix, TAILLE_PRIX, Random_Number(0, PRIX_MAX));           // generer le prix du materiel aleartoirement
+        printf("\nEntrez les caracteristiques de votre materiel: ");             // demander la description du materiel de l'utilisateur
+        scanf(" %[^\n]", Description);                                           // Lire la description de l'utilisateur
+        Generer_Chaine(Taille, TAILLE_TAILLE, strlen(Description));              // taille du champs de la description
+
+        printf("identifiant: %.5s\n", Identifiant);
+        printf("material: %.12s\n", Materiel);
+        printf("prix: %.6s\n", Prix);
+        printf("length of description: %.3s\n", Taille);
         printf("description: %s\n", Description);
+
+        l = TAILLE_IDENTIFIANT + TAILLE_MATERIEL + TAILLE_FONCTIONNEMENT + TAILLE_PRIX + TAILLE_TAILLE + strlen(Description);
+        /*
+                if (j + l > B) // inserer le nouvel element dans un nouveau bloc
+                {
+                    // 3-write the bloc
+                    i = Alloc_bloc_TOVnC(F);
+                    j = 0;
+                    // we will insert the string here
+                    // update the j ou hiya rayha
+                    // 2- update the bloc: la premiere pos libre
+                    // 3- update the bloc: la cle max
+                    // 3- update l'entete: number of chars inserted
+                }
+                else // inserer dans le bloc courant
+                {
+                    printf("the bloc fits the content");
+                    // 1- inserer dans la premiere pos libre
+                    sprintf(buf.tableau, "%s%.5s%.12s%c%.6s%.3s", buf.tableau, Identifiant, Materiel, Fonctionne, Prix, Taille);
+                    printf("%s", buf.tableau);
+                    // 2- update the bloc: la premiere pos libre
+                    // 3- update the bloc: la cle max
+                    // 3- update l'entete: number of chars inserted
+                }
+        */
     }
 }
 
