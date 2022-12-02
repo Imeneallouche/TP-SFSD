@@ -12,7 +12,7 @@ void Recheche (fichier_TOVnc *f ,int clerecherch , int i,j )
     char taille,eff,clecourante;
     Tbloc_TOVnC buff;
     binf=1;                                                   //le premier bloc
-    sup=Entete_TOVnC(f,1) ;                                   //le dernier bloc
+    bsup=Entete_TOVnC(f,1) ;                                   //le dernier bloc
     while (!trouve && inf <= sup)                             //enreg non trouve et recherche possible
     {
         i = (inf+sup)/2;                                     //numero de bloc a parcourir
