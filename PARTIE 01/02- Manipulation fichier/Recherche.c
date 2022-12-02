@@ -81,8 +81,8 @@ void Affichage_E(TOVnC_fichier *f,int i,j)
     printf(" -> Le type matériel : %s\n",buf.tableau[j+9..j+20]);
     printf(" -> Fonctionnement du materiel: %s\n", buf.tableau[j+21]);
     printf(" -> Le prix d’achat du matériel : %s\n", buf.tableau[j+22..j+27]);
-    printf(" -> La Description : %s\n",buf.tableau[j+23..j+295]);
+    printf(" -> La Description : %s\n",buf.tableau[j+28..j+300]);
 }
-// Eregistrement = | longueur de l'info|   eff      | clé(identifiant) | l'information (from j+4 TO j+295) *cle est inclue dans l'information* | 
-//                 |    (3 bits)       |  (1 bit)   |     (5bits)      |               (296bits) :300-(3+1)                  |
+// Eregistrement = | longueur de l'info|   eff      | clé(identifiant) | l'information (from j+4 TO j+300) *cle est inclue dans l'information* | 
+//                 |    (3 bits)       |  (1 bit)   |     (5bits)      |               (296bits)                   |
 
