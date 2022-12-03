@@ -86,9 +86,9 @@ int Entete_TOVnC(fichier_TOVnC *f, int i)
 {
     if (i == 1)
         return (f->entete.nombre_bloc);
-    if (i == 2)
+    else if (i == 2)
         return (f->entete.nbr_caract_insert);
-    if (i == 3)
+    else if (i == 3)
         return (f->entete.nbr_caract_supp);
     else
     {
@@ -118,9 +118,9 @@ void Aff_Entete_TOVnC(fichier_TOVnC *f, int i, int val)
 {
     if (i == 1)
         f->entete.nombre_bloc = val;
-    if (i == 2)
+    else if (i == 2)
         f->entete.nbr_caract_insert = val;
-    if (i == 3)
+    else if (i == 3)
         f->entete.nbr_caract_supp = val;
     else
         printf("Parametre inexistant dans l'entete\n");
@@ -252,9 +252,9 @@ void Aff_Entete_TOF(fichier_TOF *f, int i, int val)
 {
     if (i == 1) // nombre de blocs total
         f->entete.blocs_total = val;
-    if (i == 2) // nombre d'enregistrements inseres
+    else if (i == 2) // nombre d'enregistrements inseres
         f->entete.enreg_inseres = val;
-    if (i == 3) // nombre d'enregistrements supprimes
+    else if (i == 3) // nombre d'enregistrements supprimes
         f->entete.enreg_supprimes = val;
     else
         printf("Parametre inexistant dans l'entete\n");
@@ -371,11 +371,11 @@ int Entete_TOVC(fichier_TOVC *f, int i)
 {
     if (i == 1)
         return (f->entete.adr_dernier_bloc);
-    if (i == 2)
+    else if (i == 2)
         return (f->entete.pos_libre_dernier_bloc);
-    if (i == 3)
+    else if (i == 3)
         return (f->entete.nbr_caract_insert);
-    if (i == 4)
+    else if (i == 4)
         return (f->entete.nbr_caract_supp);
     else
         printf("Parametre inexistant dans l'entete\n");
@@ -402,11 +402,11 @@ void Aff_Entete_TOVC(fichier_TOVC *f, int i, int val)
 {
     if (i == 1)
         f->entete.adr_dernier_bloc = val;
-    if (i == 2)
+    else if (i == 2)
         f->entete.pos_libre_dernier_bloc = val;
-    if (i == 3)
+    else if (i == 3)
         f->entete.nbr_caract_insert = val;
-    if (i == 4)
+    else if (i == 4)
         f->entete.nbr_caract_supp = val;
     else
         printf("Parametre inexistant dans l'entete\n");
@@ -530,13 +530,13 @@ int entete_LOVC(fichier_LOVC *f, int i)
 {
     if (i == 1)
         return (f->entete.Num_premier_bloc); // l'adresse du premier bloc
-    if (i == 2)
+    else if (i == 2)
         return (f->entete.Num_dernier_bloc);
-    if (i == 3)
+    else if (i == 3)
         return (f->entete.pos_libre_dernier_bloc); // la position libre dans le dernier bloc
-    if (i == 4)
+    else if (i == 4)
         return (f->entete.nb_chars_inseres); // numero du bloc representatnt la tete du fichier
-    if (i == 5)
+    else if (i == 5)
         return (f->entete.nb_chars_supprimes); // nombre de caracteres inseres (effaces non inclus)
     else
     {
@@ -554,13 +554,13 @@ void aff_entete_LOVC(fichier_LOVC *f, int i, int val)
 {
     if (i == 1)
         f->entete.Num_premier_bloc = val; // le numero du premier bloc
-    if (i == 2)
+    else if (i == 2)
         f->entete.Num_dernier_bloc = val; // le numero du dernier bloc
-    if (i == 3)
+    else if (i == 3)
         f->entete.pos_libre_dernier_bloc = val; // la position libre dans le denier bloc
-    if (i == 4)
+    else if (i == 4)
         f->entete.nb_chars_inseres = val; // nombre de caractères inseres dans le fichier
-    if (i == 5)
+    else if (i == 5)
         f->entete.nb_chars_supprimes = val; // nombre de caractères supprimes dans le fichier
     else
         printf("Parametre inexistant dans l'entete\n");
@@ -669,14 +669,11 @@ void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], char cle[], int *i, in
 {
     if (*j + strlen(chaine) > B) // inserer le nouvel element dans un nouveau bloc
     {
-        printf("new bloc\n");
-        printf("%s", Buf->tableau);
         EcrireDir_TOVnC(F, *i, *Buf); // ecrire le bloc
         *i = Alloc_bloc_TOVnC(F);
         *j = 0;
-        Buf->tableau[0] = '\0';
+        memset(Buf->tableau, '\0', sizeof(Buf->tableau));
     }
-
     strcat(Buf->tableau, chaine);                                // mise a jour du bloc: inserer la chaine de caractere
     Aff_Entete_TOVnC(F, 2, Entete_TOVnC(F, 2) + strlen(chaine)); // mise a jour de l'entere: nombre de caracteres inseres
     *j = *j + strlen(chaine);                                    // mise a jour du deplacement libre du buffer
@@ -704,12 +701,12 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
 {
     fichier_TOVnC *F;
     Ouvrir_TOVnC(F, FICHIER_ORIGINAL, 'N');
-    Tampon_TOVnC *buf;
-    buf->tableau[0] = '\0';
-    int *i = 0, // le numero du bloc pour le parcours entre bloc
-        *j = 0, // la position dans le bloc pour le parcours interbloc
-        k,      // le numero de l'element insere de 1 a n
-        l;      // la longueur total de l'enregistrement ajoute
+    Tampon_TOVnC buf;
+    memset(buf.tableau, '\0', sizeof(buf.tableau));
+    int i = 0, // le numero du bloc pour le parcours entre bloc
+        j = 0, // la position dans le bloc pour le parcours interbloc
+        k,     // le numero de l'element insere de 1 a n
+        l;     // la longueur total de l'enregistrement ajoute
 
     char Identifiant[TAILLE_IDENTIFIANT],    // numero d'identifiant(cle)
         Supprime = 'f',                      // supprimer='f' l'element n'a pas ete supprime supprimer='t' sinon
@@ -743,13 +740,13 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
         char Enreg[l];
         concatenate(Enreg, Identifiant, Supprime, Materiel, Fonctionne, Prix, Taille, Description);
         printf("l'element sera insere sous cette forme: %s\n", Enreg);
-        Ecrire_chaine_TOVnC(F, Enreg, Identifiant, i, j, buf);
+        Ecrire_chaine_TOVnC(F, Enreg, Identifiant, &i, &j, &buf);
     }
-    EcrireDir_TOVnC(F, *i, *buf);
+    EcrireDir_TOVnC(F, i, buf);
 }
 
 int main(void)
 {
     printf("a printing is needed");
-    Chargement_initial_TOVnC(FICHIER_ORIGINAL, 3);
+    Chargement_initial_TOVnC(FICHIER_ORIGINAL, 10);
 }
