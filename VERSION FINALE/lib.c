@@ -637,39 +637,39 @@ void Generer_Chaine(char chaine[], int length, int number)
     }
 }
 
-void concatenate(char destination[], char *identifiant, char *materiel, char fonctionne, char *prix, char *taille, char *description)
+void concatenate(char destination[], char *identifiant, char supprime, char *materiel, char fonctionne, char *prix, char *taille, char *description)
 {
+    /**************************************************************************************************************|
+    | Identifiant | champs supprime | Type materiel | fonctionne |    Prix   |   taille   | Description (variable) |
+    |  (5 bytes)  |   (1 bytes)     |  (12 bytes)   |  (1 bytes) | (6 bytes) |  (3 bytes) |  (max sur 272 bytes)   |
+    |**************************************************************************************************************/
     destination[0] = '\0';
-    strncat(destination, identifiant, TAILLE_IDENTIFIANT);
-    strncat(destination, materiel, TAILLE_MATERIEL);
-    strncat(destination, &fonctionne, TAILLE_FONCTIONNEMENT);
-    strncat(destination, prix, TAILLE_PRIX);
-    strncat(destination, taille, TAILLE_TAILLE);
-    strcat(destination, description);
+    strncat(destination, identifiant, TAILLE_IDENTIFIANT);    // destination+=identifiant
+    strncat(destination, &supprime, TAILLE_SUPPRIMER);        // destination+=supprime
+    strncat(destination, materiel, TAILLE_MATERIEL);          // destination+=materiel
+    strncat(destination, &fonctionne, TAILLE_FONCTIONNEMENT); // destination+=fonctionne
+    strncat(destination, prix, TAILLE_PRIX);                  // destination+=prix
+    strncat(destination, taille, TAILLE_TAILLE);              // destination+=taille
+    strcat(destination, description);                         // destination+=description
 }
 
-void Ecrire_chaine_TOVnC(char nom_fichier, char chaine[], int *i, int *j, Tampon_TOVnC *Buf)
+void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], char cle[], int *i, int *j, Tampon_TOVnC *Buf)
 {
-    fichier_TOVnC *F;
-    if (j + strlen(chaine) > B) // inserer le nouvel element dans un nouveau bloc
+    if (*j + strlen(chaine) > B) // inserer le nouvel element dans un nouveau bloc
     {
-        // 3-write the bloc
-        i = Alloc_bloc_TOVnC(F);
-        j = 0;
-        // we will insert the string here
-        // update the j ou hiya rayha
-        // 2- update the bloc: la premiere pos libre
-        // 3- update the bloc: la cle max
-        // 3- update l'entete: number of chars inserted
+        printf("new bloc\n");
+        printf("%s", Buf->tableau);
+        EcrireDir_TOVnC(F, *i, *Buf); // ecrire le bloc
+        *i = Alloc_bloc_TOVnC(F);
+        *j = 0;
+        Buf->tableau[0] = '\0';
     }
-    else // inserer dans le bloc courant
-    {
-        // 1- inserer dans la premiere pos libre
-        strcat(Buf->tableau, chaine);
-        // 2- update the bloc: la premiere pos libre
-        // 3- update the bloc: la cle max
-        // 3- update l'entete: number of chars inserted
-    }
+
+    strcat(Buf->tableau, chaine);                                // mise a jour du bloc: inserer la chaine de caractere
+    Aff_Entete_TOVnC(F, 2, Entete_TOVnC(F, 2) + strlen(chaine)); // mise a jour de l'entere: nombre de caracteres inseres
+    *j = *j + strlen(chaine);                                    // mise a jour du deplacement libre du buffer
+    Buf->nb = *j;                                                // mise a jour du bloc: la permiere pos libre
+    strncat(Buf->cleMax, cle, TAILLE_IDENTIFIANT);               // mise a jour du bloc: la cle max
 }
 
 /*
@@ -692,24 +692,24 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
 {
     fichier_TOVnC *F;
     Ouvrir_TOVnC(F, FICHIER_ORIGINAL, 'N');
-    Tampon_TOVnC buf;
+    Tampon_TOVnC *buf;
+    buf->tableau[0] = '\0';
     int *i = 0, // le numero du bloc pour le parcours entre bloc
         *j = 0, // la position dans le bloc pour le parcours interbloc
         k,      // le numero de l'element insere de 1 a n
         l;      // la longueur total de l'enregistrement ajoute
 
     char Identifiant[TAILLE_IDENTIFIANT],    // numero d'identifiant(cle)
-        Supprimer = 'f',                     // supprimer='f' l'element n'a pas ete supprime supprimer='t' sinon
+        Supprime = 'f',                      // supprimer='f' l'element n'a pas ete supprime supprimer='t' sinon
         Materiel[TAILLE_MATERIEL],           // le type du materiel
-        Fonctionne,                          // fonctionne = 'f', le materiel marche, fonctionne = 'n' sinon
+        Fonctionne = 'f',                    // fonctionne = 'f', le materiel marche, fonctionne = 'n' sinon
         Prix[TAILLE_PRIX],                   // le ptix du materiel
         Taille[TAILLE_TAILLE],               // taille du champs description
         Description[TAILLE_MAX_DESCRIPTION]; // la description (caracteristiques) du materiel
 
     for (k = 0; k < n; k++)
-    {
-        int cle = 10 * k;                                                        // l'identifiant= multiple de 10 pour garder l'ordre et possibilité d'insertion
-        Generer_Chaine(Identifiant, TAILLE_IDENTIFIANT, cle);                    // generer l'identifiant sous forme de chaine sur 5 positions
+    {                                                                            // l'identifiant= multiple de 10 pour garder l'ordre et possibilité d'insertion
+        Generer_Chaine(Identifiant, TAILLE_IDENTIFIANT, 10 * k);                 // generer l'identifiant sous forme de chaine sur 5 positions
         strcpy(Materiel, MATERIAL_LIST[Random_Number(0, NB_TYPE_MATERIEL - 1)]); // tirer un materiel de la liste  des materiels selon index genere aleartoirement
         Generer_Chaine(Prix, TAILLE_PRIX, Random_Number(0, PRIX_MAX));           // generer le prix du materiel aleartoirement
 
@@ -727,12 +727,13 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
         printf("taille de description: %.3s\n", Taille);
         printf("description: %s\n", Description);
 
-        l = TAILLE_IDENTIFIANT + strlen(Materiel) + TAILLE_FONCTIONNEMENT + TAILLE_PRIX + TAILLE_TAILLE + strlen(Description);
+        l = TAILLE_IDENTIFIANT + TAILLE_SUPPRIMER + strlen(Materiel) + TAILLE_FONCTIONNEMENT + TAILLE_PRIX + TAILLE_TAILLE + strlen(Description);
         char Enreg[l];
-        concatenate(Enreg, Identifiant, Materiel, Fonctionne, Prix, Taille, Description);
+        concatenate(Enreg, Identifiant, Supprime, Materiel, Fonctionne, Prix, Taille, Description);
         printf("l'element sera insere sous cette forme: %s\n", Enreg);
-        // Ecrire_chaine_TOVnC();
+        // Ecrire_chaine_TOVnC(F, Enreg, Identifiant, i, j, buf);
     }
+    // EcrireDir_TOVnC(F, *i, *buf);
 }
 
 int main(void)

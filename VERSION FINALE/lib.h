@@ -325,12 +325,12 @@ int alloc_bloc_LOVC(fichier_LOVC *fichier, int *cpt_lect, int *cpt_ecr, Tampon_L
 |                                               |
 |***********************************************/
 char *MATERIAL_LIST[] = {
-    "Imprimante",
-    "PC Bureau",
+    "Imprimante ",
+    "PC Bureau  ",
     "PC Portable",
-    "Television",
-    "Telephone",
-    "Projecteur"};
+    "Television ",
+    "Telephone  ",
+    "Projecteur "};
 
 char *FICHIER_ORIGINAL = "Materiel_informatique_TOVnC.bin"; // le nom du fichier original
 
