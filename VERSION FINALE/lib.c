@@ -731,9 +731,9 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
         char Enreg[l];
         concatenate(Enreg, Identifiant, Supprime, Materiel, Fonctionne, Prix, Taille, Description);
         printf("l'element sera insere sous cette forme: %s\n", Enreg);
-        // Ecrire_chaine_TOVnC(F, Enreg, Identifiant, i, j, buf);
+        Ecrire_chaine_TOVnC(F, Enreg, Identifiant, i, j, buf);
     }
-    // EcrireDir_TOVnC(F, *i, *buf);
+    EcrireDir_TOVnC(F, *i, *buf);
 }
 
 int main(void)
