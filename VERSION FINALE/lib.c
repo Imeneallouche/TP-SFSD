@@ -637,6 +637,12 @@ void Generer_Chaine(char chaine[], int length, int number)
     }
 }
 
+/**********************************************|
+|                                              |
+|      Concatener tous les champs dans         |
+|       une seule chaine destination           |
+|                                              |
+|**********************************************/
 void concatenate(char destination[], char *identifiant, char supprime, char *materiel, char fonctionne, char *prix, char *taille, char *description)
 {
     /**************************************************************************************************************|
@@ -653,6 +659,12 @@ void concatenate(char destination[], char *identifiant, char supprime, char *mat
     strcat(destination, description);                         // destination+=description
 }
 
+/**********************************************|
+|                                              |
+| Ecrire la chaine d'identifiant cle a partir  |
+|       du bloc i a la pos j dans Buf          |
+|                                              |
+|**********************************************/
 void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], char cle[], int *i, int *j, Tampon_TOVnC *Buf)
 {
     if (*j + strlen(chaine) > B) // inserer le nouvel element dans un nouveau bloc
@@ -727,7 +739,7 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
         printf("taille de description: %.3s\n", Taille);
         printf("description: %s\n", Description);
 
-        l = TAILLE_IDENTIFIANT + TAILLE_SUPPRIMER + strlen(Materiel) + TAILLE_FONCTIONNEMENT + TAILLE_PRIX + TAILLE_TAILLE + strlen(Description);
+        l = TAILLE_IDENTIFIANT + TAILLE_SUPPRIMER + TAILLE_MATERIEL + TAILLE_FONCTIONNEMENT + TAILLE_PRIX + TAILLE_TAILLE + strlen(Description);
         char Enreg[l];
         concatenate(Enreg, Identifiant, Supprime, Materiel, Fonctionne, Prix, Taille, Description);
         printf("l'element sera insere sous cette forme: %s\n", Enreg);
