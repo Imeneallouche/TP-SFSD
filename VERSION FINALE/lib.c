@@ -62,7 +62,6 @@ void Fermer_TOVnC(fichier_TOVnC *f)
     rewind(f->fichier);
     fwrite(&(f->entete), sizeof(entete_TOVnC), 1, f->fichier);
     fclose(f->fichier);
-    free(f);
 }
 
 /********************************************|
@@ -514,7 +513,7 @@ void LireDir_LOVC(fichier_LOVC *f, int i, Tampon_LOVC *buf, int *cpt_lect)
 void ecrireDir_LOVC(fichier_LOVC *f, int i, Tampon_LOVC *buf, int *cpt_ecr)
 {
 
-    // positionnement au debut du bloc num�ro i
+    // positionnement au debut du bloc numero i
     fseek(f->fichier, sizeof(Entete_LOVC) + sizeof(Tbloc_LOVC) * (i - 1), SEEK_SET);
     // ecriture du contenu du buffer dans le bloc numero i du fichier
     fwrite(buf, sizeof(Tampon_LOVC), 1, f->fichier);
@@ -630,7 +629,8 @@ int Random_Number(int lower, int upper)
 |**********************************************/
 void Generer_Chaine(char chaine[], int length, int number)
 {
-    for (int i = length - 1; i >= 0; i--)
+    int i;
+    for (i = length - 1; i >= 0; i--)
     {
         chaine[i] = number % 10 + '0';
         number = number / 10;
@@ -669,10 +669,11 @@ void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], char cle[], int *i, in
 {
     if (*j + strlen(chaine) > B) // inserer le nouvel element dans un nouveau bloc
     {
-        EcrireDir_TOVnC(F, *i, *Buf); // ecrire le bloc
-        *i = Alloc_bloc_TOVnC(F);
-        *j = 0;
-        memset(Buf->tableau, '\0', sizeof(Buf->tableau));
+        EcrireDir_TOVnC(F, *i, *Buf);                     // Ecrire le bloc courant pour passer au prochain
+        printf("\nNouveau bloc a ete cree");              // la creation d'un nouveau bloc
+        *i = Alloc_bloc_TOVnC(F);                         // passer au nouveau bloc
+        *j = 0;                                           // revenir a la premiere position dans le nouveau bloc
+        memset(Buf->tableau, '\0', sizeof(Buf->tableau)); // vider la chaine de caracteres
     }
     strcat(Buf->tableau, chaine);                                // mise a jour du bloc: inserer la chaine de caractere
     Aff_Entete_TOVnC(F, 2, Entete_TOVnC(F, 2) + strlen(chaine)); // mise a jour de l'entere: nombre de caracteres inseres
@@ -700,21 +701,20 @@ void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], char cle[], int *i, in
 void Chargement_initial_TOVnC(char nom_fichier[], int n)
 {
     fichier_TOVnC *F;
-    Ouvrir_TOVnC(F, FICHIER_ORIGINAL, 'N');
+    Ouvrir_TOVnC(F, nom_fichier, 'N');
     Tampon_TOVnC buf;
-    memset(buf.tableau, '\0', sizeof(buf.tableau));
-    int i = 0, // le numero du bloc pour le parcours entre bloc
-        j = 0, // la position dans le bloc pour le parcours interbloc
-        k,     // le numero de l'element insere de 1 a n
-        l;     // la longueur total de l'enregistrement ajoute
-
-    char Identifiant[TAILLE_IDENTIFIANT],    // numero d'identifiant(cle)
-        Supprime = 'f',                      // supprimer='f' l'element n'a pas ete supprime supprimer='t' sinon
-        Materiel[TAILLE_MATERIEL],           // le type du materiel
-        Fonctionne = 'f',                    // fonctionne = 'f', le materiel marche, fonctionne = 'n' sinon
-        Prix[TAILLE_PRIX],                   // le ptix du materiel
-        Taille[TAILLE_TAILLE],               // taille du champs description
-        Description[TAILLE_MAX_DESCRIPTION]; // la description (caracteristiques) du materiel
+    memset(buf.tableau, '\0', sizeof(buf.tableau)); // vider le tableau des caractères
+    int i = Alloc_bloc_TOVnC(F),                    // le numero du bloc pour le parcours entre bloc
+        j = 0,                                      // la position dans le bloc pour le parcours interbloc
+        k,                                          // le numero de l'element insere de 1 a n
+        l;                                          // la longueur total de l'enregistrement ajoute
+    char Identifiant[TAILLE_IDENTIFIANT],           // numero d'identifiant(cle)
+        Supprime = 'f',                             // supprimer='f' l'element n'a pas ete supprime supprimer='t' sinon
+        Materiel[TAILLE_MATERIEL],                  // le type du materiel
+        Fonctionne = 'f',                           // fonctionne = 'f', le materiel marche, fonctionne = 'n' sinon
+        Prix[TAILLE_PRIX],                          // le ptix du materiel
+        Taille[TAILLE_TAILLE],                      // taille du champs description
+        Description[TAILLE_MAX_DESCRIPTION];        // la description (caracteristiques) du materiel
 
     for (k = 0; k < n; k++)
     {                                                                            // l'identifiant= multiple de 10 pour garder l'ordre et possibilité d'insertion
@@ -730,6 +730,7 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
         printf("identifiant: %.5s\n", Identifiant);
         printf("materiel: %.12s\n", Materiel);
         printf("prix: %.6s\n", Prix);
+
         printf("Description de votre materiel: ");                  // demander la description du materiel de l'utilisateur
         scanf(" %[^\n]", Description);                              // Lire la description de l'utilisateur
         Generer_Chaine(Taille, TAILLE_TAILLE, strlen(Description)); // taille du champs de la description
@@ -743,10 +744,11 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
         Ecrire_chaine_TOVnC(F, Enreg, Identifiant, &i, &j, &buf);
     }
     EcrireDir_TOVnC(F, i, buf);
+    Fermer_TOVnC(F);
 }
 
 int main(void)
 {
     printf("a printing is needed");
-    Chargement_initial_TOVnC(FICHIER_ORIGINAL, 10);
+    Chargement_initial_TOVnC(FICHIER_ORIGINAL, 5);
 }
