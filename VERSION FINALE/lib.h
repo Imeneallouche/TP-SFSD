@@ -337,35 +337,12 @@ char *FICHIER_ORIGINAL = "Materiel_informatique_TOVnC.bin";               // le 
 char *FICHIER_MATERIEL_FONCTIONNE = "Materiel_informatique_TOVC.bin";     // le nom du fichier qui contient le materiel en fonction
 char *FICHIER_MATERIEL_NON_FONCTIONNE = "Materiel_informatique_LOVC.bin"; // le nom du fichier qui contient le materiel en panne
 
-/*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-*/
 /***********************************************|
 |                                               |
 |     FONCTIONS IMPLEMENTES POUR PARTIE 01      |
 |                                               |
 |***********************************************/
 void Chargement_initial_TOVnC(char nom_fichier[], int n);
-void afficher_fichier_TOVnC(char nom_fichier[]);
-void extraire_chaine_TOVnC(fichier_TOVnC f, char destination[], int *i, int *j, int taille, Tampon_TOVnC *Buf);
-
 void Generer_Chaine(char chaine[], int length, int number);
 void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], char cle[], int *i, int *j, Tampon_TOVnC *Buf);
 int Random_Number(int lower, int upper);
