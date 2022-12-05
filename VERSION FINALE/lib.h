@@ -74,7 +74,10 @@ void Aff_Entete_TOVnC(fichier_TOVnC *f, int i, int val);
 void EcrireDir_TOVnC(fichier_TOVnC *f, int i, Tbloc_TOVnC buf);
 void LireDir_TOVnC(fichier_TOVnC *f, int i, Tbloc_TOVnC *buf);
 int Alloc_bloc_TOVnC(fichier_TOVnC *f);
+
 void affichage_entete_TOVnC(char nom_fichier[]);
+void extraire_chaine_TOVnC(char destination[], int *j, int taille, Tampon_TOVnC *Buf);
+void afficher_fichier_TOVnC(char nom_fichier[]);
 
 /*
 
