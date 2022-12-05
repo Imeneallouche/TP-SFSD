@@ -337,9 +337,9 @@ char *MATERIAL_LIST[] = {
     "Telephone  ",
     "Projecteur "};
 
-char *FICHIER_ORIGINAL = "Materiel_informatique_TOVnC.bin";               // le nom du fichier original
-char *FICHIER_MATERIEL_FONCTIONNE = "Materiel_informatique_TOVC.bin";     // le nom du fichier qui contient le materiel en fonction
-char *FICHIER_MATERIEL_NON_FONCTIONNE = "Materiel_informatique_LOVC.bin"; // le nom du fichier qui contient le materiel en panne
+char *FICHIER_ORIGINAL = "Materiel_informatique_TOVnC.bin";                        // le nom du fichier original
+char *FICHIER_MATERIEL_FONCTIONNE = "Materiel_informatique_en_marche_TOVC.bin";    // le nom du fichier qui contient le materiel en fonction
+char *FICHIER_MATERIEL_NON_FONCTIONNE = "Materiel_informatique_en_panne_LOVC.bin"; // le nom du fichier qui contient le materiel en panne
 
 /*
 
@@ -370,4 +370,5 @@ void Generer_Chaine(char chaine[], int length, int number);
 void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], char cle[], int *i, int *j, Tampon_TOVnC *Buf);
 int Random_Number(int lower, int upper);
 void concatenate(char destination[], char *identifiant, char supprime, char *materiel, char fonctionne, char *prix, char *taille, char *description);
-void Recheche_TOVnC(fichier_TOVnC *f, char clerecherch[], bool *trouv, int i, int j);
+// void Recheche_TOVnC(fichier_TOVnC *f, char clerecherch[], bool *trouv, int i, int j);
+void Reorganisation_TOVnC(char nom_fichier[])
