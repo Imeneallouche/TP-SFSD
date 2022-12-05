@@ -11,6 +11,7 @@
 #define maxBloc 10                 // max d'enregistrement dans un seul bloc (TOF)
 #define maxNomFichier 30           // la taille max d'un nom du fichier
 #define facteur_reorganisation 0.5 // le facteur de reorganisation du fichier
+#include <stdbool.h>
 
 /**************************************************************************************************************|
 | Identifiant | champs supprime | Type materiel | fonctionne |    Prix   |   taille   | Description (variable) |
@@ -340,6 +341,25 @@ char *FICHIER_ORIGINAL = "Materiel_informatique_TOVnC.bin";               // le 
 char *FICHIER_MATERIEL_FONCTIONNE = "Materiel_informatique_TOVC.bin";     // le nom du fichier qui contient le materiel en fonction
 char *FICHIER_MATERIEL_NON_FONCTIONNE = "Materiel_informatique_LOVC.bin"; // le nom du fichier qui contient le materiel en panne
 
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
 /***********************************************|
 |                                               |
 |     FONCTIONS IMPLEMENTES POUR PARTIE 01      |
@@ -350,3 +370,4 @@ void Generer_Chaine(char chaine[], int length, int number);
 void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], char cle[], int *i, int *j, Tampon_TOVnC *Buf);
 int Random_Number(int lower, int upper);
 void concatenate(char destination[], char *identifiant, char supprime, char *materiel, char fonctionne, char *prix, char *taille, char *description);
+void Recheche_TOVnC(fichier_TOVnC *f, char clerecherch[], bool *trouv, int i, int j);

@@ -3,6 +3,7 @@
 #include <ctype.h>
 #include <string.h>
 #include "lib.h"
+#include <stdbool.h>
 
 /*************************************|
 |                                     |
@@ -134,7 +135,7 @@ int Alloc_bloc_TOVnC(fichier_TOVnC *f)
 {
     int i = Entete_TOVnC(f, 1);    // le nombre de bloc = le numero du dernier bloc -1
     Aff_Entete_TOVnC(f, 1, i + 1); // mettre a jour le nombre de bloc dans l'entete
-    return i;                      // le nombre anciens de bloc = numero du dernier bloc
+    return Entete_TOVnC(f, 1);     // le nombre anciens de bloc = numero du dernier bloc
 }
 
 /**************************************************|
@@ -212,12 +213,6 @@ void afficher_fichier_TOVnC(char nom_fichier[])
         LireDir_TOVnC(f, i, &Buf);
         while (j < Buf.nb)
         {
-            printf(".........................\n");
-            printf(".                       .\n");
-            printf(".  Materiel numero : %i  .\n", counter);
-            printf(".                       .\n");
-            printf(".........................\n");
-
             extraire_chaine_TOVnC(Identifiant, &j, TAILLE_IDENTIFIANT, &Buf);
             extraire_chaine_TOVnC(&Supprime, &j, TAILLE_SUPPRIMER, &Buf);
             extraire_chaine_TOVnC(Materiel, &j, TAILLE_MATERIEL, &Buf);
@@ -228,6 +223,11 @@ void afficher_fichier_TOVnC(char nom_fichier[])
 
             if (Supprime != 't')
             {
+                printf(".........................\n");
+                printf(".                       .\n");
+                printf(".  Materiel numero : %i  .\n", counter);
+                printf(".                       .\n");
+                printf(".........................\n");
                 printf("identifiant: %.5s\n", Identifiant);
                 printf("materiel: %.12s\n", Materiel);
                 if (Fonctionne == 'f')
@@ -855,8 +855,116 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
     Fermer_TOVnC(F);
 }
 
+/****************************************************|
+|                                                   |
+|   Recherche dun materiel selon son identifiant    |
+|                                                   |
+|****************************************************/
+void Recheche_TOVnC(fichier_TOVnC *f, char clerecherch[], bool *trouv, int i, int j)
+{
+    int binf = 1,
+        bsup = Entete_TOVnC(f, 1); // le dernier bloc
+
+    char cle1[TAILLE_IDENTIFIANT],
+        cle2[TAILLE_IDENTIFIANT],
+        clecourante[TAILLE_IDENTIFIANT],
+        taille[TAILLE_TAILLE],
+        eff;
+    char Identifiant[TAILLE_IDENTIFIANT],    // numero d'identifiant(cle)
+        Supprime,                            // supprimer='f' l'element n'a pas ete supprime supprimer='t' sinon
+        Materiel[TAILLE_MATERIEL],           // le type du materiel
+        Fonctionne,                          // fonctionne = 'f', le materiel marche, fonctionne = 'n' sinon
+        Prix[TAILLE_PRIX],                   // le ptix du materiel
+        Taille[TAILLE_TAILLE],               // taille du champs description
+        Description[TAILLE_MAX_DESCRIPTION]; // la description (caracteristiques) du materiel
+
+    Tbloc_TOVnC buff;
+    while (!(*trouv) && binf <= bsup) // enregistrement non trouvé et recherche possible
+    {
+        i = (binf + bsup) / 2; // numero de bloc a parcourir
+        j = 0;
+
+        LireDir_TOVnC(f, i, &buff);
+        extraire_chaine_TOVnC(cle1, &j, TAILLE_IDENTIFIANT, &buff); // Generer_Chaine est une fonction pour faire la conversion,
+        strcat(clecourante, cle1);
+        strcat(cle2, buff.cleMax);                      // d'une chaine contenant un nombre vers l'entier qu'elle contienne
+        if (clerecherch >= cle1 && clerecherch <= cle2) // si la cle à recherchee est entre cle1 et cle2 du bloc on fait le recherche sequentielle dans le bloc
+        {
+            while (!(*trouv) && j != buff.nb)
+            {
+                extraire_chaine_TOVnC(&eff, &j, TAILLE_SUPPRIMER, &buff); // récupérer un caractère d'effacement
+                if (clerecherch == clecourante && !eff)                   // la cle st donc trouveée dans le bloc i
+                {
+                    extraire_chaine_TOVnC(Materiel, &j, TAILLE_MATERIEL, &buff);
+                    extraire_chaine_TOVnC(&Fonctionne, &j, TAILLE_FONCTIONNEMENT, &buff);
+                    extraire_chaine_TOVnC(Prix, &j, TAILLE_PRIX, &buff);
+                    extraire_chaine_TOVnC(Taille, &j, TAILLE_TAILLE, &buff);
+                    extraire_chaine_TOVnC(Description, &j, atoi(Taille), &buff);
+                    *trouv = true;
+                    printf("\n L'enregistrement est dans le bloc %d a la position %d", i, j);
+                    printf("\n Les informations du materiel:  ----------------------------------------\n\n");
+                    printf(" -> L'identifiant : %s\n", Identifiant);
+                    printf(" -> Le type matériel : %s\n", Materiel);
+                    printf(" -> Fonctionnement du materiel: %c\n", Fonctionne);
+                    printf(" -> Le prix d'achat du matériel : %s\n", Prix);
+                    printf(" -> La Description : %s\n", Description);
+                }
+                else
+                {
+                    j += TAILLE_MATERIEL + TAILLE_FONCTIONNEMENT + TAILLE_PRIX;
+                    extraire_chaine_TOVnC(taille, &j, TAILLE_TAILLE, &buff); // récupérer un tableau de 3 caractères, la taille d'enregistrement
+                    j += atoi(taille);
+                    extraire_chaine_TOVnC(clecourante, &j, TAILLE_IDENTIFIANT, &buff);
+                }
+            }
+        }
+        else
+        {
+            if (clerecherch < cle1) // la clé n'est pas dans ce bloc
+                bsup = i - 1;       // la clé doit être avant le bloc courant
+            else
+                binf = i + 1; /// clé  doit être après le bloc courant
+        }
+    }
+    if (!(*trouv))
+        printf("\nEnregistrement n'existe pas!, vous devez l'inserez si vous voulez!\n");
+}
+
+/***************************************************|
+|                                                   |
+|        Affichage d'un enregistrement              |
+|                                                   |
+|****************************************************/
+void Affichage_E(fichier_TOVnC *f, int i, int j, Tampon_TOVnC buf)
+{
+    char Identifiant[TAILLE_IDENTIFIANT],    // numero d'identifiant(cle)
+        Supprime,                            // supprimer='f' l'element n'a pas ete supprime supprimer='t' sinon
+        Materiel[TAILLE_MATERIEL],           // le type du materiel
+        Fonctionne,                          // fonctionne = 'f', le materiel marche, fonctionne = 'n' sinon
+        Prix[TAILLE_PRIX],                   // le ptix du materiel
+        Taille[TAILLE_TAILLE],               // taille du champs description
+        Description[TAILLE_MAX_DESCRIPTION]; // la description (caracteristiques) du materiel
+
+    extraire_chaine_TOVnC(Identifiant, &j, TAILLE_IDENTIFIANT, &buf);
+    extraire_chaine_TOVnC(&Supprime, &j, TAILLE_SUPPRIMER, &buf);
+    extraire_chaine_TOVnC(Materiel, &j, TAILLE_MATERIEL, &buf);
+    extraire_chaine_TOVnC(&Fonctionne, &j, TAILLE_FONCTIONNEMENT, &buf);
+    extraire_chaine_TOVnC(Prix, &j, TAILLE_PRIX, &buf);
+    extraire_chaine_TOVnC(Taille, &j, TAILLE_TAILLE, &buf);
+    extraire_chaine_TOVnC(Description, &j, atoi(Taille), &buf);
+
+    printf("\n Les informations du materiel:  ----------------------------------------\n\n");
+    printf(" -> L'identifiant : %s\n", Identifiant);
+    printf(" -> Le type matériel : %s\n", Materiel);
+    printf(" -> Fonctionnement du materiel: %c\n", Fonctionne);
+    printf(" -> Le prix d’achat du matériel : %s\n", Prix);
+    printf(" -> La Description : %s\n", Description);
+}
+
+// Eregistrement = | longueur de l'info|   eff      | clé(identifiant) | l'information (from j+4 TO j+300) *cle est inclue dans l'information* |
+//                 |    (3 bits)       |  (1 bit)   |     (5bits)      |               (296bits)                   |
 int main(void)
 {
     printf("a printing is needed");
-    Chargement_initial_TOVnC(FICHIER_ORIGINAL, 5);
+    // Chargement_initial_TOVnC(FICHIER_ORIGINAL, 5);
 }
