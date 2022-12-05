@@ -137,6 +137,26 @@ int Alloc_bloc_TOVnC(fichier_TOVnC *f)
     return i;                      // le nombre anciens de bloc = numero du dernier bloc
 }
 
+/**************************************************|
+|                                                  |
+|    afficher les caracteristqiues (entete) d'un   |
+|       fichier "nom fichier" de type TOVnC        |
+|                                                  |
+|**************************************************/
+void affichage_entete_TOVnC(char nom_fichier[])
+{
+    fichier_TOVnC *f;
+    Ouvrir_TOVnC(f, nom_fichier, 'N');
+    printf("\n\n\n*************************************************\n");
+    printf("*                                               *\n");
+    printf("*       caracteristiques du fichier             *\n");
+    printf("*                                               *\n");
+    printf("*************************************************\n\n\n");
+    printf(" -> Nombre de Blocs : %d\n", Entete_TOVnC(f, 1));
+    printf(" -> Nombre caracteres inseres : %d\n", Entete_TOVnC(f, 2));
+    printf(" -> Nombre caracteres supprimes : %d\n", Entete_TOVnC(f, 3));
+}
+
 /*
 
 
@@ -682,6 +702,93 @@ void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], char cle[], int *i, in
     strncat(Buf->cleMax, cle, TAILLE_IDENTIFIANT);               // mise a jour du bloc: la cle max
 }
 
+/**********************************************|
+|                                              |
+|       affichier le contenu d'un fichier      |
+|                de type TOVnC                 |
+|                                              |
+|**********************************************/
+void afficher_fichier_TOVnC(char nom_fichier[])
+{
+    fichier_TOVnC *f;
+    Ouvrir_TOVnC(f, nom_fichier, 'A');
+    int i = 0,                               // parcours bloc par bloc
+        j = 0,                               // parcours de position dans le bloc
+        counter = 0;                         // numero de l'enregistrement dans le bloc
+    Tampon_TOVnC Buf;                        // contenu d'un bloc dans un buffer
+    char Identifiant[TAILLE_IDENTIFIANT],    // numero d'identifiant(cle)
+        Supprime,                            // supprimer='f' l'element n'a pas ete supprime supprimer='t' sinon
+        Materiel[TAILLE_MATERIEL],           // le type du materiel
+        Fonctionne,                          // fonctionne = 'f', le materiel marche, fonctionne = 'n' sinon
+        Prix[TAILLE_PRIX],                   // le ptix du materiel
+        Taille[TAILLE_TAILLE],               // taille du champs description
+        Description[TAILLE_MAX_DESCRIPTION]; // la description (caracteristiques) du materiel
+
+    /**************************************************************************************************************|
+    | Identifiant | champs supprime | Type materiel | fonctionne |    Prix   |   taille   | Description (variable) |
+    |  (5 bytes)  |   (1 bytes)     |  (12 bytes)   |  (1 bytes) | (6 bytes) |  (3 bytes) |  (max sur 272 bytes)   |
+    |**************************************************************************************************************/
+    while (i < Entete_TOVnC(f, 1))
+    {
+        printf("    *************************************************\n");
+        printf("    *                                               *\n");
+        printf("    *            Le bloc numéro : %i                 *\n", i);
+        printf("    *                                               *\n");
+        printf("    *************************************************\n\n\n");
+
+        LireDir_TOVnC(f, i, &Buf);
+        while (j < Buf.nb)
+        {
+            printf(".........................\n");
+            printf(".                       .\n");
+            printf(".  Materiel numero : %i  .\n", counter);
+            printf(".                       .\n");
+            printf(".........................\n");
+
+            extraire_chaine_TOVnC(*f, Identifiant, &i, &j, TAILLE_IDENTIFIANT, &Buf);
+            extraire_chaine_TOVnC(*f, &Supprime, &i, &j, TAILLE_SUPPRIMER, &Buf);
+            extraire_chaine_TOVnC(*f, Materiel, &i, &j, TAILLE_MATERIEL, &Buf);
+            extraire_chaine_TOVnC(*f, &Fonctionne, &i, &j, TAILLE_FONCTIONNEMENT, &Buf);
+            extraire_chaine_TOVnC(*f, Prix, &i, &j, TAILLE_PRIX, &Buf);
+            extraire_chaine_TOVnC(*f, Taille, &i, &j, TAILLE_TAILLE, &Buf);
+            extraire_chaine_TOVnC(*f, Description, &i, &j, atoi(Taille), &Buf);
+
+            if (Supprime != 't')
+            {
+                printf("identifiant: %.5s\n", Identifiant);
+                printf("materiel: %.12s\n", Materiel);
+                if (Fonctionne == 'f')
+                    printf("Fonctionne? : OUI\n");
+                else
+                    printf("Fonctionne? : NON\n");
+                printf("prix: %.6s\n", Prix);
+                printf("taille de description: %.3s\n", Taille);
+                printf("description: %s\n", Description);
+                counter++;
+            }
+        }
+        j = 0;
+        i++;
+    }
+}
+
+/**************************************************|
+|                                                  |
+|    extraire une chaine de taille "taille" dans   |
+|  la chaine destination a partir du bloc i pos j  |
+|                                                  |
+|**************************************************/
+void extraire_chaine_TOVnC(fichier_TOVnC f, char destination[], int *i, int *j, int taille, Tampon_TOVnC *Buf)
+{
+    int k = 0;
+    sprintf(destination, "%s", "");
+    for (k = 0; k < taille; k++)             // boucle de taille iterations correspondant a la longueur de la chaine
+    {                                        // indice de parcours de la chaine resultata et j celui du tableau                                             // le caractere 99 correspond a la fin de la chaine dans le tableau
+        destination[k] = Buf->tableau[(*j)]; // recuperation du caractere dans la position k de la chaine
+        (*j)++;                              // deplacement d'une position dans le buffer
+    }                                        // fin de boucle
+    // destination[k] = '\0';                   // fin de la chaine obtenue
+}
 /*
 
 
@@ -722,9 +829,9 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
         strcpy(Materiel, MATERIAL_LIST[Random_Number(0, NB_TYPE_MATERIEL - 1)]); // tirer un materiel de la liste  des materiels selon index genere aleartoirement
         Generer_Chaine(Prix, TAILLE_PRIX, Random_Number(0, PRIX_MAX));           // generer le prix du materiel aleartoirement
 
-        printf("\n\n.........................\n");
+        printf(".........................\n");
         printf(".                       .\n");
-        printf(". element numero : %i    .\n", k);
+        printf(". Materiel numero : %i   .\n", k);
         printf(".                       .\n");
         printf(".........................\n");
         printf("identifiant: %.5s\n", Identifiant);
@@ -749,6 +856,6 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
 
 int main(void)
 {
-    printf("a printing is needed");
+    printf("a printing is needed\n");
     Chargement_initial_TOVnC(FICHIER_ORIGINAL, 5);
 }
