@@ -13,22 +13,22 @@ void Recheche (fichier_TOVnc *f ,int clerecherch , int i,j )
     Tbloc_TOVnC buff;
     binf=1;                                                   //le premier bloc
     bsup=Entete_TOVnC(f,1) ;                                   //le dernier bloc
-    while (!trouve && inf <= sup)                             //enregistrement non trouvé et recherche possible
+    while (!trouve && binf <= bsup)                             //enregistrement non trouvé et recherche possible
     {
         i = (binf+bsup)/2;                                     //numero de bloc a parcourir
         j=1;
 
-        LireDir_TOVnC(fichier_TOVnC *f, int i, Tbloc_TOVnC *buf);
+        LireDir_TOVnC(f,  i, buf);
 
         cle1=Generer_Chaine(buff.tableau[j+4..j+8]);                 // Generer_Chaine est une fonction pour faire la conversion,
         cle2=Generer_Chaine(buff.cleMax);                         //d'une chaine contenant un nombre vers l'entier qu'elle contienne
         if ( clerecherch>=cle1 && clerecherch<=cle2)             //si la cle à recherchee est entre cle1 et cle2 du bloc on fait le recherche sequentielle dans le bloc
             {
             	
-                while (!trouve && j!= buff.pos_libre )
+                while (!trouve && j!= buff.nb )
                 {
                     taille = buf.tableau[j..j+2]; 				//récupérer un tableau de 3 caractères, la taille d'enregistrement
-	            eff = buf.tab[j+3];              			       // récupérer un caractère d'effacement
+	            eff = buf.tableau[j+3];              			       // récupérer un caractère d'effacement
 		    clecourante =buf.tableau[j+4..j+8];           	     //récupérer 5 caractères:la taille du champ identifiant (la cle) sur 5 octets
                     cle=Generer_Chaine(clecourante);
                     if ( clerecherch == clecourante && !eff)               //la cle st donc trouveée dans le bloc i
