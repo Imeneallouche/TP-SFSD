@@ -11,7 +11,6 @@
 #define maxBloc 10                 // max d'enregistrement dans un seul bloc (TOF)
 #define maxNomFichier 30           // la taille max d'un nom du fichier
 #define facteur_reorganisation 0.5 // le facteur de reorganisation du fichier
-#include <stdbool.h>
 
 /**************************************************************************************************************|
 | Identifiant | champs supprime | Type materiel | fonctionne |    Prix   |   taille   | Description (variable) |
@@ -370,5 +369,5 @@ void Generer_Chaine(char chaine[], int length, int number);
 void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], char cle[], int *i, int *j, Tampon_TOVnC *Buf);
 int Random_Number(int lower, int upper);
 void concatenate(char destination[], char *identifiant, char supprime, char *materiel, char fonctionne, char *prix, char *taille, char *description);
-// void Recheche_TOVnC(fichier_TOVnC *f, char clerecherch[], bool *trouv, int i, int j);
-void Reorganisation_TOVnC(char nom_fichier[])
+void Recheche_TOVnC(fichier_TOVnC *f, char Identifiant_Recherche[], int *trouv, int *i, int *j);
+void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fichier2[]);
