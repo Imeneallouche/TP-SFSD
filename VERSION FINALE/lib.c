@@ -872,28 +872,27 @@ void Recheche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trouv
         Cle_Courrante[TAILLE_IDENTIFIANT + 1],   // la cle courrant dont on s'est arrete dans le parcours
         Identifiant[TAILLE_IDENTIFIANT + 1],     // numero d'identifiant(cle)
         Supprime[TAILLE_SUPPRIMER + 1],          // supprimer='f' l'element n'a pas ete supprime supprimer='t' sinon
-        Materiel[TAILLE_MATERIEL + 1],           // le type du materiel
+        Materiel[TAILLE_MATERIEL],               // le type du materiel
         Fonctionne[TAILLE_FONCTIONNEMENT + 1],   // fonctionne = 'f', le materiel marche, fonctionne = 'n' sinon
         Prix[TAILLE_PRIX + 1],                   // le ptix du materiel
         Taille[TAILLE_TAILLE + 1],               // taille du champs description
         Description[TAILLE_MAX_DESCRIPTION + 1]; // la description (caracteristiques) du materiel
     Tbloc_TOVnC Buf;                             // un buffer pour charger un bloc de MS vers MC
+    *trouv = 0;                                  // initialiser trouv vers faux
     while (!(*trouv) && binf <= bsup)            // enregistrement non trouvé et recherche possible
     {
         *i = (binf + bsup) / 2;                                                   // numero de bloc a parcourir
         *j = 0;                                                                   // la premiere position dans le bloc
         LireDir_TOVnC(&f, *i, &Buf);                                              // lire le buffer
         extraire_chaine_TOVnC(Cle_Min, j, TAILLE_IDENTIFIANT, &Buf);              // extraire la plus petite cle (premiere cle) de du bloc i
-        strcat(Cle_Courrante, Cle_Min);                                           // mettre a jour la cle courrante
-        strcat(Cle_Max, Buf.cleMax);                                              // lire la cle max qui est dans le tableau
+        strcpy(Cle_Courrante, Cle_Min);                                           // mettre a jour la cle courrante
+        strcpy(Cle_Max, Buf.cleMax);                                              // lire la cle max qui est dans le tableau
         if (Identifiant_Recherche >= Cle_Min && Identifiant_Recherche <= Cle_Max) // si la cle à recherchee est entre Cle_Min et Cle_Max du bloc on fait le recherche sequentielle dans le bloc
         {
             while (!(*trouv) && *j < Buf.nb)
             {
-                if (Fonctionne == 'f')
-                    printf("Fonctionne? : OUI\n");
-                extraire_chaine_TOVnC(&Supprime, j, TAILLE_SUPPRIMER, &Buf); // récupérer un caractère d'Supprimeacement
-                if (Identifiant_Recherche == Cle_Courrante && !Supprime)     // la cle st donc trouveée dans le bloc i
+                extraire_chaine_TOVnC(Supprime, j, TAILLE_SUPPRIMER, &Buf);                          // récupérer un le champs de suppression
+                if (strcmp(Identifiant_Recherche, Cle_Courrante) == 0 && strcmp(Supprime, "f") == 0) // la cle st donc trouveée dans le bloc i
                 {
                     extraire_chaine_TOVnC(Materiel, j, TAILLE_MATERIEL, &Buf);
                     extraire_chaine_TOVnC(Fonctionne, j, TAILLE_FONCTIONNEMENT, &Buf);
@@ -911,7 +910,7 @@ void Recheche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trouv
                 }
                 else
                 {
-                    *j = *j + TAILLE_MATERIEL + TAILLE_FONCTIONNEMENT + TAILLE_PRIX;
+                    *j = *j + TAILLE_MATERIEL - 1 + TAILLE_FONCTIONNEMENT + TAILLE_PRIX;
                     extraire_chaine_TOVnC(Taille, j, TAILLE_TAILLE, &Buf); // récupérer un tableau de 3 caractères, la taille d'enregistrement
                     *j = *j + atoi(Taille);
                     extraire_chaine_TOVnC(Cle_Courrante, j, TAILLE_IDENTIFIANT, &Buf);
@@ -984,9 +983,9 @@ void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fich
             extraire_chaine_TOVnC(Taille, &j, TAILLE_TAILLE, &Buf);
             extraire_chaine_TOVnC(Description, &j, atoi(Taille), &Buf);
 
-            if (Supprime != 't')
+            if (strcmp(Supprime, "t") == 0)
             {
-                if (Fonctionne == 't')
+                if (strcmp(Fonctionne, "t") == 0)
                 {
                     printf("\nin the TOVC file");
                 }
@@ -1001,6 +1000,6 @@ void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fich
 int main(void)
 {
     printf("a printing is needed");
-    // Chargement_initial_TOVnC(FICHIER_ORIGINAL, 10);
-    afficher_fichier_TOVnC(FICHIER_ORIGINAL);
+    int trouv, i, j;
+    Recheche_TOVnC(FICHIER_ORIGINAL, "00000", &trouv, &i, &j);
 }
