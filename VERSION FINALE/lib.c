@@ -788,7 +788,7 @@ void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], char cle[], int *i, in
     Aff_Entete_TOVnC(F, 2, Entete_TOVnC(F, 2) + strlen(chaine)); // mise a jour de l'entere: nombre de caracteres inseres
     *j = *j + strlen(chaine);                                    // mise a jour du deplacement libre du buffer
     Buf->nb = *j;                                                // mise a jour du bloc: la permiere pos libre
-    strncat(Buf->cleMax, cle, TAILLE_IDENTIFIANT);               // mise a jour du bloc: la cle max
+    strcpy(Buf->cleMax, cle);                                    // mise a jour du bloc: la cle max
 }
 
 /*
@@ -881,16 +881,19 @@ void Recheche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trouv
     *trouv = 0;                                  // initialiser trouv vers faux
     while (!(*trouv) && binf <= bsup)            // enregistrement non trouvé et recherche possible
     {
-        *i = (binf + bsup) / 2;                                                   // numero de bloc a parcourir
-        *j = 0;                                                                   // la premiere position dans le bloc
-        LireDir_TOVnC(&f, *i, &Buf);                                              // lire le buffer
-        extraire_chaine_TOVnC(Cle_Min, j, TAILLE_IDENTIFIANT, &Buf);              // extraire la plus petite cle (premiere cle) de du bloc i
-        strcpy(Cle_Courrante, Cle_Min);                                           // mettre a jour la cle courrante
-        strcpy(Cle_Max, Buf.cleMax);                                              // lire la cle max qui est dans le tableau
+        *i = (binf + bsup) / 2;                                      // numero de bloc a parcourir
+        *j = 0;                                                      // la premiere position dans le bloc
+        LireDir_TOVnC(&f, *i, &Buf);                                 // lire le buffer
+        extraire_chaine_TOVnC(Cle_Min, j, TAILLE_IDENTIFIANT, &Buf); // extraire la plus petite cle (premiere cle) de du bloc i
+        strcpy(Cle_Courrante, Cle_Min);                              // mettre a jour la cle courrante
+        printf("\nhere on est dans le bloc %i la pos %i cle courante %s cle recherche %s", *i, *j, Cle_Courrante, Identifiant_Recherche);
+        strcpy(Cle_Max, Buf.cleMax); // lire la cle max qui est dans le tableau
+        printf("\n cle max %s", Cle_Max);
         if (Identifiant_Recherche >= Cle_Min && Identifiant_Recherche <= Cle_Max) // si la cle à recherchee est entre Cle_Min et Cle_Max du bloc on fait le recherche sequentielle dans le bloc
         {
             while (!(*trouv) && *j < Buf.nb)
             {
+                printf("\non est dans le bloc %i la pos %i cle courante %s cle recherche %s", *i, *j, Cle_Courrante, Identifiant_Recherche);
                 extraire_chaine_TOVnC(Supprime, j, TAILLE_SUPPRIMER, &Buf);                          // récupérer un le champs de suppression
                 if (strcmp(Identifiant_Recherche, Cle_Courrante) == 0 && strcmp(Supprime, "f") == 0) // la cle st donc trouveée dans le bloc i
                 {
@@ -1001,5 +1004,6 @@ int main(void)
 {
     printf("a printing is needed");
     int trouv, i, j;
+    // Chargement_initial_TOVnC(FICHIER_ORIGINAL, 10);
     Recheche_TOVnC(FICHIER_ORIGINAL, "00000", &trouv, &i, &j);
 }

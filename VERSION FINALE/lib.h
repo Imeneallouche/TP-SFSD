@@ -43,9 +43,9 @@ typedef struct entete_TOVnC
 |*********************************************/
 typedef struct Tbloc_TOVnC
 {
-    char tableau[B];                 // taille variable
-    int nb;                          // la position libre dans le bloc
-    char cleMax[TAILLE_IDENTIFIANT]; // la cle max dans le bloc afin de pouvoir faire une recherche dichotomique dans le bloc
+    char tableau[B];                     // taille variable
+    int nb;                              // la position libre dans le bloc
+    char cleMax[TAILLE_IDENTIFIANT + 1]; // la cle max dans le bloc afin de pouvoir faire une recherche dichotomique dans le bloc
 
 } Tbloc_TOVnC;
 
