@@ -369,6 +369,6 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n);
 void Generer_Chaine(char chaine[], int length, int number);
 void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], char cle[], int *i, int *j, Tampon_TOVnC *Buf);
 int Random_Number(int lower, int upper);
-void concatenate(char destination[], char *identifiant, char supprime, char *materiel, char fonctionne, char *prix, char *taille, char *description);
+void concatenate(char *destination, char *identifiant, char *supprime, char *materiel, char *fonctionne, char *prix, char *taille, char *description);
 // void Recheche_TOVnC(fichier_TOVnC *f, char clerecherch[], bool *trouv, int i, int j);
 void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fichier2[]);
