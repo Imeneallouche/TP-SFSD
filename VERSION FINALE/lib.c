@@ -169,7 +169,7 @@ void extraire_chaine_TOVnC(char destination[], int *j, int taille, Tampon_TOVnC 
     int k = 0;
     sprintf(destination, "%s", "");
     for (k = 0; k < taille; k++)             // boucle de taille iterations correspondant a la longueur de la chaine
-    {                                        // indice de parcours de la chaine resultata et j celui du tableau                                             // le caractere 99 correspond a la fin de la chaine dans le tableau
+    {                                        // indice de parcours de la chaine resultata et j celui du tableau
         destination[k] = Buf->tableau[(*j)]; // recuperation du caractere dans la position k de la chaine
         (*j)++;                              // deplacement d'une position dans le buffer
     }                                        // fin de boucle
@@ -555,7 +555,7 @@ int Alloc_bloc_TOVC(fichier_TOVC *f)
 /*************************************************************|
 |                                                             |
 |  Ouvrir fichier nom_fichier avec le mode correspondant LOVC |
-|                                                           , |
+|                                                             |
 |*************************************************************/
 void Ouvrir_LOVC(fichier_LOVC *f, const char nomFichier[], char mode)
 {
