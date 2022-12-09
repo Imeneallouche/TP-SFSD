@@ -372,3 +372,4 @@ int Random_Number(int lower, int upper);
 void concatenate(char *destination, char *identifiant, char *supprime, char *materiel, char *fonctionne, char *prix, char *taille, char *description);
 void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trouv, int *i, int *j);
 void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fichier2[]);
+void Suppression_TOVnC(char nom_fichier[], char identifiant_a_supprimer[]);
