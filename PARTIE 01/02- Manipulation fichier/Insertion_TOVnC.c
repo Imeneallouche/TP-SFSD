@@ -97,16 +97,7 @@ void inserer_TOVnC(fichier_TOVnC *f,char chaine[])            //procédure pour 
                                                    //qui viennent  apres ce dernier(chaine1)
                 i= i+1, j=0;                      //  l'insertion se fera à la prochaine itération du TQ
 
-                 // si on dépasse la fin de fichier, on rajoute un nouveau bloc contenant un chaine//
-                     if (i> Entete_TOVnC(&f, 1)){
-                        i== Alloc_bloc_TOVnC(&f);
-                        strcpy (Buf.tableau , chaine1);                    // insertion chaine
-                        Buf.nb== TAILLE_chaine1;
-                        strcpy( Buf.cleMax, Cle_Max);                    // mise à jour de cle_Max
-                        EcrireDir_TOVnC(&f,i,Buf);  
-                     }
-
-
+                 
             else{
             /** si la taille du materiel + position ou il faut l'inserer(j) =< B **/
                 TAILLE_chaine1 = (Buf.nb - j);
@@ -126,6 +117,7 @@ void inserer_TOVnC(fichier_TOVnC *f,char chaine[])            //procédure pour 
             }
 
     }
+     }
      /** si on dépasse la fin de fichier, on rajoute un nouveau bloc contenant un chaine**/
      if (i> Entete_TOVnC(&f, 1)){
         i== Alloc_bloc_TOVnC(&f);
@@ -138,7 +130,7 @@ void inserer_TOVnC(fichier_TOVnC *f,char chaine[])            //procédure pour 
        Aff_Entete_TOVnC(&f, 2, Entete_TOVnC(&f,2)+taille_materiel);   // Entete_TOVnC(f,2) : nb d'insertion  , on incrémente le compteur d'insertions
 
 
-   }
+ 
  }
   Fermer_TOVnC(&f);
 }
