@@ -70,12 +70,11 @@ void Fermer_TOVnC(fichier_TOVnC *f)
 |    Lire le i eme bloc dans buf TOVnC       |
 |                                            |
 |********************************************/
-void LireDir_TOVnC(fichier_TOVnC *f, int i, Tbloc_TOVnC *buf, int *cpt_lect)
+void LireDir_TOVnC(fichier_TOVnC *f, int i, Tbloc_TOVnC *buf)
 {
     /// on se jitionne au debut du i ème bloc puis on le lit dans buf
     fseek(f->fichier, sizeof(entete_TOVnC) + (sizeof(Tbloc_TOVnC) * (i - 1)), SEEK_SET);
     fread(buf, sizeof(Tbloc_TOVnC), 1, f->fichier);
-    *cpt_lect = *cpt_lect + 1;
 }
 
 /**********************************************|
@@ -93,7 +92,7 @@ int Entete_TOVnC(fichier_TOVnC *f, int i)
         return (f->entete.nbr_caract_supp);
     else
     {
-        printf("Parametre inexistant dans l'entete TOVnC\n");
+        printf("Parametre inexistant dans l'entete\n");
         return -1;
     }
 }
@@ -103,12 +102,11 @@ int Entete_TOVnC(fichier_TOVnC *f, int i)
 |    Ecrire buf dans le i eme bloc TOVnC      |
 |                                             |
 |*********************************************/
-void EcrireDir_TOVnC(fichier_TOVnC *f, int i, Tbloc_TOVnC buf, int *cpt_ecr)
+void EcrireDir_TOVnC(fichier_TOVnC *f, int i, Tbloc_TOVnC buf)
 {
     /// on se positionne au debut du i ème bloc puis on ecrit dans fichier->f
     fseek(f->fichier, sizeof(entete_TOVnC) + (sizeof(Tbloc_TOVnC) * (i - 1)), SEEK_SET);
     fwrite(&buf, sizeof(Tbloc_TOVnC), 1, f->fichier);
-    *cpt_ecr = *cpt_ecr + 1;
 }
 
 /***********************************************|
@@ -125,7 +123,7 @@ void Aff_Entete_TOVnC(fichier_TOVnC *f, int i, int val)
     else if (i == 3)
         f->entete.nbr_caract_supp = val;
     else
-        printf("Parametre inexistant dans l'entete TOVnC\n");
+        printf("Parametre inexistant dans l'entete\n");
 }
 
 /**********************************************|
@@ -184,7 +182,7 @@ void extraire_chaine_TOVnC(char destination[], int *j, int taille, Tampon_TOVnC 
 |                de type TOVnC                 |
 |                                              |
 |**********************************************/
-void afficher_fichier_TOVnC(char nom_fichier[], int *cpt_lect)
+void afficher_fichier_TOVnC(char nom_fichier[])
 {
     fichier_TOVnC f;
     Ouvrir_TOVnC(&f, nom_fichier, 'A');
@@ -212,7 +210,7 @@ void afficher_fichier_TOVnC(char nom_fichier[], int *cpt_lect)
         printf("*                                               *\n");
         printf("*************************************************\n");
 
-        LireDir_TOVnC(&f, i, &Buf, cpt_lect);
+        LireDir_TOVnC(&f, i, &Buf);
         while (j < Buf.nb)
         {
             extraire_chaine_TOVnC(Identifiant, &j, TAILLE_IDENTIFIANT, &Buf);
@@ -248,21 +246,7 @@ void afficher_fichier_TOVnC(char nom_fichier[], int *cpt_lect)
 }
 
 /*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-*/
+ */
 /*************************************|
 |                                     |
 |           FICHIER TYPE TOF          |
@@ -349,10 +333,7 @@ int Entete_TOF(fichier_TOF f, int i)
     else if (i == 3) // nombre d'enregistrements supprimes
         return f.entete.enreg_supprimes;
     else
-    {
-        printf("Parametre inexistant dans l'entete TOF\n");
         return -1;
-    }
 }
 
 /*********************************************|
@@ -369,7 +350,7 @@ void Aff_Entete_TOF(fichier_TOF *f, int i, int val)
     else if (i == 3) // nombre d'enregistrements supprimes
         f->entete.enreg_supprimes = val;
     else
-        printf("Parametre inexistant dans l'entete TOF\n");
+        printf("Parametre inexistant dans l'entete\n");
 }
 
 /********************************************|
@@ -385,21 +366,7 @@ int Alloc_bloc_TOF(fichier_TOF *f)
 }
 
 /*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-*/
+ */
 /*************************************|
 |                                     |
 |           FICHIER TYPE TOVC         |
@@ -419,7 +386,7 @@ void Ouvrir_TOVC(fichier_TOVC *f, char nom_fichier[], char mode_ouverture)
         if (f->fichier != NULL)
         {
             /// initialisation de l'entête :
-            f->entete.nb_bloc = 0;
+            f->entete.adr_dernier_bloc = 0;
             f->entete.pos_libre_dernier_bloc = 0;
             f->entete.nbr_caract_insert = 0;
             f->entete.nbr_caract_supp = 0;
@@ -467,12 +434,11 @@ void Fermer_TOVC(fichier_TOVC *f)
 |     Lire le i eme bloc dans buf TOVC       |
 |                                            |
 |********************************************/
-void LireDir_TOVC(fichier_TOVC *f, int i, Tbloc_TOVC *buf, int *cpt_lect)
+void LireDir_TOVC(fichier_TOVC *f, int i, Tbloc_TOVC *buf)
 {
     /// on se jitionne au debut du i ème bloc puis on le lit dans buf
     fseek(f->fichier, sizeof(entete_TOVC) + (sizeof(Tbloc_TOVC) * (i - 1)), SEEK_SET);
     fread(buf, sizeof(Tbloc_TOVC), 1, f->fichier);
-    *cpt_lect = *cpt_lect + 1;
 }
 
 /********************************************|
@@ -483,7 +449,7 @@ void LireDir_TOVC(fichier_TOVC *f, int i, Tbloc_TOVC *buf, int *cpt_lect)
 int Entete_TOVC(fichier_TOVC *f, int i)
 {
     if (i == 1)
-        return (f->entete.nb_bloc);
+        return (f->entete.adr_dernier_bloc);
     else if (i == 2)
         return (f->entete.pos_libre_dernier_bloc);
     else if (i == 3)
@@ -491,7 +457,7 @@ int Entete_TOVC(fichier_TOVC *f, int i)
     else if (i == 4)
         return (f->entete.nbr_caract_supp);
     else
-        printf("Parametre inexistant dans l'entete TOVC\n");
+        printf("Parametre inexistant dans l'entete\n");
 }
 
 /*********************************************|
@@ -499,12 +465,11 @@ int Entete_TOVC(fichier_TOVC *f, int i)
 |     Ecrire buf dans le i eme bloc TOVC      |
 |                                             |
 |*********************************************/
-void EcrireDir_TOVC(fichier_TOVC *f, int i, Tbloc_TOVC buf, int *cpt_ecr)
+void EcrireDir_TOVC(fichier_TOVC *f, int i, Tbloc_TOVC buf)
 {
     /// on se positionne au debut du i ème bloc puis on ecrit dans fichier->f
     fseek(f->fichier, sizeof(entete_TOVC) + (sizeof(Tbloc_TOVC) * (i - 1)), SEEK_SET);
     fwrite(&buf, sizeof(Tbloc_TOVC), 1, f->fichier);
-    *cpt_ecr = *cpt_ecr + 1;
 }
 
 /*********************************************|
@@ -515,7 +480,7 @@ void EcrireDir_TOVC(fichier_TOVC *f, int i, Tbloc_TOVC buf, int *cpt_ecr)
 void Aff_Entete_TOVC(fichier_TOVC *f, int i, int val)
 {
     if (i == 1)
-        f->entete.nb_bloc = val;
+        f->entete.adr_dernier_bloc = val;
     else if (i == 2)
         f->entete.pos_libre_dernier_bloc = val;
     else if (i == 3)
@@ -523,7 +488,7 @@ void Aff_Entete_TOVC(fichier_TOVC *f, int i, int val)
     else if (i == 4)
         f->entete.nbr_caract_supp = val;
     else
-        printf("Parametre inexistant dans l'entete TOVC\n");
+        printf("Parametre inexistant dans l'entete\n");
 }
 
 /********************************************|
@@ -539,21 +504,7 @@ int Alloc_bloc_TOVC(fichier_TOVC *f)
 }
 
 /*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-*/
+ */
 /*************************************|
 |                                     |
 |           FICHIER TYPE LOVC         |
@@ -611,13 +562,12 @@ void fermer_LOVC(fichier_LOVC *f)
 |      Lire le i eme bloc dans buf LOVC       |
 |                                         ,   |
 |*********************************************/
-void LireDir_LOVC(fichier_LOVC *f, int i, Tampon_LOVC *buf, int *cpt_lect)
+void LireDir_LOVC(fichier_LOVC *f, int i, Tampon_LOVC *buf)
 {
     // positionnement au debut du bloc numero i
     fseek(f->fichier, (sizeof(Entete_LOVC) + sizeof(Tbloc_LOVC) * (i - 1)), SEEK_SET);
     // lecture d'un bloc de caractere correspondant a la taille du bloc dans le buffer
     fread(buf, sizeof(Tampon_LOVC), 1, f->fichier);
-    (*cpt_lect) = (*cpt_lect) + 1;
 }
 
 /**********************************************|
@@ -625,14 +575,13 @@ void LireDir_LOVC(fichier_LOVC *f, int i, Tampon_LOVC *buf, int *cpt_lect)
 |      Ecrire buf dans le i eme bloc LOVC      |
 |                                              |
 |*********************************************/
-void ecrireDir_LOVC(fichier_LOVC *f, int i, Tampon_LOVC *buf, int *cpt_ecr)
+void ecrireDir_LOVC(fichier_LOVC *f, int i, Tampon_LOVC *buf)
 {
 
     // positionnement au debut du bloc numero i
     fseek(f->fichier, sizeof(Entete_LOVC) + sizeof(Tbloc_LOVC) * (i - 1), SEEK_SET);
     // ecriture du contenu du buffer dans le bloc numero i du fichier
     fwrite(buf, sizeof(Tampon_LOVC), 1, f->fichier);
-    (*cpt_ecr) = (*cpt_ecr) + 1;
 }
 
 /*********************************************|
@@ -654,7 +603,7 @@ int entete_LOVC(fichier_LOVC *f, int i)
         return (f->entete.nb_chars_supprimes); // nombre de caracteres inseres (effaces non inclus)
     else
     {
-        printf("Parametre inexistant dans l'entete LOVC\n");
+        printf("Parametre inexistant dans l'entete\n");
         return -1;
     }
 }
@@ -677,7 +626,7 @@ void aff_entete_LOVC(fichier_LOVC *f, int i, int val)
     else if (i == 5)
         f->entete.nb_chars_supprimes = val; // nombre de caractères supprimes dans le fichier
     else
-        printf("Parametre inexistant dans l'entete LOVC\n");
+        printf("Parametre inexistant dans l'entete\n");
 }
 
 /*********************************************|
@@ -685,41 +634,17 @@ void aff_entete_LOVC(fichier_LOVC *f, int i, int val)
 |   Retourne le numero du nouveau bloc LOVC   |
 |                                             |
 |*********************************************/
-int alloc_bloc_LOVC(fichier_LOVC *fichier, int *cpt_lect, int *cpt_ecr, Tampon_LOVC *buf)
+int alloc_bloc_LOVC(fichier_LOVC *fichier, Tampon_LOVC *buf)
 {
-    LireDir_LOVC(fichier, entete_LOVC(fichier, 2), buf, cpt_lect);  // lecture du bloc correspondant a la queue
-    buf->suivant = entete_LOVC(fichier, 1) + 1;                     // mise a jour dui suivant de la queue au bloc correspondant a la nouvelle queue
-    ecrireDir_LOVC(fichier, entete_LOVC(fichier, 2), buf, cpt_ecr); // ecriture du bloc de queue dans le fichier
-    aff_entete_LOVC(fichier, 2, entete_LOVC(fichier, 1) + 1);       // mise a jour du numero du bloc correspondant a la nouvelle queue dan sl'entete
-    buf->suivant = -1;                                              // mise a jour du suivant a nill
-    sprintf(buf->tab, "%s", "");                                    // vider la chaine du buffer
+    LireDir_LOVC(fichier, entete_LOVC(fichier, 2), buf);      // lecture du bloc correspondant a la queue
+    buf->suivant = entete_LOVC(fichier, 1) + 1;               // mise a jour dui suivant de la queue au bloc correspondant a la nouvelle queue
+    ecrireDir_LOVC(fichier, entete_LOVC(fichier, 2), buf);    // ecriture du bloc de queue dans le fichier
+    aff_entete_LOVC(fichier, 2, entete_LOVC(fichier, 1) + 1); // mise a jour du numero du bloc correspondant a la nouvelle queue dan sl'entete
+    buf->suivant = -1;                                        // mise a jour du suivant a nill
+    sprintf(buf->tab, "%s", "");                              // vider la chaine du buffer
     return entete_LOVC(fichier, 2);
 }
 /*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**********************************************|
 |                                              |
 |            FUNCTIONS USED IN TP              |
@@ -782,11 +707,11 @@ void concatenate(char *destination, char *identifiant, char *supprime, char *mat
 |       du bloc i a la pos j dans Buf          |
 |                                              |
 |**********************************************/
-void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], char cle[], int *i, int *j, Tampon_TOVnC *Buf, int *cpt_lect)
+void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], char cle[], int *i, int *j, Tampon_TOVnC *Buf)
 {
     if (*j + strlen(chaine) > B) // inserer le nouvel element dans un nouveau bloc
     {
-        EcrireDir_TOVnC(F, *i, *Buf, cpt_lect);           // Ecrire le bloc courant pour passer au prochain
+        EcrireDir_TOVnC(F, *i, *Buf);                     // Ecrire le bloc courant pour passer au prochain
         printf("\nNouveau bloc a ete cree");              // la creation d'un nouveau bloc
         *i = Alloc_bloc_TOVnC(F);                         // passer au nouveau bloc
         *j = 0;                                           // revenir a la premiere position dans le nouveau bloc
@@ -802,12 +727,13 @@ void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], char cle[], int *i, in
 /**********************************************|
 |                                              |
 | Ecrire la chaine d'identifiant cle a partir  |
-|     du bloc i a la pos j dans Buf TOVC       |
+|       du bloc i a la pos j dans Buf          |
 |                                              |
 |**********************************************/
-void Ecrire_Chaine_TOVC(fichier_TOVC *fichier, int *i, int *j, char chaine[], Tampon_TOVC *buf, int *cpt_ecr)
+void Ecrire_Chaine_TOVC(fichier_TOVC *fichier, int *i, int *j, char chaine[], int *cpt, Tampon_TOVC *buf)
 {
     int k;                               // variable pour parcourir la chaine caractere par caractere
+    (*cpt) = 0;                          // nombre de bloc ajoutes
     for (k = 0; k < strlen(chaine); k++) // k pour le deplacement dans la chaine
     {                                    // parcours
         if ((*j) <= B - 1)               // si je suis toujours dans le bloc conserne
@@ -815,64 +741,27 @@ void Ecrire_Chaine_TOVC(fichier_TOVC *fichier, int *i, int *j, char chaine[], Ta
             buf->tableau[*j] = chaine[k]; // affectation des caracteres de la chaine dans le buffer un a un
             (*j)++;                       // deplacement dans le buffer
         }
-        else                                            // si la chaine a inserer depasse le buffer
-        {                                               // nouveau bloc
-            EcrireDir_TOVC(fichier, *i, *buf, cpt_ecr); // ecriture du precedent buffer dans le fichier
-            (*i) = Alloc_bloc_TOVC(fichier);            // alocation d'un nouveau bloc afin de recevoir le reste de la chaine
-            buf->tableau[0] = chaine[k];                // ecrtiture du k eme caractere de la chaine dans la position 0
-            (*j) = 1;                                   // passage a la position 1
+        else                                   // si la chaine a inserer depasse le buffer
+        {                                      // nouveau bloc
+            EcrireDir_TOVC(fichier, *i, *buf); // ecriture du precedent buffer dans le fichier
+            alloc_bloc(fichier);               // alocation d'un nouveau bloc afin de recevoir le reste de la chaine
+            buf->tableau[0] = chaine[k];       // ecrtiture du kiem caractere de la chaine dans la position 0
+            (*j) = 1;                          // passage a la position 1
+            (*i) = Alloc_bloc_TOVC(fichier);   // deplacement dans les bloc du ficher
+            (*cpt)++;                          // incrementation du nombre de bloc alloues
         }
     }
-    buf->tableau[*j] = '\0';                                               // fin de la chaine
-    Aff_Entete_TOVC(fichier, 3, Entete_TOVC(fichier, 3) + strlen(chaine)); // mise a jour de l'entere: nombre de caracteres inseres
-    Aff_Entete_TOVC(fichier, 2, *j);                                       // mise a jour de l'entete: la 1ere pos libre dans le dernier bloc
-}
-
-/**********************************************|
-|                                              |
-| Ecrire la chaine d'identifiant cle a partir  |
-|       du bloc i a la pos j dans Buf          |
-|                                              |
-|**********************************************/
-void Ecrire_Chaine_LOVC(fichier_LOVC *fichier, int *i, int *j, char chaine[], Tampon_LOVC *buf, int *cpt_lect, int *cpt_ecr)
-{
-    int k;                               // variable pour parcourir la chaine caractere par caractere
-    for (k = 0; k < strlen(chaine); k++) // k pour le deplacement dans la chaine
-    {                                    // parcours
-        if ((*j) <= B - 1)               // si je suis toujours dans le bloc conserne
-        {
-            buf->tab[*j] = chaine[k]; // affectation des caracteres de la chaine dans le buffer un a un
-            (*j)++;                   // deplacement dans le buffer
-        }
-        else                                                         // si la chaine a inserer depasse le buffer
-        {                                                            // nouveau bloc
-            ecrireDir_LOVC(fichier, *i, buf, cpt_ecr);               // ecriture du precedent buffer dans le fichier
-            (*i) = alloc_bloc_LOVC(fichier, cpt_lect, cpt_ecr, buf); // alocation d'un nouveau bloc afin de recevoir le reste de la chaine
-            buf->tab[0] = chaine[k];                                 // ecrtiture du kiem caractere de la chaine dans la position 0
-            (*j) = 1;                                                // passage a la position 1
-        }
-    }
-    buf->tab[*j] = '\0';                                                   // fin de la chaine
-    aff_entete_LOVC(fichier, 3, *j);                                       // mise a jour de l'entete: la 1ere pos libre dans le dernier bloc
-    aff_entete_LOVC(fichier, 4, entete_LOVC(fichier, 4) + strlen(chaine)); // mise a jour de l'entere: nombre de caracteres inseres
+    buf->tableau[*j] = '\0'; // fin de la chaine
 }
 /*
-
-
-
-
-
-
-
-
-*/
+ */
 /**********************************************|
 |                                              |
 |       initialiser fichier nom_fichier        |
 |        de type TOVnC avec n valeurs          |
 |                                              |
 |**********************************************/
-void Chargement_initial_TOVnC(char nom_fichier[], int n, int *cpt_ecr)
+void Chargement_initial_TOVnC(char nom_fichier[], int n)
 {
     fichier_TOVnC *F;
     Ouvrir_TOVnC(F, nom_fichier, 'N');
@@ -915,14 +804,14 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n, int *cpt_ecr)
         char Enreg[l];
         concatenate(Enreg, Identifiant, Supprime, Materiel, Fonctionne, Prix, Taille, Description);
         printf("l'element sera insere sous cette forme: %s\n", Enreg);
-        Ecrire_chaine_TOVnC(F, Enreg, Identifiant, &i, &j, &buf, cpt_ecr);
+        Ecrire_chaine_TOVnC(F, Enreg, Identifiant, &i, &j, &buf);
         if (strcmp(Fonctionne, "f") == 0) // generer le champs fonctionnement en alternatif
             strcpy(Fonctionne, "n");      // si le precedent fonctionnait, le prochain ne fonctionne pas
         else                              // si le precedent ne fonctionnait pas , le prochain fonctionne
             strcpy(Fonctionne, "f");      // pour equilibrer les deux fichiers genere par la reorganisation
     }
-    EcrireDir_TOVnC(F, i, buf, cpt_ecr); // ecrire le dernier buffer meme si il n'etait pas plein
-    Fermer_TOVnC(F);                     // fermer le fichier
+    EcrireDir_TOVnC(F, i, buf); // ecrire le dernier buffer meme si il n'etait pas plein
+    Fermer_TOVnC(F);            // fermer le fichier
 }
 
 /****************************************************|
@@ -930,7 +819,7 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n, int *cpt_ecr)
 |   Recherche dun materiel selon son identifiant     |
 |                                                    |
 |****************************************************/
-void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trouv, int *i, int *j, int *cpt_lect)
+void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trouv, int *i, int *j)
 {
     fichier_TOVnC f;
     Ouvrir_TOVnC(&f, nom_fichier, 'A');
@@ -955,7 +844,7 @@ void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trou
 
         *i = (binf + bsup) / 2;                                      // numero de bloc a parcourir
         *j = 0;                                                      // la premiere position dans le bloc
-        LireDir_TOVnC(&f, *i, &Buf, cpt_lect);                       // lire le buffer
+        LireDir_TOVnC(&f, *i, &Buf);                                 // lire le buffer
         temp_j = *j;                                                 // sauvegarder j avant de se deplacer
         extraire_chaine_TOVnC(Cle_Min, j, TAILLE_IDENTIFIANT, &Buf); // extraire la plus petite cle (premiere cle) de du bloc i
         strcpy(Cle_Courrante, Cle_Min);                              // mettre a jour la cle courrante
@@ -1029,22 +918,14 @@ void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trou
 }
 
 /*
-
-
-
-
-
-
-
-
-*/
+ */
 /**********************************************|
 |                                              |
 |      Supprimer un materiel logiquement       |
 |            selon son identifiant             |
 |                                              |
 |**********************************************/
-void Suppression_TOVnC(char nom_fichier[], char identifiant_a_supprimer[], int *cpt_lect, int *cpt_ecr)
+void Suppression_TOVnC(char nom_fichier[], char identifiant_a_supprimer[])
 {
     /**************************************************************************************************************|
     | Identifiant | champs supprime | Type materiel | fonctionne |    Prix   |   taille   | Description (variable) |
@@ -1054,23 +935,23 @@ void Suppression_TOVnC(char nom_fichier[], char identifiant_a_supprimer[], int *
         i,     // le numero du bloc pour le parcours entre bloc
         j;     // la position dans le bloc pour le parcours interbloc
 
-    Recherche_TOVnC(nom_fichier, identifiant_a_supprimer, &trouv, &i, &j, cpt_lect); // rechercher l'identifiant
-    if (trouv)                                                                       // si il existe alors on va le supprimer logiquement
+    Recherche_TOVnC(nom_fichier, identifiant_a_supprimer, &trouv, &i, &j); // rechercher l'identifiant
+    if (trouv)                                                             // si il existe alors on va le supprimer logiquement
     {
-        fichier_TOVnC F;                      // fichier TOVnC
-        Ouvrir_TOVnC(&F, nom_fichier, 'A');   // ouvrir le fichier de "nom fichier"
-        Tampon_TOVnC buf;                     // un buffer pour charger le contenu de la MS vers la MC
-        char Taille[TAILLE_TAILLE + 1];       // champs taille pour remettre l'entete a jour avec le nombre de char supprime
-        LireDir_TOVnC(&F, i, &buf, cpt_lect); // lire le bloc retenu par la recherche
-        j += TAILLE_IDENTIFIANT;              // sauter le champs identifiant
-        buf.tableau[j] = 't';                 // remettre le champs supprimer a Vrai
+        fichier_TOVnC F;                    // fichier TOVnC
+        Ouvrir_TOVnC(&F, nom_fichier, 'A'); // ouvrir le fichier de "nom fichier"
+        Tampon_TOVnC buf;                   // un buffer pour charger le contenu de la MS vers la MC
+        char Taille[TAILLE_TAILLE + 1];     // champs taille pour remettre l'entete a jour avec le nombre de char supprime
+        LireDir_TOVnC(&F, i, &buf);         // lire le bloc retenu par la recherche
+        j += TAILLE_IDENTIFIANT;            // sauter le champs identifiant
+        buf.tableau[j] = 't';               // remettre le champs supprimer a Vrai
 
         j += TAILLE_SUPPRIMER + TAILLE_MATERIEL + TAILLE_FONCTIONNEMENT + TAILLE_PRIX; // sauter tous les champs jusqèa champs taille
         extraire_chaine_TOVnC(Taille, &j, TAILLE_TAILLE, &buf);                        // extraire le champs taille de description
         int Nombre_chars_supprime = TAILLE_IDENTIFIANT + TAILLE_SUPPRIMER + TAILLE_MATERIEL - 1 + TAILLE_FONCTIONNEMENT + TAILLE_PRIX + atoi(Taille);
 
         Aff_Entete_TOVnC(&F, 3, Entete_TOVnC(&F, 3) + Nombre_chars_supprime); // mettre le nombre de char supprime dans le fichier a jour
-        EcrireDir_TOVnC(&F, i, buf, cpt_ecr);                                 // ecrire le buffer ne MS aprés la mise a jour du champs supprimer
+        EcrireDir_TOVnC(&F, i, buf);                                          // ecrire le buffer ne MS aprés la mise a jour du champs supprimer
         Fermer_TOVnC(&F);                                                     // fermer le fichier
         printf("\nle materiel a ete supprime");                               // pour informer l'audience
     }                                                                         // mais
@@ -1078,22 +959,14 @@ void Suppression_TOVnC(char nom_fichier[], char identifiant_a_supprimer[], int *
         printf("\nle materiel n'existe pas, aucune suppression n'a eu lieu"); // alors informer mon audience qu'aucune suppression n'a eu lieu
 }
 /*
-
-
-
-
-
-
-
-
-*/
+ */
 /**********************************************|
 |                                              |
 |       reorganiser un fichier TOVnC selon     |
 |          le champs de fonctionnement         |
 |                                              |
 |**********************************************/
-void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fichier2[], int *cpt_lect, int *cpt_ecr)
+void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fichier2[])
 {
     fichier_TOVnC f;                                  // le fichier original qu'on doit reorganiser "Materiel_informatique_TOVnC.bin"
     Ouvrir_TOVnC(&f, nom_fichier, 'A');               // ouvrir le fichier TOVnC
@@ -1124,10 +997,9 @@ void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fich
         Destination[B];                          // la chaine ou on fera la concatenation des champs pour l'ecrire ensuite dans le Buf
     while (i <= Entete_TOVnC(&f, 1))             // tant que on n'est pas arrive a la fin du fichier
     {
-        LireDir_TOVnC(&f, i, &Buf, cpt_lect); // lire le i eme bloc
-        while (j < Buf.nb)                    // parcourir le i eme bloc jusqu'a la premiere position libre (Buf.nb)
+        LireDir_TOVnC(&f, i, &Buf); // lire le i eme bloc
+        while (j < Buf.nb)          // parcourir le i eme bloc jusqu'a la premiere position libre (Buf.nb)
         {
-            printf("here");
             extraire_chaine_TOVnC(Identifiant, &j, TAILLE_IDENTIFIANT, &Buf);   // extraire le champs Identifiant
             extraire_chaine_TOVnC(Supprime, &j, TAILLE_SUPPRIMER, &Buf);        // extraire le champs Supprimer
             extraire_chaine_TOVnC(Materiel, &j, TAILLE_MATERIEL - 1, &Buf);     // extraire le champs materiel
@@ -1141,37 +1013,35 @@ void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fich
                 concatenate(Destination, Identifiant, "", Materiel, "", Prix, Taille, Description); // concatener les champs: identifiant, materiel, prix, taille et description
 
                 if (strcmp(Fonctionne, "f") == 0) // si le materiel fonctionne
-                {                                 // le mettre dans le fichier des materiaux en marche (TOVC)
-                    Ecrire_Chaine_TOVC(&f1, &i1, &j1, Destination, &Buf1, cpt_ecr);
+                {                                 // alors le mettre dans le fichier des materiaux en marche (TOVC)
+                    printf("\n\nTOVC file");
+                    printf("\n %s", Destination);
                 }
                 else // si le materiel ne fonctionne pas
-                {    // le mettre dans le fichier des materiaux en panne (LOVC)
-                    Ecrire_Chaine_LOVC(&f2, &i2, &j2, Destination, &Buf2, cpt_lect, cpt_ecr);
+                {    // alors le mettre dans le fichier des materiaux en panne (LOVC)
+                    printf("\n\nin the LOVC file");
+                    printf("\n %s", Destination);
                 }
             }
         }
         j = 0;
         i++;
     }
-    EcrireDir_TOVC(&f1, i1, Buf1, cpt_ecr);  // ecrire dernier buffer du fichier des materiaux en marche
-    ecrireDir_LOVC(&f2, i2, &Buf2, cpt_ecr); // ecrire dernier buffer du fichier des materiaux en panne
-    Fermer_TOVnC(&f);                        // fermer le fichier principal
-    Fermer_TOVC(&f1);                        // fermer le fichier des materiaux en marche
-    fermer_LOVC(&f2);                        // fermer le fichier des materiaux en panne
+    EcrireDir_TOVC(&f1, i1, Buf1);  // ecrire dernier buffer du fichier des materiaux en marche
+    ecrireDir_LOVC(&f2, i2, &Buf2); // ecrire dernier buffer du fichier des materiaux en marche
+    Fermer_TOVC(&f1);
+    fermer_LOVC(&f2);
+    Fermer_TOVnC(&f);
 }
 
 int main(void)
 {
-    printf("a printing is needed\n");
-    int trouv, i, j, cpt_ecr = 0, cpt_lect = 0;
-    Chargement_initial_TOVnC(FICHIER_ORIGINAL, 10, &cpt_ecr);
-    afficher_fichier_TOVnC(FICHIER_ORIGINAL, &cpt_lect);
-    Recherche_TOVnC(FICHIER_ORIGINAL, "00010", &trouv, &i, &j, &cpt_lect);
-    Suppression_TOVnC(FICHIER_ORIGINAL, "00010", &cpt_lect, &cpt_ecr);
-    Recherche_TOVnC(FICHIER_ORIGINAL, "00010", &trouv, &i, &j, &cpt_lect);
-    afficher_fichier_TOVnC(FICHIER_ORIGINAL, &cpt_lect);
-
-    // Recherche_TOVnC(FICHIER_ORIGINAL, "00010", &trouv, &i, &j, &cpt_lect);
+    printf("a printing is needed");
+    // Reorganisation_TOVnC(FICHIER_ORIGINAL, FICHIER_MATERIEL_FONCTIONNE, FICHIER_MATERIEL_NON_FONCTIONNE);
+    int trouv, i, j;
+    Recherche_TOVnC(FICHIER_ORIGINAL, "00010", &trouv, &i, &j);
+    Suppression_TOVnC(FICHIER_ORIGINAL, "00010");
+    Recherche_TOVnC(FICHIER_ORIGINAL, "00010", &trouv, &i, &j);
 }
 
 /*fichier TOVC en marche*/

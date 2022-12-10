@@ -72,26 +72,16 @@ void Ouvrir_TOVnC(fichier_TOVnC *f, char nom_fichier[], char mode_ouverture);
 void Fermer_TOVnC(fichier_TOVnC *f);
 int Entete_TOVnC(fichier_TOVnC *f, int i);
 void Aff_Entete_TOVnC(fichier_TOVnC *f, int i, int val);
-void EcrireDir_TOVnC(fichier_TOVnC *f, int i, Tbloc_TOVnC buf, int *cpt_ecr);
-void LireDir_TOVnC(fichier_TOVnC *f, int i, Tbloc_TOVnC *buf, int *cpt_lect);
+void EcrireDir_TOVnC(fichier_TOVnC *f, int i, Tbloc_TOVnC buf);
+void LireDir_TOVnC(fichier_TOVnC *f, int i, Tbloc_TOVnC *buf);
 int Alloc_bloc_TOVnC(fichier_TOVnC *f);
 
 void affichage_entete_TOVnC(char nom_fichier[]);
 void extraire_chaine_TOVnC(char destination[], int *j, int taille, Tampon_TOVnC *Buf);
-void afficher_fichier_TOVnC(char nom_fichier[], int *cpt_lect);
+void afficher_fichier_TOVnC(char nom_fichier[]);
 
 /*
-
-
-
-
-
-
-
-
-
-
-*/
+ */
 
 /*********************************************|
 |                                             |
@@ -165,17 +155,7 @@ void Aff_Entete_TOF(fichier_TOF *f, int i, int val);
 int Alloc_bloc_TOF(fichier_TOF *f);
 
 /*
-
-
-
-
-
-
-
-
-
-
-*/
+ */
 /**********************************************|
 |                                              |
 |    STRUCTURES ET VARIABLES GLOBALES TOVC     |
@@ -188,7 +168,7 @@ int Alloc_bloc_TOF(fichier_TOF *f);
 |*********************************************/
 typedef struct entete_TOVC
 {
-    int nb_bloc;                // nombre de blocs = adresse du dernier bloc
+    int adr_dernier_bloc;       // adresse du dernier bloc / nombre de bloc -1
     int pos_libre_dernier_bloc; // position libre dans le dernier bloc
     int nbr_caract_insert;      // nombre de caracteres inseres (nous aidera dans la reorganisation)
     int nbr_caract_supp;        // nombre de caracteres supprimes (nous aidera dans la reorganisation)
@@ -229,22 +209,11 @@ void Ouvrir_TOVC(fichier_TOVC *f, char nom_fichier[], char mode_ouverture);
 void Fermer_TOVC(fichier_TOVC *f);
 int Entete_TOVC(fichier_TOVC *f, int i);
 void Aff_Entete_TOVC(fichier_TOVC *f, int i, int val);
-void EcrireDir_TOVC(fichier_TOVC *f, int i, Tbloc_TOVC buf, int *cpt_ect);
-void LireDir_TOVC(fichier_TOVC *f, int i, Tbloc_TOVC *buf, int *cpt_lect);
+void EcrireDir_TOVC(fichier_TOVC *f, int i, Tbloc_TOVC buf);
+void LireDir_TOVC(fichier_TOVC *f, int i, Tbloc_TOVC *buf);
 int Alloc_bloc_TOVC(fichier_TOVC *f);
 /*
-
-
-
-
-
-
-
-
-
-
-
-*/
+ */
 
 /*********************************************|
 |                                             |
@@ -298,32 +267,14 @@ typedef struct fichier_LOVC
 |*********************************************/
 void Ouvrir_LOVC(fichier_LOVC *f, const char nomFichier[], char mode);
 void fermer_LOVC(fichier_LOVC *f);
-void LireDir_LOVC(fichier_LOVC *f, int i, Tampon_LOVC *buf, int *cpt_lect);
-void ecrireDir_LOVC(fichier_LOVC *f, int i, Tampon_LOVC *buf, int *cpt_ecr);
+void LireDir_LOVC(fichier_LOVC *f, int i, Tampon_LOVC *buf);
+void ecrireDir_LOVC(fichier_LOVC *f, int i, Tampon_LOVC *buf);
 int entete_LOVC(fichier_LOVC *f, int i);
 void aff_entete_LOVC(fichier_LOVC *f, int i, int val);
-int alloc_bloc_LOVC(fichier_LOVC *fichier, int *cpt_lect, int *cpt_ecr, Tampon_LOVC *buf);
+int alloc_bloc_LOVC(fichier_LOVC *fichier, Tampon_LOVC *buf);
 
 /*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-*/
+ */
 /***********************************************|
 |                                               |
 |          VARIABLES GLOBALES DU TP             |
@@ -342,37 +293,17 @@ char *FICHIER_MATERIEL_FONCTIONNE = "Materiel_informatique_en_marche_TOVC.bin"; 
 char *FICHIER_MATERIEL_NON_FONCTIONNE = "Materiel_informatique_en_panne_LOVC.bin"; // le nom du fichier qui contient le materiel en panne
 
 /*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-*/
+ */
 /***********************************************|
 |                                               |
 |     FONCTIONS IMPLEMENTES POUR PARTIE 01      |
 |                                               |
 |***********************************************/
-void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], char cle[], int *i, int *j, Tampon_TOVnC *Buf, int *cpt_lect);
-void Ecrire_Chaine_TOVC(fichier_TOVC *fichier, int *i, int *j, char chaine[], Tampon_TOVC *buf, int *cpt_ecr);
-void Ecrire_Chaine_LOVC(fichier_LOVC *fichier, int *i, int *j, char chaine[], Tampon_LOVC *buf, int *cpt_lect, int *cpt_ecr);
+void Chargement_initial_TOVnC(char nom_fichier[], int n);
 void Generer_Chaine(char chaine[], int length, int number);
+void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], char cle[], int *i, int *j, Tampon_TOVnC *Buf);
 int Random_Number(int lower, int upper);
 void concatenate(char *destination, char *identifiant, char *supprime, char *materiel, char *fonctionne, char *prix, char *taille, char *description);
-
-void Chargement_initial_TOVnC(char nom_fichier[], int n, int *cpt_ecr);
-void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trouv, int *i, int *j, int *cpt_lect);
-void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fichier2[], int *cpt_lect, int *cpt_ecr);
-void Suppression_TOVnC(char nom_fichier[], char identifiant_a_supprimer[], int *cpt_lect, int *cpt_ecr);
+void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trouv, int *i, int *j);
+void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fichier2[]);
+void Suppression_TOVnC(char nom_fichier[], char identifiant_a_supprimer[]);
