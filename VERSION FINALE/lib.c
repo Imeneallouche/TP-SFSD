@@ -147,7 +147,7 @@ int Alloc_bloc_TOVnC(fichier_TOVnC *f)
 void affichage_entete_TOVnC(char nom_fichier[])
 {
     fichier_TOVnC f;
-    Ouvrir_TOVnC(&f, nom_fichier, 'N');
+    Ouvrir_TOVnC(&f, nom_fichier, 'A');
     printf("\n\n\n*************************************************\n");
     printf("*                                               *\n");
     printf("*       caracteristiques du fichier             *\n");
@@ -246,7 +246,28 @@ void afficher_fichier_TOVnC(char nom_fichier[])
 }
 
 /*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  */
+
 /*************************************|
 |                                     |
 |           FICHIER TYPE TOF          |
@@ -366,7 +387,28 @@ int Alloc_bloc_TOF(fichier_TOF *f)
 }
 
 /*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  */
+
 /*************************************|
 |                                     |
 |           FICHIER TYPE TOVC         |
@@ -504,7 +546,28 @@ int Alloc_bloc_TOVC(fichier_TOVC *f)
 }
 
 /*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  */
+
 /*************************************|
 |                                     |
 |           FICHIER TYPE LOVC         |
@@ -644,6 +707,30 @@ int alloc_bloc_LOVC(fichier_LOVC *fichier, Tampon_LOVC *buf)
     sprintf(buf->tab, "%s", "");                              // vider la chaine du buffer
     return entete_LOVC(fichier, 2);
 }
+
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ */
+
 /*
 /**********************************************|
 |                                              |
@@ -701,6 +788,19 @@ void concatenate(char *destination, char *identifiant, char *supprime, char *mat
     strcat(destination, description);                        // destination+=description
 }
 
+/*
+
+
+
+
+
+
+
+
+
+
+ */
+
 /**********************************************|
 |                                              |
 | Ecrire la chaine d'identifiant cle a partir  |
@@ -724,16 +824,28 @@ void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], char cle[], int *i, in
     strcpy(Buf->cleMax, cle);                                    // mise a jour du bloc: la cle max
 }
 
+/*
+
+
+
+
+
+
+
+
+
+
+ */
+
 /**********************************************|
 |                                              |
 | Ecrire la chaine d'identifiant cle a partir  |
-|       du bloc i a la pos j dans Buf          |
+|     du bloc i a la pos j dans Buf TOVC       |
 |                                              |
 |**********************************************/
-void Ecrire_Chaine_TOVC(fichier_TOVC *fichier, int *i, int *j, char chaine[], int *cpt, Tampon_TOVC *buf)
+void Ecrire_Chaine_TOVC(fichier_TOVC *fichier, int *i, int *j, char chaine[], Tampon_TOVC *buf)
 {
     int k;                               // variable pour parcourir la chaine caractere par caractere
-    (*cpt) = 0;                          // nombre de bloc ajoutes
     for (k = 0; k < strlen(chaine); k++) // k pour le deplacement dans la chaine
     {                                    // parcours
         if ((*j) <= B - 1)               // si je suis toujours dans le bloc conserne
@@ -744,17 +856,71 @@ void Ecrire_Chaine_TOVC(fichier_TOVC *fichier, int *i, int *j, char chaine[], in
         else                                   // si la chaine a inserer depasse le buffer
         {                                      // nouveau bloc
             EcrireDir_TOVC(fichier, *i, *buf); // ecriture du precedent buffer dans le fichier
-            alloc_bloc(fichier);               // alocation d'un nouveau bloc afin de recevoir le reste de la chaine
-            buf->tableau[0] = chaine[k];       // ecrtiture du kiem caractere de la chaine dans la position 0
+            (*i) = Alloc_bloc_TOVC(fichier);   // alocation d'un nouveau bloc afin de recevoir le reste de la chaine
+            buf->tableau[0] = chaine[k];       // ecrtiture du k eme caractere de la chaine dans la position 0
             (*j) = 1;                          // passage a la position 1
-            (*i) = Alloc_bloc_TOVC(fichier);   // deplacement dans les bloc du ficher
-            (*cpt)++;                          // incrementation du nombre de bloc alloues
         }
     }
-    buf->tableau[*j] = '\0'; // fin de la chaine
+    buf->tableau[*j] = '\0';                                               // fin de la chaine
+    Aff_Entete_TOVC(fichier, 3, Entete_TOVC(fichier, 3) + strlen(chaine)); // mise a jour de l'entere: nombre de caracteres inseres
+    Aff_Entete_TOVC(fichier, 2, *j);                                       // mise a jour de l'entete: la 1ere pos libre dans le dernier bloc
 }
+
 /*
+
+
+
+
+
+
+
+
+
+
  */
+
+/**********************************************|
+|                                              |
+| Ecrire la chaine d'identifiant cle a partir  |
+|       du bloc i a la pos j dans Buf          |
+|                                              |
+|**********************************************/
+void Ecrire_Chaine_LOVC(fichier_LOVC *fichier, int *i, int *j, char chaine[], Tampon_LOVC *buf)
+{
+    int k;                               // variable pour parcourir la chaine caractere par caractere
+    for (k = 0; k < strlen(chaine); k++) // k pour le deplacement dans la chaine
+    {                                    // parcours
+        if ((*j) <= B - 1)               // si je suis toujours dans le bloc conserne
+        {
+            buf->tab[*j] = chaine[k]; // affectation des caracteres de la chaine dans le buffer un a un
+            (*j)++;                   // deplacement dans le buffer
+        }
+        else                                      // si la chaine a inserer depasse le buffer
+        {                                         // nouveau bloc
+            ecrireDir_LOVC(fichier, *i, buf);     // ecriture du precedent buffer dans le fichier
+            (*i) = alloc_bloc_LOVC(fichier, buf); // alocation d'un nouveau bloc afin de recevoir le reste de la chaine
+            buf->tab[0] = chaine[k];              // ecrtiture du kiem caractere de la chaine dans la position 0
+            (*j) = 1;                             // passage a la position 1
+        }
+    }
+    buf->tab[*j] = '\0';                                                   // fin de la chaine
+    aff_entete_LOVC(fichier, 3, *j);                                       // mise a jour de l'entete: la 1ere pos libre dans le dernier bloc
+    aff_entete_LOVC(fichier, 4, entete_LOVC(fichier, 4) + strlen(chaine)); // mise a jour de l'entere: nombre de caracteres inseres
+}
+
+/*
+
+
+
+
+
+
+
+
+
+
+ */
+
 /**********************************************|
 |                                              |
 |       initialiser fichier nom_fichier        |
@@ -813,6 +979,19 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
     EcrireDir_TOVnC(F, i, buf); // ecrire le dernier buffer meme si il n'etait pas plein
     Fermer_TOVnC(F);            // fermer le fichier
 }
+
+/*
+
+
+
+
+
+
+
+
+
+
+ */
 
 /****************************************************|
 |                                                    |
@@ -890,8 +1069,8 @@ void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trou
                     {                                                                        // alors
                         *j = *j + TAILLE_MATERIEL - 1 + TAILLE_FONCTIONNEMENT + TAILLE_PRIX; // zapper les champs: materiel, fonctionnement, taille
                         extraire_chaine_TOVnC(Taille, j, TAILLE_TAILLE, &Buf);               // recuperer la taille de la description
-                        *j = *j + atoi(Taille);
-                        temp_j = *j;                                                       // zapper la description egalement
+                        *j = *j + atoi(Taille);                                              // zapper la description egalement
+                        temp_j = *j;
                         extraire_chaine_TOVnC(Cle_Courrante, j, TAILLE_IDENTIFIANT, &Buf); // recuperer la cle prochaine a verifier
                     }
                 }
@@ -905,7 +1084,7 @@ void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trou
                 binf = *i + 1;                               /// cle  doit être après le bloc courant
         }
     }
-    if (binf > bsup) // si on est sortie a cause des chevauchement des base
+    if (binf > bsup && !stop) // si on est sortie a cause des chevauchement des base
     {
         *i = binf;   // le bloc ou devait exister l'identifiant = binf
         *j = temp_j; // la pos ou devait commencer le materiel = temp_j
@@ -918,7 +1097,18 @@ void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trou
 }
 
 /*
+
+
+
+
+
+
+
+
+
+
  */
+
 /**********************************************|
 |                                              |
 |      Supprimer un materiel logiquement       |
@@ -958,8 +1148,20 @@ void Suppression_TOVnC(char nom_fichier[], char identifiant_a_supprimer[])
     else                                                                      // si le materiel n'existe pas d'origine
         printf("\nle materiel n'existe pas, aucune suppression n'a eu lieu"); // alors informer mon audience qu'aucune suppression n'a eu lieu
 }
+
 /*
+
+
+
+
+
+
+
+
+
+
  */
+
 /**********************************************|
 |                                              |
 |       reorganiser un fichier TOVnC selon     |
@@ -1010,17 +1212,19 @@ void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fich
 
             if (strcmp(Supprime, "f") == 0) // si le materiel n'a pas ete supprime logiquement
             {
-                concatenate(Destination, Identifiant, "", Materiel, "", Prix, Taille, Description); // concatener les champs: identifiant, materiel, prix, taille et description
+                /*********************************************************************************|
+                |  Identifiant |  Type materiel |   Prix    |   taille   | Description (variable) |
+                |   (5 bytes)  |    (12 bytes)  | (6 bytes) |  (3 bytes) |  (max sur 272 bytes)   |
+                |*********************************************************************************/
+                concatenate(Destination, Identifiant, "", Materiel, "", Prix, Taille, Description);
 
-                if (strcmp(Fonctionne, "f") == 0) // si le materiel fonctionne
-                {                                 // alors le mettre dans le fichier des materiaux en marche (TOVC)
-                    printf("\n\nTOVC file");
-                    printf("\n %s", Destination);
+                if (strcmp(Fonctionne, "f") == 0) // si le materiel fonctionne le mettre dans le fichier des materiaux en marche (TOVC)
+                {
+                    Ecrire_Chaine_TOVC(&f1, &i1, &j1, Destination, &Buf1);
                 }
-                else // si le materiel ne fonctionne pas
-                {    // alors le mettre dans le fichier des materiaux en panne (LOVC)
-                    printf("\n\nin the LOVC file");
-                    printf("\n %s", Destination);
+                else // si le materiel ne fonctionne pas le mettre dans le fichier des materiaux en panne (LOVC)
+                {
+                    Ecrire_Chaine_LOVC(&f2, &i2, &j2, Destination, &Buf2);
                 }
             }
         }
@@ -1034,64 +1238,29 @@ void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fich
     Fermer_TOVnC(&f);
 }
 
+/*
+
+
+
+
+
+
+
+
+
+
+ */
+
 int main(void)
 {
     printf("a printing is needed");
-    // Reorganisation_TOVnC(FICHIER_ORIGINAL, FICHIER_MATERIEL_FONCTIONNE, FICHIER_MATERIEL_NON_FONCTIONNE);
+    // Chargement_initial_TOVnC(FICHIER_ORIGINAL, 20);       marche avec success
+    // affichage_entete_TOVnC(FICHIER_ORIGINAL);             marche avec success
+    // afficher_fichier_TOVnC(FICHIER_ORIGINAL);             marche avec success
     int trouv, i, j;
-    Recherche_TOVnC(FICHIER_ORIGINAL, "00010", &trouv, &i, &j);
-    Suppression_TOVnC(FICHIER_ORIGINAL, "00010");
-    Recherche_TOVnC(FICHIER_ORIGINAL, "00010", &trouv, &i, &j);
+    Recherche_TOVnC(FICHIER_ORIGINAL, "00050", &trouv, &i, &j);
+    Suppression_TOVnC(FICHIER_ORIGINAL, "00050");
+    Recherche_TOVnC(FICHIER_ORIGINAL, "00050", &trouv, &i, &j);
+    //  Reorganisation_TOVnC(FICHIER_ORIGINAL, FICHIER_MATERIEL_FONCTIONNE, FICHIER_MATERIEL_NON_FONCTIONNE);
+    //  Recherche_TOVnC(FICHIER_ORIGINAL, "00010", &trouv, &i, &j);
 }
-
-/*fichier TOVC en marche*/
-/********************************************************************************
-| Identifiant |Type materiel |   Prix   |   taille   | Description (variable) |
-|  (5 bytes)  |(12 bytes)   | (6 bytes) |  (3 bytes) |  (max sur 272 bytes)    |
-|*****************************************************************************/
-
-// les fichiers qui seront générés
-/*************************
-| Identifiant |  Prix    |
-|  (5 bytes)  |(6 bytes) /
-|************************/
-/*« Materiel_en_marche_typeMateriel_TOF.bin ».*/
-/*« Materiel_en_marche_typeMateriel_TOF.bin ».*/
-/*« Materiel_en_marche_typeMateriel_TOF.bin ».*/
-/*« Materiel_en_marche_typeMateriel_TOF.bin ».*/
-/*« Materiel_en_marche_typeMateriel_TOF.bin ».*/
-/*« Materiel_en_marche_typeMateriel_TOF.bin ».*/
-
-// 1-ouvrir 6 fichier mode nouveau
-// 2- parcourir TOVC
-// 3- verifier type materiel
-// 4- affecter au fichier correspondant
-/*
-
-
-
-
-
-
-
-*/
-/*fichier LOVC en panne*/
-/**********************************************************************************
-| Identifiant |Type materiel |   Prix     |   taille   | Description (variable) |
-|  (5 bytes)  |(12 bytes)   | (6 bytes)  |  (3 bytes) |  (max sur 272 bytes)    |
-|*****************************************************************************/
-// 1- afficher tous les materiaux dont le prix [a,b] (1- parcours_LOVC_sequentielle)
-// 2- afficher le montant global
-//    [ initialiser un compteur : counter=0, counter+=Prix]
-
-/*
-
-
-
-
-
-
-
-*/
-/*fichier index TOF / Table index TOF*/
-// 1-  why not taking each cle max de chaque bloc de TOVnC as a key f la table d'index et fichier index

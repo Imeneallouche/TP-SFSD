@@ -11,7 +11,6 @@
 #define maxBloc 10                 // max d'enregistrement dans un seul bloc (TOF)
 #define maxNomFichier 30           // la taille max d'un nom du fichier
 #define facteur_reorganisation 0.5 // le facteur de reorganisation du fichier
-#include <stdbool.h>
 
 /**************************************************************************************************************|
 | Identifiant | champs supprime | Type materiel | fonctionne |    Prix   |   taille   | Description (variable) |
@@ -76,11 +75,22 @@ void EcrireDir_TOVnC(fichier_TOVnC *f, int i, Tbloc_TOVnC buf);
 void LireDir_TOVnC(fichier_TOVnC *f, int i, Tbloc_TOVnC *buf);
 int Alloc_bloc_TOVnC(fichier_TOVnC *f);
 
-void affichage_entete_TOVnC(char nom_fichier[]);
-void extraire_chaine_TOVnC(char destination[], int *j, int taille, Tampon_TOVnC *Buf);
-void afficher_fichier_TOVnC(char nom_fichier[]);
-
 /*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  */
 
 /*********************************************|
@@ -155,7 +165,23 @@ void Aff_Entete_TOF(fichier_TOF *f, int i, int val);
 int Alloc_bloc_TOF(fichier_TOF *f);
 
 /*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  */
+
 /**********************************************|
 |                                              |
 |    STRUCTURES ET VARIABLES GLOBALES TOVC     |
@@ -212,7 +238,23 @@ void Aff_Entete_TOVC(fichier_TOVC *f, int i, int val);
 void EcrireDir_TOVC(fichier_TOVC *f, int i, Tbloc_TOVC buf);
 void LireDir_TOVC(fichier_TOVC *f, int i, Tbloc_TOVC *buf);
 int Alloc_bloc_TOVC(fichier_TOVC *f);
+
 /*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  */
 
 /*********************************************|
@@ -274,7 +316,26 @@ void aff_entete_LOVC(fichier_LOVC *f, int i, int val);
 int alloc_bloc_LOVC(fichier_LOVC *fichier, Tampon_LOVC *buf);
 
 /*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  */
+
 /***********************************************|
 |                                               |
 |          VARIABLES GLOBALES DU TP             |
@@ -293,17 +354,134 @@ char *FICHIER_MATERIEL_FONCTIONNE = "Materiel_informatique_en_marche_TOVC.bin"; 
 char *FICHIER_MATERIEL_NON_FONCTIONNE = "Materiel_informatique_en_panne_LOVC.bin"; // le nom du fichier qui contient le materiel en panne
 
 /*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  */
+
 /***********************************************|
 |                                               |
 |     FONCTIONS IMPLEMENTES POUR PARTIE 01      |
 |                                               |
 |***********************************************/
-void Chargement_initial_TOVnC(char nom_fichier[], int n);
+/*******************************|
+|                               |
+|     FONCTIONS GLOBALES        |
+|                               |
+|*******************************/
 void Generer_Chaine(char chaine[], int length, int number);
-void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], char cle[], int *i, int *j, Tampon_TOVnC *Buf);
-int Random_Number(int lower, int upper);
 void concatenate(char *destination, char *identifiant, char *supprime, char *materiel, char *fonctionne, char *prix, char *taille, char *description);
+int Random_Number(int lower, int upper);
+
+/*******************************|
+|                               |
+|       FONCTIONS TOVnC         |
+|                               |
+|*******************************/
+void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], char cle[], int *i, int *j, Tampon_TOVnC *Buf);
+void affichage_entete_TOVnC(char nom_fichier[]);
+void extraire_chaine_TOVnC(char destination[], int *j, int taille, Tampon_TOVnC *Buf);
+void afficher_fichier_TOVnC(char nom_fichier[]);
+void Chargement_initial_TOVnC(char nom_fichier[], int n);
 void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trouv, int *i, int *j);
 void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fichier2[]);
 void Suppression_TOVnC(char nom_fichier[], char identifiant_a_supprimer[]);
+
+/*******************************|
+|                               |
+|        FONCTIONS TOVC         |
+|                               |
+|*******************************/
+void Ecrire_Chaine_TOVC(fichier_TOVC *fichier, int *i, int *j, char chaine[], Tampon_TOVC *buf);
+
+/*******************************|
+|                               |
+|        FONCTIONS LOVC         |
+|                               |
+|*******************************/
+void Ecrire_Chaine_LOVC(fichier_LOVC *fichier, int *i, int *j, char chaine[], Tampon_LOVC *buf);
+
+/*
+
+
+
+
+
+
+
+
+
+ */
+
+/***********************************************|
+|                                               |
+|     FONCTIONS IMPLEMENTES POUR PARTIE 02      |
+|                                               |
+|***********************************************/
+/*BRAINSTORMING*/
+/*fichier TOVC en marche*/
+/********************************************************************************
+| Identifiant |Type materiel |   Prix   |   taille   | Description (variable) |
+|  (5 bytes)  |(12 bytes)   | (6 bytes) |  (3 bytes) |  (max sur 272 bytes)    |
+|*****************************************************************************/
+
+// les fichiers qui seront générés
+/*************************
+| Identifiant |  Prix    |
+|  (5 bytes)  |(6 bytes) /
+|************************/
+/*« Materiel_en_marche_typeMateriel_TOF.bin ».*/
+/*« Materiel_en_marche_typeMateriel_TOF.bin ».*/
+/*« Materiel_en_marche_typeMateriel_TOF.bin ».*/
+/*« Materiel_en_marche_typeMateriel_TOF.bin ».*/
+/*« Materiel_en_marche_typeMateriel_TOF.bin ».*/
+/*« Materiel_en_marche_typeMateriel_TOF.bin ».*/
+
+// 1-ouvrir 6 fichier mode nouveau
+// 2- parcourir TOVC
+// 3- verifier type materiel
+// 4- affecter au fichier correspondant
+/*
+
+
+
+
+
+
+
+*/
+/*fichier LOVC en panne*/
+/**********************************************************************************
+| Identifiant |Type materiel |   Prix     |   taille   | Description (variable) |
+|  (5 bytes)  |(12 bytes)   | (6 bytes)  |  (3 bytes) |  (max sur 272 bytes)    |
+|*****************************************************************************/
+// 1- afficher tous les materiaux dont le prix [a,b] (1- parcours_LOVC_sequentielle)
+// 2- afficher le montant global
+//    [ initialiser un compteur : counter=0, counter+=Prix]
+
+/*
+
+
+
+
+
+
+
+*/
+/*fichier index TOF / Table index TOF*/
+// 1-  why not taking each cle max de chaque bloc de TOVnC as a key f la table d'index et fichier index
