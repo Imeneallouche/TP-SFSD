@@ -190,17 +190,16 @@ void afficher_fichier_TOVnC(char nom_fichier[])
         counter = 0;                             // numero de l'enregistrement dans le bloc
     Tampon_TOVnC Buf;                            // contenu d'un bloc dans un buffer
     char Identifiant[TAILLE_IDENTIFIANT + 1],    // numero d'identifiant(cle)
-        Supprime[TAILLE_SUPPRIMER + 1],          // supprimer='f' l'element n'a pas ete supprime supprimer='t' sinon
         Materiel[TAILLE_MATERIEL],               // le type du materiel
         Fonctionne[TAILLE_FONCTIONNEMENT + 1],   // fonctionne = "f", le materiel marche, fonctionne = "n" sinon
         Prix[TAILLE_PRIX + 1],                   // le ptix du materiel
         Taille[TAILLE_TAILLE + 1],               // taille du champs description
         Description[TAILLE_MAX_DESCRIPTION + 1]; // la description (caracteristiques) du materiel
 
-    /**************************************************************************************************************|
-    | Identifiant | champs supprime | Type materiel | fonctionne |    Prix   |   taille   | Description (variable) |
-    |  (5 bytes)  |   (1 bytes)     |  (12 bytes)   |  (1 bytes) | (6 bytes) |  (3 bytes) |  (max sur 272 bytes)   |
-    |**************************************************************************************************************/
+    /***************************************************************************************************|
+    | Identifiant | champs fonctionne | Type materiel |    Prix   |   taille   | Description (variable) |
+    |  (5 bytes)  |   (1 bytes)       |  (12 bytes)   | (6 bytes) |  (3 bytes) |  (max sur 273 bytes)   |
+    |***************************************************************************************************/
     while (i <= Entete_TOVnC(&f, 1))
     {
         LireDir_TOVnC(&f, i, &Buf);
@@ -214,31 +213,27 @@ void afficher_fichier_TOVnC(char nom_fichier[])
         while (j < Buf.nb)
         {
             extraire_chaine_TOVnC(Identifiant, &j, TAILLE_IDENTIFIANT, &Buf);
-            extraire_chaine_TOVnC(Supprime, &j, TAILLE_SUPPRIMER, &Buf);
-            extraire_chaine_TOVnC(Materiel, &j, TAILLE_MATERIEL - 1, &Buf);
             extraire_chaine_TOVnC(Fonctionne, &j, TAILLE_FONCTIONNEMENT, &Buf);
+            extraire_chaine_TOVnC(Materiel, &j, TAILLE_MATERIEL - 1, &Buf);
             extraire_chaine_TOVnC(Prix, &j, TAILLE_PRIX, &Buf);
             extraire_chaine_TOVnC(Taille, &j, TAILLE_TAILLE, &Buf);
             extraire_chaine_TOVnC(Description, &j, atoi(Taille), &Buf);
 
-            if (strcmp(Supprime, "f") == 0)
-            {
-                printf("\n\n.........................\n");
-                printf(".                       .\n");
-                printf(".  Materiel numero : %i  .\n", counter);
-                printf(".                       .\n");
-                printf(".........................\n");
-                printf("identifiant: %.5s\n", Identifiant);
-                printf("materiel: %.11s\n", Materiel);
-                if (strcmp(Fonctionne, "f") == 0)
-                    printf("Fonctionne? : OUI\n");
-                else
-                    printf("Fonctionne? : NON\n");
-                printf("prix: %.6s\n", Prix);
-                printf("taille de description: %.3s\n", Taille);
-                printf("description: %s\n", Description);
-                counter++;
-            }
+            printf("\n\n.........................\n");
+            printf(".                       .\n");
+            printf(".  Materiel numero : %i  .\n", counter);
+            printf(".                       .\n");
+            printf(".........................\n");
+            printf("identifiant: %.5s\n", Identifiant);
+            printf("materiel: %.11s\n", Materiel);
+            if (strcmp(Fonctionne, "f") == 0)
+                printf("Fonctionne? : OUI\n");
+            else
+                printf("Fonctionne? : NON\n");
+            printf("prix: %.6s\n", Prix);
+            printf("taille de description: %.3s\n", Taille);
+            printf("description: %s\n", Description);
+            counter++;
         }
         j = 0;
         i++;
@@ -772,17 +767,16 @@ void Generer_Chaine(char chaine[], int length, int number)
 |       une seule chaine destination           |
 |                                              |
 |**********************************************/
-void concatenate(char *destination, char *identifiant, char *supprime, char *materiel, char *fonctionne, char *prix, char *taille, char *description)
+void concatenate(char *destination, char *identifiant, char *fonctionne, char *materiel, char *prix, char *taille, char *description)
 {
     /**************************************************************************************************************|
     | Identifiant | champs supprime | Type materiel | fonctionne |    Prix   |   taille   | Description (variable) |
-    |  (5 bytes)  |   (1 bytes)     |  (12 bytes)   |  (1 bytes) | (6 bytes) |  (3 bytes) |  (max sur 272 bytes)   |
+    |  (5 bytes)  |   (1 bytes)     |  (12 bytes)   |  (1 bytes) | (6 bytes) |  (3 bytes) |  (max sur 273 bytes)   |
     |**************************************************************************************************************/
     sprintf(destination, "%s", "");                          // vider le tableau des caractères
     strncat(destination, identifiant, TAILLE_IDENTIFIANT);   // destination+=identifiant
-    strncat(destination, supprime, TAILLE_SUPPRIMER);        // destination+=supprime
-    strncat(destination, materiel, TAILLE_MATERIEL);         // destination+=materiel
     strncat(destination, fonctionne, TAILLE_FONCTIONNEMENT); // destination+=fonctionne
+    strncat(destination, materiel, TAILLE_MATERIEL);         // destination+=materiel
     strncat(destination, prix, TAILLE_PRIX);                 // destination+=prix
     strncat(destination, taille, TAILLE_TAILLE);             // destination+=taille
     strcat(destination, description);                        // destination+=description
@@ -938,9 +932,8 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
         k,                                           // le numero de l'element insere de 1 a n
         l;                                           // la longueur total de l'enregistrement ajoute
     char Identifiant[TAILLE_IDENTIFIANT + 1],        // numero d'identifiant(cle)
-        Supprime[TAILLE_SUPPRIMER + 1] = "f",        // supprimer='f' l'element n'a pas ete supprime supprimer='t' sinon
-        Materiel[TAILLE_MATERIEL + 1],               // le type du materiel
         Fonctionne[TAILLE_FONCTIONNEMENT + 1] = "f", // fonctionne = 'f', le materiel marche, fonctionne = 'n' sinon
+        Materiel[TAILLE_MATERIEL + 1],               // le type du materiel
         Prix[TAILLE_PRIX + 1],                       // le ptix du materiel
         Taille[TAILLE_TAILLE + 1],                   // taille du champs description
         Description[TAILLE_MAX_DESCRIPTION + 1];     // la description (caracteristiques) du materiel
@@ -966,16 +959,22 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
         printf("taille de description: %.3s\n", Taille);
         printf("description: %s\n", Description);
 
-        l = TAILLE_IDENTIFIANT + TAILLE_SUPPRIMER + TAILLE_MATERIEL + TAILLE_FONCTIONNEMENT + TAILLE_PRIX + TAILLE_TAILLE + strlen(Description);
+        l = TAILLE_IDENTIFIANT + TAILLE_FONCTIONNEMENT + TAILLE_MATERIEL + TAILLE_PRIX + TAILLE_TAILLE + strlen(Description);
         char Enreg[l];
-        concatenate(Enreg, Identifiant, Supprime, Materiel, Fonctionne, Prix, Taille, Description);
+        concatenate(Enreg, Identifiant, Fonctionne, Materiel, Prix, Taille, Description);
         printf("l'element sera insere sous cette forme: %s\n", Enreg);
         printf("\non est dans le bloc %i", i);
         Ecrire_chaine_TOVnC(F, Enreg, Identifiant, &i, &j, &buf);
         if (strcmp(Fonctionne, "f") == 0) // generer le champs fonctionnement en alternatif
-            strcpy(Fonctionne, "n");      // si le precedent fonctionnait, le prochain ne fonctionne pas
-        else                              // si le precedent ne fonctionnait pas , le prochain fonctionne
-            strcpy(Fonctionne, "f");      // pour equilibrer les deux fichiers genere par la reorganisation
+        {
+            // si le precedent fonctionnait, le prochain ne fonctionne pas
+            strcpy(Fonctionne, "n");
+        }
+        else // si le precedent ne fonctionnait pas , le prochain fonctionne
+        {
+            Aff_Entete_TOVnC(F, 3, Entete_TOVnC(F, 3) + l);
+            strcpy(Fonctionne, "f"); // pour equilibrer les deux fichiers genere par la reorganisation
+        }
     }
     EcrireDir_TOVnC(F, i, buf); // ecrire le dernier buffer meme si il n'etait pas plein
     Fermer_TOVnC(F);            // fermer le fichier
@@ -1011,7 +1010,6 @@ void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trou
         Cle_Max[TAILLE_IDENTIFIANT + 1],         // la plus grande cle dans un bloc (plus grand identifiant)
         Cle_Courrante[TAILLE_IDENTIFIANT + 1],   // la cle courrant dont on s'est arrete dans le parcours
         Identifiant[TAILLE_IDENTIFIANT + 1],     // numero d'identifiant(cle)
-        Supprime[TAILLE_SUPPRIMER + 1],          // supprimer='f' l'element n'a pas ete supprime supprimer='t' sinon
         Materiel[TAILLE_MATERIEL],               // le type du materiel
         Fonctionne[TAILLE_FONCTIONNEMENT + 1],   // fonctionne = 'f', le materiel marche, fonctionne = 'n' sinon
         Prix[TAILLE_PRIX + 1],                   // le ptix du materiel
@@ -1034,16 +1032,15 @@ void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trou
         {                                                                                                 // alors on recherche la cle dans ce bloc
             while (!(*trouv) && *j < Buf.nb && !stop)                                                     // stop = cle_courante > cle_recherche
             {                                                                                             // recherche sequentielle dans le bloc
-                extraire_chaine_TOVnC(Supprime, j, TAILLE_SUPPRIMER, &Buf);                               // recuperer un le champs de suppression
-                if (strcmp(Identifiant_Recherche, Cle_Courrante) == 0 && strcmp(Supprime, "f") == 0)      // la cle est donc trouveee dans le bloc i
+                extraire_chaine_TOVnC(Fonctionne, j, TAILLE_FONCTIONNEMENT, &Buf);                        // recuperer un le champs de suppression
+                if (strcmp(Identifiant_Recherche, Cle_Courrante) == 0)                                    // la cle est donc trouveee dans le bloc i
                 {
-                    extraire_chaine_TOVnC(Materiel, j, TAILLE_MATERIEL - 1, &Buf);     // extraire le materiel
-                    extraire_chaine_TOVnC(Fonctionne, j, TAILLE_FONCTIONNEMENT, &Buf); // extraire son etat de fonctionnement
-                    extraire_chaine_TOVnC(Prix, j, TAILLE_PRIX, &Buf);                 // extraire son prix
-                    extraire_chaine_TOVnC(Taille, j, TAILLE_TAILLE, &Buf);             // extraire la taille de la description
-                    extraire_chaine_TOVnC(Description, j, atoi(Taille), &Buf);         // extraire la description
-                    *trouv = 1;                                                        // mettre trouve a vrai pour arreter la recherche
-                    *j = temp_j;                                                       // faire revenir j a la position du premier champs avant decalage (l'identifiant)
+                    extraire_chaine_TOVnC(Materiel, j, TAILLE_MATERIEL - 1, &Buf); // extraire le materiel
+                    extraire_chaine_TOVnC(Prix, j, TAILLE_PRIX, &Buf);             // extraire son prix
+                    extraire_chaine_TOVnC(Taille, j, TAILLE_TAILLE, &Buf);         // extraire la taille de la description
+                    extraire_chaine_TOVnC(Description, j, atoi(Taille), &Buf);     // extraire la description
+                    *trouv = 1;                                                    // mettre trouve a vrai pour arreter la recherche
+                    *j = temp_j;                                                   // faire revenir j a la position du premier champs avant decalage (l'identifiant)
                     printf("\n\n---------------- L'enregistrement trouve dans le bloc %d a la position %d ------------------\n", *i, *j);
                     printf("|    -> L'identifiant : %s\n", Cle_Courrante);                     // afficher la cle
                     printf("|    -> Le type materiel : %s\n", Materiel);                       // afficher le materiel
@@ -1066,11 +1063,11 @@ void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trou
                         printf("|    -> Dans la position : %i\n", *j);
                         printf("-------------------------------------------------------------------------------------\n\n");
                     }
-                    else                                                                     // sinon on passe au prochain materiel dans le meme bloc toujours
-                    {                                                                        // alors
-                        *j = *j + TAILLE_MATERIEL - 1 + TAILLE_FONCTIONNEMENT + TAILLE_PRIX; // zapper les champs: materiel, fonctionnement, taille
-                        extraire_chaine_TOVnC(Taille, &(*j), TAILLE_TAILLE, &Buf);           // recuperer la taille de la description
-                        *j = *j + atoi(Taille);                                              // zapper la description egalement
+                    else                                                           // sinon on passe au prochain materiel dans le meme bloc toujours
+                    {                                                              // alors
+                        *j = *j + TAILLE_MATERIEL - 1 + TAILLE_PRIX;               // zapper les champs: materiel, fonctionnement, taille
+                        extraire_chaine_TOVnC(Taille, &(*j), TAILLE_TAILLE, &Buf); // recuperer la taille de la description
+                        *j = *j + atoi(Taille);                                    // zapper la description egalement
                         temp_j = *j;
                         extraire_chaine_TOVnC(Cle_Courrante, &(*j), TAILLE_IDENTIFIANT, &Buf); // recuperer la cle prochaine a verifier
                     }
@@ -1097,6 +1094,144 @@ void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trou
     Fermer_TOVnC(&f);
 }
 
+/***********************************************|
+|                                               |
+| COPIER LA CHAINE str DANS LA CHAINE tableau   |
+| A PARTIR DE LA POSITION pos                   |
+|                                               |
+|***********************************************/
+
+void ins_string(char tableau[B], int pos, char str[B]) // module à utilisé pour l'insertion
+{
+    int i = 0;
+    while (i < strlen(str))
+    {
+        tableau[pos] = str[i];
+        pos++;
+        i++;
+    }
+}
+
+/*
+
+
+
+
+
+
+
+
+
+
+ */
+/****************************************************|
+|                                                    |
+|insertion d’un matériel dans le fichier de données  |
+|                                                    |
+|***************************************************/
+
+void inserer_TOVnC(char nom_fichier[], char chaine[]) // procédure pour inserer une chaine dans un fichier , la chaine represente le materiel
+{
+    fichier_TOVnC f;
+    Ouvrir_TOVnC(&f, nom_fichier, 'A');
+    int i, j, l, k, ident, cpt, trouv;
+    int stop = 1;
+    int taille_materiel;
+    int TAILLE_chaine1;
+    char key[TAILLE_IDENTIFIANT + 1];
+    char chaine1[2 * B], // on déclare un tableau assez grand afin de s'assurer qu'il peut recevoir plus de materiels que contient notre bloc
+        Cle_Max[TAILLE_IDENTIFIANT + 1];
+    // fichier_TOVnC f;
+    Tbloc_TOVnC Buf;
+    // nom_fichier = FICHIER_ORIGINAL;
+
+    // mettre notre identifiant de la chaine  dans 'key' pour ensuite l'utiliser pour la recherche
+    key[0] = chaine[0];
+    key[1] = chaine[1];
+    key[2] = chaine[2];
+    key[3] = chaine[3];
+    key[4] = chaine[4];
+    ident = atoi(key); // taille de la cle de la chaine qu'on veut l'inserer (in case we need it )
+
+    taille_materiel = strlen(chaine); // affecter à taille_materiel la taille du materiel (chaine) qu'on va insérer
+    // Ouvrir_TOVnC(&f, FICHIER_ORIGINAL , 'A');
+    Recherche_TOVnC(nom_fichier, key, &trouv, &i, &j); // on fait la recherche de la cle du materiel qu'on veut l'inserer
+
+    if (!trouv)
+    {                                // chaine doit être inséré dans le bloc i à la position j
+        strcpy(Cle_Max, Buf.cleMax); // on sauvgarde la cle Max pour l'utiliser dans la mise à jour
+        while (stop && i <= Entete_TOVnC(&f, 1))
+        {
+            LireDir_TOVnC(&f, i, &Buf);
+
+            /**  si l'espace libre peut contenir le materiel, on décale si nécessaire et puis on insere le materiel  **/
+            if ((B - Buf.nb) >= taille_materiel)
+            {
+                l = Buf.nb;
+                k = Buf.nb + taille_materiel;
+                cpt = 1;
+                while (cpt <= Buf.nb)
+                {
+                    Buf.tableau[k] = Buf.tableau[l];
+                    k--;
+                    l--;
+                    cpt++;
+                }
+                ins_string(Buf.tableau, j, chaine);
+                Buf.nb = Buf.nb + taille_materiel;
+                EcrireDir_TOVnC(&f, i, Buf);
+                // cle_Max reste la meme
+                stop = 0;
+            }
+
+            /** si l'espace libre ne peut pas contenir le materiel [(taille du materiel) > (B-buf.nb)] **/
+            else
+            {
+                /** si la taille du materiel + position ou il faut l'inserer(j) > B , on prend le materiel qu'on veut l'inserer et les matererls qui viennent apres comme
+                une nouvelle chaine à inserer **/
+                if ((j + taille_materiel) > B)
+                {
+                    TAILLE_chaine1 = (Buf.nb - j);
+                    extraire_chaine_TOVnC(chaine1, &j, TAILLE_chaine1, &Buf);
+
+                    Buf.nb = j;
+                    // ***update cle max?
+                    EcrireDir_TOVnC(&f, i, Buf);
+                    strcat(chaine, chaine1); // nouveau materirl à inserer (chaine) dans le prochain bloc = materiel qu'on veut inserer (chaine)+ les materierls
+                                             // qui viennent  apres ce dernier(chaine1)
+                    i = i + 1, j = 0;        //  l'insertion se fera à la prochaine itération du TQ
+                }
+                else
+                {
+                    /** si la taille du materiel + position ou il faut l'inserer(j) =< B **/
+                    TAILLE_chaine1 = (Buf.nb - j);
+                    extraire_chaine_TOVnC(chaine1, &j, TAILLE_chaine1, &Buf);
+                    ins_string(Buf.tableau, j, chaine);
+                    Buf.nb = j + taille_materiel;
+                    EcrireDir_TOVnC(&f, i, Buf);
+                    strcpy(Buf.cleMax, key); // mise à jour de cle_Max
+                    strcpy(chaine, chaine1); // le neouveau materiel qui va etre inserer dans  prochain bloc
+                    i = i + 1, j = 0;
+                    /*___________________________________________________________________________________________
+                     REMARQUE: on a voulu laiser de vide dans le bloc pour faciliter les prochaines insertions
+                    ( évitant les décalages  )
+                     ____________________________________________________________________________________________*/
+                }
+            }
+        }
+        /** si on dépasse la fin de fichier, on rajoute un nouveau bloc contenant un chaine**/
+        if (i > Entete_TOVnC(&f, 1))
+        {
+            i == Alloc_bloc_TOVnC(&f);
+            strcpy(Buf.tableau, chaine1); // insertion chaine
+            Buf.nb == TAILLE_chaine1;
+            strcpy(Buf.cleMax, Cle_Max); // mise à jour de cle_Max
+            EcrireDir_TOVnC(&f, i, Buf);
+        }
+        Aff_Entete_TOVnC(&f, 2, Entete_TOVnC(&f, 2) + taille_materiel); // Entete_TOVnC(f,2) : nb d'insertion  , on incrémente le compteur d'insertions
+    }
+    Fermer_TOVnC(&f);
+}
 /*
 
 
@@ -1135,11 +1270,11 @@ void Suppression_TOVnC(char nom_fichier[], char identifiant_a_supprimer[])
         char Taille[TAILLE_TAILLE + 1];     // champs taille pour remettre l'entete a jour avec le nombre de char supprime
         LireDir_TOVnC(&F, i, &buf);         // lire le bloc retenu par la recherche
         j += TAILLE_IDENTIFIANT;            // sauter le champs identifiant
-        buf.tableau[j] = 't';               // remettre le champs supprimer a Vrai
+        buf.tableau[j] = 'n';               // remettre le champs fonctionne a faux
 
-        j += TAILLE_SUPPRIMER + TAILLE_MATERIEL + TAILLE_FONCTIONNEMENT + TAILLE_PRIX; // sauter tous les champs jusqèa champs taille
-        extraire_chaine_TOVnC(Taille, &j, TAILLE_TAILLE, &buf);                        // extraire le champs taille de description
-        int Nombre_chars_supprime = TAILLE_IDENTIFIANT + TAILLE_SUPPRIMER + TAILLE_MATERIEL - 1 + TAILLE_FONCTIONNEMENT + TAILLE_PRIX + atoi(Taille);
+        j += TAILLE_FONCTIONNEMENT + TAILLE_MATERIEL + TAILLE_PRIX; // sauter tous les champs jusqèa champs taille
+        extraire_chaine_TOVnC(Taille, &j, TAILLE_TAILLE, &buf);     // extraire le champs taille de description
+        int Nombre_chars_supprime = TAILLE_IDENTIFIANT + TAILLE_FONCTIONNEMENT + TAILLE_MATERIEL - 1 + TAILLE_PRIX + atoi(Taille);
 
         Aff_Entete_TOVnC(&F, 3, Entete_TOVnC(&F, 3) + Nombre_chars_supprime); // mettre le nombre de char supprime dans le fichier a jour
         EcrireDir_TOVnC(&F, i, buf);                                          // ecrire le buffer ne MS aprés la mise a jour du champs supprimer
@@ -1191,7 +1326,6 @@ void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fich
         j2 = 0; // le parcours de position du fichier original LOVC
 
     char Identifiant[TAILLE_IDENTIFIANT + 1],    // numero d'identifiant(cle)
-        Supprime[TAILLE_SUPPRIMER + 1],          // supprimer='f' l'element n'a pas ete supprime supprimer='t' sinon
         Materiel[TAILLE_MATERIEL],               // le type du materiel
         Fonctionne[TAILLE_FONCTIONNEMENT + 1],   // fonctionne = 'f', le materiel marche, fonctionne = 'n' sinon
         Prix[TAILLE_PRIX + 1],                   // le ptix du materiel
@@ -1204,36 +1338,36 @@ void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fich
         while (j < Buf.nb)          // parcourir le i eme bloc jusqu'a la premiere position libre (Buf.nb)
         {
             extraire_chaine_TOVnC(Identifiant, &j, TAILLE_IDENTIFIANT, &Buf);   // extraire le champs Identifiant
-            extraire_chaine_TOVnC(Supprime, &j, TAILLE_SUPPRIMER, &Buf);        // extraire le champs Supprimer
-            extraire_chaine_TOVnC(Materiel, &j, TAILLE_MATERIEL - 1, &Buf);     // extraire le champs materiel
             extraire_chaine_TOVnC(Fonctionne, &j, TAILLE_FONCTIONNEMENT, &Buf); // extraire le champs d'etat de fonctionnement
+            extraire_chaine_TOVnC(Materiel, &j, TAILLE_MATERIEL - 1, &Buf);     // extraire le champs materiel
             extraire_chaine_TOVnC(Prix, &j, TAILLE_PRIX, &Buf);                 // extraire le champs du prix
             extraire_chaine_TOVnC(Taille, &j, TAILLE_TAILLE, &Buf);             // extraire le champs taille de description
             extraire_chaine_TOVnC(Description, &j, atoi(Taille), &Buf);         // extraire le champs description
 
-            if (strcmp(Supprime, "f") == 0) // si le materiel n'a pas ete supprime logiquement
-            {
-                /*********************************************************************************|
-                |  Identifiant |  Type materiel |   Prix    |   taille   | Description (variable) |
-                |   (5 bytes)  |    (12 bytes)  | (6 bytes) |  (3 bytes) |  (max sur 272 bytes)   |
-                |*********************************************************************************/
-                concatenate(Destination, Identifiant, "", Materiel, "", Prix, Taille, Description);
+            concatenate(Destination, Identifiant, "", Materiel, Prix, Taille, Description);
 
-                if (strcmp(Fonctionne, "f") == 0) // si le materiel fonctionne le mettre dans le fichier des materiaux en marche (TOVC)
-                {
-                    Ecrire_Chaine_TOVC(&f1, &i1, &j1, Destination, &Buf1);
-                    printf("\n buf1 after inserting %s \n %s\n\n", Destination, Buf1.tableau);
-                }
-                else // si le materiel ne fonctionne pas le mettre dans le fichier des materiaux en panne (LOVC)
-                {
-                    Ecrire_Chaine_LOVC(&f2, &i2, &j2, Destination, &Buf2);
-                    printf("\n buf2 after inserting %s \n %s\n\n", Destination, Buf2.tab);
-                }
+            /*********************************************************************************|
+            |  Identifiant |  Type materiel |   Prix    |   taille   | Description (variable) |
+            |   (5 bytes)  |    (12 bytes)  | (6 bytes) |  (3 bytes) |  (max sur 273 bytes)   |
+            |*********************************************************************************/
+
+            if (strcmp(Fonctionne, "f") == 0) // si le materiel n'a pas ete supprime logiquement (fonctionne)
+            {                                 // le mettre dans le fichier des materiaux en marche (TOVC)
+
+                Ecrire_Chaine_TOVC(&f1, &i1, &j1, Destination, &Buf1);
+                printf("\n buf1 after inserting %s \n %s\n\n", Destination, Buf1.tableau);
+            }
+            else // si le materiel a ete supprime (ne fonctionne pas)
+            {    // le mettre dans le fichier des materiaux en panne (LOVC)
+
+                Ecrire_Chaine_LOVC(&f2, &i2, &j2, Destination, &Buf2);
+                printf("\n buf2 after inserting %s \n %s\n\n", Destination, Buf2.tab);
             }
         }
         j = 0;
         i++;
     }
+
     EcrireDir_TOVC(&f1, i1, Buf1);  // ecrire dernier buffer du fichier des materiaux en marche
     ecrireDir_LOVC(&f2, i2, &Buf2); // ecrire dernier buffer du fichier des materiaux en marche
     Fermer_TOVC(&f1);
@@ -1307,13 +1441,14 @@ void Generation_fichiers_Materiel(char nom_fichier[])
 int main(void)
 {
     printf("a printing is needed");
-    // Chargement_initial_TOVnC(FICHIER_ORIGINAL, 20);    marche avec success
-    // affichage_entete_TOVnC(FICHIER_ORIGINAL);         marche avec success
-    // afficher_fichier_TOVnC(FICHIER_ORIGINAL);          marche avec success
-    int trouv, i, j;
+    // Chargement_initial_TOVnC(FICHIER_ORIGINAL, 6);       marche avec success
+    // affichage_entete_TOVnC(FICHIER_ORIGINAL);            marche avec success
+    // afficher_fichier_TOVnC(FICHIER_ORIGINAL);            marche avec success
+    int trouv,
+        i, j;
     // Recherche_TOVnC(FICHIER_ORIGINAL, "00050", &trouv, &i, &j);
-    // Suppression_TOVnC(FICHIER_ORIGINAL, "00050");
-    // Recherche_TOVnC(FICHIER_ORIGINAL, "00050", &trouv, &i, &j);
+    // Suppression_TOVnC(FICHIER_ORIGINAL, "00025");
+    // Recherche_TOVnC(FICHIER_ORIGINAL, "00025", &trouv, &i, &j);
     // Reorganisation_TOVnC(FICHIER_ORIGINAL, FICHIER_MATERIEL_FONCTIONNE, FICHIER_MATERIEL_NON_FONCTIONNE);
-    Generation_fichiers_Materiel(FICHIER_ORIGINAL);
+    // Generation_fichiers_Materiel(FICHIER_ORIGINAL);
 }
