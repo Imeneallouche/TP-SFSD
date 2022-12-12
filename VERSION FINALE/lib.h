@@ -1,21 +1,21 @@
-#define B 300                      // le nombre max de caractère que peut contenir le bloc
-#define NB_TYPE_MATERIEL 6         // nombre de types de materiel qui existent
-#define TAILLE_IDENTIFIANT 5       // la taille du champs identifiant (la cle) sur 5 octets
-#define TAILLE_SUPPRIMER 1         // la taille du champs supprime sur 1 octets
-#define TAILLE_MATERIEL 12         // la taille du champ type du materiel sur 12 octets
+#define B 300                // le nombre max de caractère que peut contenir le bloc
+#define NB_TYPE_MATERIEL 6   // nombre de types de materiel qui existent
+#define TAILLE_IDENTIFIANT 5 // la taille du champs identifiant (la cle) sur 5 octets
+#define TAILLE_SUPPRIMER 1
 #define TAILLE_FONCTIONNEMENT 1    // la taille du champs qui indique si le materiel fonctionne ou pas (f-> fonctionne n-> ne fonctionne pas)
+#define TAILLE_MATERIEL 12         // la taille du champ type du materiel sur 12 octets
 #define TAILLE_PRIX 6              // la taille du champs prix du materiel
 #define TAILLE_TAILLE 3            // la taille du champs taille (taille du champs description)
 #define TAILLE_MAX_DESCRIPTION 272 // taille maximal du champs description (le nombre max de chars dans le bloc - la taille des autres champs)
 #define PRIX_MAX 999999            // le prix max d'un materiel
-#define maxBloc 10                 // max d'enregistrement dans un seul bloc (TOF)
+#define MAX_ENREG 10               // max d'enregistrement dans un seul bloc (TOF)
 #define maxNomFichier 30           // la taille max d'un nom du fichier
 #define facteur_reorganisation 0.5 // le facteur de reorganisation du fichier
 
-/**************************************************************************************************************|
-| Identifiant | champs supprime | Type materiel | fonctionne |    Prix   |   taille   | Description (variable) |
-|  (5 bytes)  |   (1 bytes)     |  (12 bytes)   |  (1 bytes) | (6 bytes) |  (3 bytes) |  (max sur 272 bytes)   |
-|**************************************************************************************************************/
+/***************************************************************************************************|
+| Identifiant | champs fonctionne | Type materiel |    Prix   |   taille   | Description (variable) |
+|  (5 bytes)  |   (1 bytes)       |  (12 bytes)   | (6 bytes) |  (3 bytes) |  (max sur 273 bytes)   |
+|***************************************************************************************************/
 
 /***********************************************|
 |                                               |
@@ -107,9 +107,9 @@ typedef int typeval_TOF; // type de la valeur stockee dans l'enregistrement
 |*********************************************/
 typedef struct Tenreg_TOF
 {
-    int cle;            // cle unique a chaque enregistrement
-    typeval_TOF valeur; // valeur stockée dans l'enregistrement
-    int supprimer;      // booleen  si efface  sinon
+    int Identifiant; // cle unique a chaque enregistrement (identifiant)
+    int Prix;        // le prix du materiel
+    int supprimer;   // booleen si efface ou non
 } Tenreg_TOF;
 
 /*********************************************|
@@ -119,7 +119,7 @@ typedef struct Tenreg_TOF
 |*********************************************/
 typedef struct Tbloc_TOF
 {
-    Tenreg_TOF tab[maxBloc];
+    Tenreg_TOF tab[MAX_ENREG];
     int nombre_enreg;
 
 } Tbloc_TOF;
@@ -353,6 +353,17 @@ char *FICHIER_ORIGINAL = "Materiel_informatique_TOVnC.bin";                     
 char *FICHIER_MATERIEL_FONCTIONNE = "Materiel_informatique_en_marche_TOVC.bin";    // le nom du fichier qui contient le materiel en fonction
 char *FICHIER_MATERIEL_NON_FONCTIONNE = "Materiel_informatique_en_panne_LOVC.bin"; // le nom du fichier qui contient le materiel en panne
 
+typedef struct FICHIER_MATERIEL
+{
+    fichier_TOF f;                   // fichier TOF
+    char nom_fichier[maxNomFichier]; // le nom du fichier TOF
+    char Materiel[TAILLE_MATERIEL];  // le type du materiel associe au fichier
+    int i;                           // le numero du bloc ou l'insertion s'est arrete
+    int j;                           // l'enregistrement dans bloc i ou l'insertion s'est arrete
+} FICHIER_MATERIEL;
+
+FICHIER_MATERIEL fichier_materiel[NB_TYPE_MATERIEL];
+
 /*
 
 
@@ -393,6 +404,10 @@ int Random_Number(int lower, int upper);
 |       FONCTIONS TOVnC         |
 |                               |
 |*******************************/
+/**************************************************************************************************************|
+| Identifiant | champs supprime | Type materiel | fonctionne |    Prix   |   taille   | Description (variable) |
+|  (5 bytes)  |   (1 bytes)     |  (12 bytes)   |  (1 bytes) | (6 bytes) |  (3 bytes) |  (max sur 272 bytes)   |
+|**************************************************************************************************************/
 void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], char cle[], int *i, int *j, Tampon_TOVnC *Buf);
 void affichage_entete_TOVnC(char nom_fichier[]);
 void extraire_chaine_TOVnC(char destination[], int *j, int taille, Tampon_TOVnC *Buf);
@@ -407,6 +422,10 @@ void Suppression_TOVnC(char nom_fichier[], char identifiant_a_supprimer[]);
 |        FONCTIONS TOVC         |
 |                               |
 |*******************************/
+/***************************************************************************|
+| Identifiant | Type materiel |   Prix    |   taille   |    Description     |
+|  (5 bytes)  |   (12 bytes)  | (6 bytes) |  (3 bytes) |    (variable)      |
+|***************************************************************************/
 void Ecrire_Chaine_TOVC(fichier_TOVC *fichier, int *i, int *j, char chaine[], Tampon_TOVC *buf);
 
 /*******************************|
@@ -414,6 +433,10 @@ void Ecrire_Chaine_TOVC(fichier_TOVC *fichier, int *i, int *j, char chaine[], Ta
 |        FONCTIONS LOVC         |
 |                               |
 |*******************************/
+/***************************************************************************|
+| Identifiant | Type materiel |   Prix    |   taille   |    Description     |
+|  (5 bytes)  |   (12 bytes)  | (6 bytes) |  (3 bytes) |    (variable)      |
+|***************************************************************************/
 void Ecrire_Chaine_LOVC(fichier_LOVC *fichier, int *i, int *j, char chaine[], Tampon_LOVC *buf);
 
 /*
@@ -433,11 +456,32 @@ void Ecrire_Chaine_LOVC(fichier_LOVC *fichier, int *i, int *j, char chaine[], Ta
 |     FONCTIONS IMPLEMENTES POUR PARTIE 02      |
 |                                               |
 |***********************************************/
-/*BRAINSTORMING*/
+/*******************************|
+|                               |
+|         FONCTIONS TOF         |
+|                               |
+|*******************************/
+/*****************************|
+|  Identifiant  |     Prix    |
+|   (5 bytes)   |  (6 bytes)  |
+|*****************************/
+void Generation_fichiers_Materiel(char nom_fichier[]);
+
+/*
+
+
+
+
+
+
+
+
+
+BRAINSTORMING*/
 /*fichier TOVC en marche*/
-/********************************************************************************
+/*****************************************************************************|
 | Identifiant |Type materiel |   Prix   |   taille   | Description (variable) |
-|  (5 bytes)  |(12 bytes)   | (6 bytes) |  (3 bytes) |  (max sur 272 bytes)    |
+|  (5 bytes)  |(12 bytes)   | (6 bytes) |  (3 bytes) |  (max sur 272 bytes)   |
 |*****************************************************************************/
 
 // les fichiers qui seront générés
