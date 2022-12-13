@@ -29,16 +29,16 @@ void ins_string(char tableau[B],int pos,char str[B])                            
 
 
 void inserer_TOVnC(char nom_fichier[],char chaine[])            //procédure pour inserer une chaine dans un fichier , la chaine represente le materiel
-{                                                               // chaine définie le materiel qu'on veut l'inserer
+{                                                               
 
             int     i,j,l,k,ident,cpt,trouv;
             int     stop=1;
             int     taille_materiel;
             int     TAILLE_chaine1;
             char    key [TAILLE_IDENTIFIANT + 1];
-            char    chaine1 [2*B],                         //on déclare un tableau assez grand afin de s'assurer qu'il peut recevoir plus de materiels que contient notre bloc
+            char    chaine1 [B+1],                        
                     Cle_Max[TAILLE_IDENTIFIANT + 1];
-            //fichier_TOVnC f;
+            fichier_TOVnC f;
             Tbloc_TOVnC Buf;
             //char nom_fichier[25];
             //nom_fichier = FICHIER_ORIGINAL;
@@ -69,7 +69,7 @@ void inserer_TOVnC(char nom_fichier[],char chaine[])            //procédure pou
                     cpt = 1;
                     while( cpt <= Buf.nb)
                     {
-                         Buf.tableau[k] = Buf.tableau[l];               // on fait le decalage des materieux qui viennent juste apres le materiel qu'on va l'inserer 
+                         Buf.tableau[k] = Buf.tableau[l];               // on fait le decalage des materiaux qui viennent juste apres le materiel qu'on va l'inserer 
                          k--;l--;cpt++;                              
                     }
                     ins_string(Buf.tableau,j,chaine);                   // insertion du materiel 
@@ -103,10 +103,10 @@ void inserer_TOVnC(char nom_fichier[],char chaine[])            //procédure pou
                 TAILLE_chaine1 = (Buf.nb - j);
                 extraire_chaine_TOVnC(chaine1,j,TAILLE_chaine1 , &Buf);      
                 ins_string(Buf.tableau,j,chaine);               // on insere le materiel
-                Buf.nb = j + taille_materiel;                   //
+                Buf.nb = j + taille_materiel;                   //mise à jour la position libre (buf.nb)
                 EcrireDir_TOVnC(&f,i,Buf);
                 strcpy(Buf.cleMax,key );                       // mise à jour de cle_Max
-                strcpy(chaine,chaine1);                       // le nouveau materiel qui va etre inserer dans  prochain bloc (chaine reçoit chaine1)
+                strcpy(chaine,chaine1);                       // le nouveau materiel qui va etre inserer dans le prochain bloc (chaine reçoit chaine1)
                  i=i+1 , j=0;   
                 /*___________________________________________________________________________________________
                  REMARQUE: on a voulu laiser de vide dans le bloc pour faciliter les prochaines insertions
@@ -118,7 +118,7 @@ void inserer_TOVnC(char nom_fichier[],char chaine[])            //procédure pou
 
     }
      }
-     /** si on dépasse la fin de fichier, on rajoute un nouveau bloc contenant un chaine**/
+     /** si on dépasse la fin de fichier, on rajoute un nouveau bloc contenant la chaine**/
      if (i> Entete_TOVnC(&f, 1)){
         i== Alloc_bloc_TOVnC(&f);
         strcpy (Buf.tableau , chaine1);               // insertion chaine

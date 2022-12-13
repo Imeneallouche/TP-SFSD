@@ -1096,142 +1096,6 @@ void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trou
 | A PARTIR DE LA POSITION pos                   |
 |                                               |
 |***********************************************/
-void ins_string(char tableau[B], int pos, char str[B]) // module à utilisé pour l'insertion
-{
-    int i = 0;
-    while (i < strlen(str))
-    {
-        tableau[pos] = str[i];
-        pos++;
-        i++;
-    }
-}
-
-/*
-
-
-
-
-
-
-
-
-
-
- */
-/****************************************************|
-|                                                    |
-|insertion d’un matériel dans le fichier de données  |
-|                                                    |
-|***************************************************/
-
-void Insertion_TOVnC(char nom_fichier[], char chaine[]) // procédure pour inserer une chaine dans un fichier , la chaine represente le materiel
-{
-    fichier_TOVnC f;
-    Ouvrir_TOVnC(&f, nom_fichier, 'A');
-    int i, // le numero du bloc retourne par la recherche
-        j, // la position de l'element ou il devait etre insere
-        l,
-        k,
-        ident,
-        cpt,
-        trouv, // le booleen qui indique si l'identifiant existe deja ou pas
-        stop = 1,
-        taille_materiel,
-        TAILLE_chaine1;
-
-    char Identifiant[TAILLE_IDENTIFIANT + 1],
-        Fonctionne[TAILLE_FONCTIONNEMENT + 1] = "f";
-
-    char chaine1[2 * B], // on déclare un tableau assez grand afin de s'assurer qu'il peut recevoir plus de materiels que contient notre bloc
-        Cle_Max[TAILLE_IDENTIFIANT + 1];
-
-    Tbloc_TOVnC Buf;
-
-    // mettre notre identifiant de la chaine  dans 'Identifiant' pour ensuite l'utiliser pour la recherche
-    Identifiant[0] = chaine[0];
-    Identifiant[1] = chaine[1];
-    Identifiant[2] = chaine[2];
-    Identifiant[3] = chaine[3];
-    Identifiant[4] = chaine[4];
-    ident = atoi(Identifiant); // taille de la cle de la chaine qu'on veut l'inserer (in case we need it )
-
-    taille_materiel = strlen(chaine); // affecter à taille_materiel la taille du materiel (chaine) qu'on va insérer
-    // Ouvrir_TOVnC(&f, FICHIER_ORIGINAL , 'A');
-    Recherche_TOVnC(nom_fichier, Identifiant, &trouv, &i, &j); // on fait la recherche de la cle du materiel qu'on veut l'inserer
-
-    if (!trouv)
-    { // chaine doit être inséré dans le bloc i à la position j
-        while (stop && i <= Entete_TOVnC(&f, 1))
-        {
-            LireDir_TOVnC(&f, i, &Buf);
-
-            /**  si l'espace libre peut contenir le materiel, on décale si nécessaire et puis on insere le materiel  **/
-            if ((B - Buf.nb) >= taille_materiel)
-            {
-                l = Buf.nb;
-                k = Buf.nb + taille_materiel;
-                cpt = 1;
-                while (cpt <= Buf.nb)
-                {
-                    Buf.tableau[k] = Buf.tableau[l];
-                    k--;
-                    l--;
-                    cpt++;
-                }
-                ins_string(Buf.tableau, j, chaine);
-                Buf.nb = Buf.nb + taille_materiel;
-                EcrireDir_TOVnC(&f, i, Buf);
-                // cle_Max reste la meme
-                stop = 0;
-            }
-
-            /** si l'espace libre ne peut pas contenir le materiel [(taille du materiel) > (B-buf.nb)] **/
-            else
-            {
-                /** si la taille du materiel + position ou il faut l'inserer(j) > B , on prend le materiel qu'on veut l'inserer et les matererls qui viennent apres comme
-                une nouvelle chaine à inserer **/
-                if ((j + taille_materiel) > B)
-                {
-                    TAILLE_chaine1 = (Buf.nb - j);
-                    extraire_chaine_TOVnC(chaine1, &j, TAILLE_chaine1, &Buf);
-
-                    Buf.nb = j;
-                    // ***update cle max?
-                    EcrireDir_TOVnC(&f, i, Buf);
-                    strcat(chaine, chaine1); // nouveau materirl à inserer (chaine) dans le prochain bloc = materiel qu'on veut inserer (chaine)+ les materierls
-                                             // qui viennent  apres ce dernier(chaine1)
-                    i = i + 1, j = 0;        //  l'insertion se fera à la prochaine itération du TQ
-                }
-                else
-                {
-                    /** si la taille du materiel + position ou il faut l'inserer(j) =< B **/
-                    TAILLE_chaine1 = (Buf.nb - j);
-                    extraire_chaine_TOVnC(chaine1, &j, TAILLE_chaine1, &Buf);
-                    ins_string(Buf.tableau, j, chaine);
-                    Buf.nb = j + taille_materiel;
-                    EcrireDir_TOVnC(&f, i, Buf);
-                    strcpy(chaine, chaine1); // le neouveau materiel qui va etre inserer dans  prochain bloc
-                    i = i + 1, j = 0;
-                    /*___________________________________________________________________________________________
-                     REMARQUE: on a voulu laiser de vide dans le bloc pour faciliter les prochaines insertions
-                    ( évitant les décalages  )
-                     ____________________________________________________________________________________________*/
-                }
-            }
-        }
-        /** si on dépasse la fin de fichier, on rajoute un nouveau bloc contenant un chaine**/
-        if (i > Entete_TOVnC(&f, 1))
-        {
-            i == Alloc_bloc_TOVnC(&f);
-            strcpy(Buf.tableau, chaine1); // insertion chaine
-            Buf.nb == TAILLE_chaine1;
-            EcrireDir_TOVnC(&f, i, Buf);
-        }
-        Aff_Entete_TOVnC(&f, 2, Entete_TOVnC(&f, 2) + taille_materiel); // Entete_TOVnC(f,2) : nb d'insertion  , on incrémente le compteur d'insertions
-    }
-    Fermer_TOVnC(&f);
-}
 
 /*
 
@@ -1253,75 +1117,7 @@ void Insertion_TOVnC(char nom_fichier[], char chaine[]) // procédure pour inser
 |insertion d’un matériel dans le fichier de données  |
 |                                                    |
 |***************************************************/
-/*
-void recupsemi_enreg(TOVC *pF, semi_enreg SE, int *i, int *j) // a modifier ! comme hidouci
-{
-    int taille;
-    char inter[Taille_Bloc + 1], inter2[Taille_Bloc + 1];
-    Buffer buf;
-    liredir(pF, *i, &buf);
-    sub_string(buf.chaine, *j, 3, inter);
-    if (strlen(inter) == 3)
-    {
-        taille = atoi(inter);
-        (*j) += 3;
-    }
-    else
-    {
-        (*i)++;
-        (*j) = 0;
-        liredir(pF, *i, &buf);
-        sub_string(buf.chaine, *j, 3 - strlen(inter), inter2);
-        sprintf(inter, "%s%s", inter, inter2);
-        taille = atoi(inter);
-        (*j) += strlen(inter2);
-    }
-    sprintf(SE, "%s", inter);
-    sub_string(buf.chaine, *j, taille + 4, inter);
-    if (strlen(inter) == taille + 4)
-    {
-        sprintf(SE, "%s%s", SE, inter);
-        (*j) += taille + 4;
-    }
-    else
-    {
-        (*i)++;
-        (*j) = 0;
-        liredir(pF, *i, &buf);
-        sub_string(buf.chaine, *j, taille + 4 - strlen(inter), inter2);
-        sprintf(inter, "%s%s", inter, inter2);
-        sprintf(SE, "%s%s", SE, inter);
-        (*j) += strlen(inter2);
-    }
-}
 
-void affich_TOVC(TOVC *pF)
-{
-    int i = 1, i1 = 1, j = 0, j1 = 0;
-    Enreg E;
-    semi_enreg SE;
-    printf("ENTETE : %d\t%d\t%d\t%d\n", entete(pF, 1), entete(pF, 2), entete(pF, 3), entete(pF, 4));
-    while (i <= entete(pF, 1))
-    {
-        recupsemi_enreg(pF, SE, &i1, &j1);
-        SemitoEnreg(SE, &E);
-        printf("%d|%d|%s", E.cle, E.sup, E.info);
-        if (i == i1)
-            printf(" Dans le Bloc %d\n", i);
-        else
-            printf(" commence du bloc %d et chevauche le bloc %d\n", i, i1);
-        if (j1 == Taille_Bloc)
-        {
-            i1++;
-            j1 = 0;
-        }
-        i = i1;
-        j = j1;
-        if ((i == entete(pF, 1)) && j == entete(pF, 3))
-            break;
-    }
-}
-*/
 /*
 
 
@@ -1476,8 +1272,36 @@ void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fich
 
 
 
- */
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ */
+/*********************************************************|
+|                                                         |
+|         FONCTIONS IMPLEMENTES POUR PARTIE 02            |
+|                                                         |
+|*********************************************************/
 /************************************************|
 |                                                |
 |  Generer fichiers TOF a partir du fichier TOVC |
