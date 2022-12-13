@@ -1,3 +1,4 @@
+
 /***********************************************|
 |                                               |
 | COPIER LA CHAINE str DANS LA CHAINE tableau   |
@@ -83,10 +84,10 @@ void inserer_TOVnC(char nom_fichier[],char chaine[])            //procédure pou
 
 
         /** si l'espace libre ne peut pas contenir le materiel [(taille du materiel) > (B-buf.nb)] **/
-        else{
+           else{
             /** si la taille du materiel + position ou il faut l'inserer(j) > B , on prend le materiel qu'on veut l'inserer et les matererls qui viennent apres comme
             une nouvelle chaine à inserer **/
-            if( (j + taille_materiel)>B ){
+              if( (j + taille_materiel)>B ){
                 TAILLE_chaine1 = (Buf.nb - j);                              // la taille des enregistrements qui viennent juste apres le meterile qu'on veut l'inserer     
                 extraire_chaine_TOVnC(chaine1, j,TAILLE_chaine1, &Buf);     // on fait sortir ces derniers enregistrements du bloc pour les inserer avec le materiel 
                                                                             // qu'on veut l'inserer 
@@ -96,8 +97,8 @@ void inserer_TOVnC(char nom_fichier[],char chaine[])            //procédure pou
                                                    //qui viennent  apres ce dernier(chaine1)
                 i= i+1, j=0;                      //  l'insertion se fera à la prochaine itération du TQ , dans le prochain bloc à la premiere position 
 
-                 
-            else{
+              }
+              else {
             /** si la taille du materiel + position ou il faut l'inserer(j) =< B **/
                 TAILLE_chaine1 = (Buf.nb - j);
                 extraire_chaine_TOVnC(chaine1,j,TAILLE_chaine1 , &Buf);      
@@ -111,11 +112,14 @@ void inserer_TOVnC(char nom_fichier[],char chaine[])            //procédure pou
                 ( évitant les décalages  )
                  ____________________________________________________________________________________________*/
 
-              }
-            }
+              
+            
+              } 
+         }
+           }
 
     }
-     }
+     
      /** si on dépasse la fin de fichier, on rajoute un nouveau bloc contenant la chaine**/
      if (i> Entete_TOVnC(&f, 1)){
         i== Alloc_bloc_TOVnC(&f);
@@ -129,6 +133,4 @@ void inserer_TOVnC(char nom_fichier[],char chaine[])            //procédure pou
 
  
  }
-  Fermer_TOVnC(&f);
-}
-
+   Fermer_TOVnC(&f);
