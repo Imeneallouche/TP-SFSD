@@ -769,10 +769,11 @@ void Generer_Chaine(char chaine[], int length, int number)
 |**********************************************/
 void concatenate(char *destination, char *identifiant, char *fonctionne, char *materiel, char *prix, char *taille, char *description)
 {
-    /**************************************************************************************************************|
-    | Identifiant | champs supprime | Type materiel | fonctionne |    Prix   |   taille   | Description (variable) |
-    |  (5 bytes)  |   (1 bytes)     |  (12 bytes)   |  (1 bytes) | (6 bytes) |  (3 bytes) |  (max sur 273 bytes)   |
-    |**************************************************************************************************************/
+    /***************************************************************************************************|
+    | Identifiant | champs fonctionne | Type materiel |    Prix   |   taille   | Description (variable) |
+    |  (5 bytes)  |   (1 bytes)       |  (12 bytes)   | (6 bytes) |  (3 bytes) |  (max sur 273 bytes)   |
+    |***************************************************************************************************/
+
     sprintf(destination, "%s", "");                          // vider le tableau des caractères
     strncat(destination, identifiant, TAILLE_IDENTIFIANT);   // destination+=identifiant
     strncat(destination, fonctionne, TAILLE_FONCTIONNEMENT); // destination+=fonctionne
@@ -1100,7 +1101,6 @@ void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trou
 | A PARTIR DE LA POSITION pos                   |
 |                                               |
 |***********************************************/
-
 void ins_string(char tableau[B], int pos, char str[B]) // module à utilisé pour l'insertion
 {
     int i = 0;
@@ -1130,32 +1130,40 @@ void ins_string(char tableau[B], int pos, char str[B]) // module à utilisé pou
 |                                                    |
 |***************************************************/
 
-void inserer_TOVnC(char nom_fichier[], char chaine[]) // procédure pour inserer une chaine dans un fichier , la chaine represente le materiel
+void Insertion_TOVnC(char nom_fichier[], char chaine[]) // procédure pour inserer une chaine dans un fichier , la chaine represente le materiel
 {
     fichier_TOVnC f;
     Ouvrir_TOVnC(&f, nom_fichier, 'A');
-    int i, j, l, k, ident, cpt, trouv;
-    int stop = 1;
-    int taille_materiel;
-    int TAILLE_chaine1;
-    char key[TAILLE_IDENTIFIANT + 1];
+    int i, // le numero du bloc retourne par la recherche
+        j, // la position de l'element ou il devait etre insere
+        l,
+        k,
+        ident,
+        cpt,
+        trouv, // le booleen qui indique si l'identifiant existe deja ou pas
+        stop = 1,
+        taille_materiel,
+        TAILLE_chaine1;
+
+    char Identifiant[TAILLE_IDENTIFIANT + 1],
+        Fonctionne[TAILLE_FONCTIONNEMENT + 1] = "f";
+
     char chaine1[2 * B], // on déclare un tableau assez grand afin de s'assurer qu'il peut recevoir plus de materiels que contient notre bloc
         Cle_Max[TAILLE_IDENTIFIANT + 1];
-    // fichier_TOVnC f;
-    Tbloc_TOVnC Buf;
-    // nom_fichier = FICHIER_ORIGINAL;
 
-    // mettre notre identifiant de la chaine  dans 'key' pour ensuite l'utiliser pour la recherche
-    key[0] = chaine[0];
-    key[1] = chaine[1];
-    key[2] = chaine[2];
-    key[3] = chaine[3];
-    key[4] = chaine[4];
-    ident = atoi(key); // taille de la cle de la chaine qu'on veut l'inserer (in case we need it )
+    Tbloc_TOVnC Buf;
+
+    // mettre notre identifiant de la chaine  dans 'Identifiant' pour ensuite l'utiliser pour la recherche
+    Identifiant[0] = chaine[0];
+    Identifiant[1] = chaine[1];
+    Identifiant[2] = chaine[2];
+    Identifiant[3] = chaine[3];
+    Identifiant[4] = chaine[4];
+    ident = atoi(Identifiant); // taille de la cle de la chaine qu'on veut l'inserer (in case we need it )
 
     taille_materiel = strlen(chaine); // affecter à taille_materiel la taille du materiel (chaine) qu'on va insérer
     // Ouvrir_TOVnC(&f, FICHIER_ORIGINAL , 'A');
-    Recherche_TOVnC(nom_fichier, key, &trouv, &i, &j); // on fait la recherche de la cle du materiel qu'on veut l'inserer
+    Recherche_TOVnC(nom_fichier, Identifiant, &trouv, &i, &j); // on fait la recherche de la cle du materiel qu'on veut l'inserer
 
     if (!trouv)
     {                                // chaine doit être inséré dans le bloc i à la position j
@@ -1209,8 +1217,8 @@ void inserer_TOVnC(char nom_fichier[], char chaine[]) // procédure pour inserer
                     ins_string(Buf.tableau, j, chaine);
                     Buf.nb = j + taille_materiel;
                     EcrireDir_TOVnC(&f, i, Buf);
-                    strcpy(Buf.cleMax, key); // mise à jour de cle_Max
-                    strcpy(chaine, chaine1); // le neouveau materiel qui va etre inserer dans  prochain bloc
+                    strcpy(Buf.cleMax, Identifiant); // mise à jour de cle_Max
+                    strcpy(chaine, chaine1);         // le neouveau materiel qui va etre inserer dans  prochain bloc
                     i = i + 1, j = 0;
                     /*___________________________________________________________________________________________
                      REMARQUE: on a voulu laiser de vide dans le bloc pour faciliter les prochaines insertions
@@ -1232,6 +1240,96 @@ void inserer_TOVnC(char nom_fichier[], char chaine[]) // procédure pour inserer
     }
     Fermer_TOVnC(&f);
 }
+
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+ */
+/****************************************************|
+|                                                    |
+|insertion d’un matériel dans le fichier de données  |
+|                                                    |
+|***************************************************/
+/*
+void recupsemi_enreg(TOVC *pF, semi_enreg SE, int *i, int *j) // a modifier ! comme hidouci
+{
+    int taille;
+    char inter[Taille_Bloc + 1], inter2[Taille_Bloc + 1];
+    Buffer buf;
+    liredir(pF, *i, &buf);
+    sub_string(buf.chaine, *j, 3, inter);
+    if (strlen(inter) == 3)
+    {
+        taille = atoi(inter);
+        (*j) += 3;
+    }
+    else
+    {
+        (*i)++;
+        (*j) = 0;
+        liredir(pF, *i, &buf);
+        sub_string(buf.chaine, *j, 3 - strlen(inter), inter2);
+        sprintf(inter, "%s%s", inter, inter2);
+        taille = atoi(inter);
+        (*j) += strlen(inter2);
+    }
+    sprintf(SE, "%s", inter);
+    sub_string(buf.chaine, *j, taille + 4, inter);
+    if (strlen(inter) == taille + 4)
+    {
+        sprintf(SE, "%s%s", SE, inter);
+        (*j) += taille + 4;
+    }
+    else
+    {
+        (*i)++;
+        (*j) = 0;
+        liredir(pF, *i, &buf);
+        sub_string(buf.chaine, *j, taille + 4 - strlen(inter), inter2);
+        sprintf(inter, "%s%s", inter, inter2);
+        sprintf(SE, "%s%s", SE, inter);
+        (*j) += strlen(inter2);
+    }
+}
+
+void affich_TOVC(TOVC *pF)
+{
+    int i = 1, i1 = 1, j = 0, j1 = 0;
+    Enreg E;
+    semi_enreg SE;
+    printf("ENTETE : %d\t%d\t%d\t%d\n", entete(pF, 1), entete(pF, 2), entete(pF, 3), entete(pF, 4));
+    while (i <= entete(pF, 1))
+    {
+        recupsemi_enreg(pF, SE, &i1, &j1);
+        SemitoEnreg(SE, &E);
+        printf("%d|%d|%s", E.cle, E.sup, E.info);
+        if (i == i1)
+            printf(" Dans le Bloc %d\n", i);
+        else
+            printf(" commence du bloc %d et chevauche le bloc %d\n", i, i1);
+        if (j1 == Taille_Bloc)
+        {
+            i1++;
+            j1 = 0;
+        }
+        i = i1;
+        j = j1;
+        if ((i == entete(pF, 1)) && j == entete(pF, 3))
+            break;
+    }
+}
+*/
 /*
 
 
@@ -1253,10 +1351,10 @@ void inserer_TOVnC(char nom_fichier[], char chaine[]) // procédure pour inserer
 |**********************************************/
 void Suppression_TOVnC(char nom_fichier[], char identifiant_a_supprimer[])
 {
-    /**************************************************************************************************************|
-    | Identifiant | champs supprime | Type materiel | fonctionne |    Prix   |   taille   | Description (variable) |
-    |  (5 bytes)  |   (1 bytes)     |  (12 bytes)   |  (1 bytes) | (6 bytes) |  (3 bytes) |  (max sur 272 bytes)   |
-    |**************************************************************************************************************/
+    /***************************************************************************************************|
+    | Identifiant | champs fonctionne | Type materiel |    Prix   |   taille   | Description (variable) |
+    |  (5 bytes)  |   (1 bytes)       |  (12 bytes)   | (6 bytes) |  (3 bytes) |  (max sur 273 bytes)   |
+    |***************************************************************************************************/
     int trouv, // booleen pour verifier si le
         i,     // le numero du bloc pour le parcours entre bloc
         j;     // la position dans le bloc pour le parcours interbloc
