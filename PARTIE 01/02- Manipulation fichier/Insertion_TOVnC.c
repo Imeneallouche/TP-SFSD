@@ -35,7 +35,7 @@ void inserer_TOVnC(char nom_fichier[],char chaine[])            //procédure pou
                     l,k,cpt,           // des variables seront utilisés pour le decalage
                     ident,
                     trouv;            // boolean utilisé pour la recherche du materiel qu'on veut l'inserer
-            int     stop=1;
+            int     stop=1;            // booleen pour continuer l'operation de l'insertion 
             int     taille_materiel;  // taille du materiel qu'on veut l'inserer
             int     TAILLE_chaine1;  
             char    IDENTIFIANT [TAILLE_IDENTIFIANT + 1];
