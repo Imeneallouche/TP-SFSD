@@ -1041,10 +1041,6 @@ void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trou
                     {                                                      // donc
                         stop = 1;                                          // la cle surement n'existe pas stop=vrai, on arrete la recherche
                         *j = temp_j;                                       // faire revenir j a la position du premier champs avant decalage (l'identifiant)
-                        printf("\n\n---------------- L'enregistrement n'exsite pas, il devait exister: ------------------\n", *i, *j);
-                        printf("|    -> Dans le bloc numero : %i\n", *i);
-                        printf("|    -> Dans la position : %i\n", *j);
-                        printf("-------------------------------------------------------------------------------------\n\n");
                     }
                     else                                                           // sinon on passe au prochain materiel dans le meme bloc toujours
                     {                                                              // alors
@@ -1052,27 +1048,29 @@ void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trou
                         extraire_chaine_TOVnC(Taille, &(*j), TAILLE_TAILLE, &Buf); // recuperer la taille de la description
                         *j = *j + atoi(Taille);                                    // zapper la description egalement
                         temp_j = *j;
-                        extraire_chaine_TOVnC(Cle_Courrante, &(*j), TAILLE_IDENTIFIANT, &Buf); // recuperer la cle prochaine a verifier
+                        if (*j < Buf.nb)
+                            extraire_chaine_TOVnC(Cle_Courrante, &(*j), TAILLE_IDENTIFIANT, &Buf); // recuperer la cle prochaine a verifier
                     }
                 }
             }
-            if (*j >= Buf.nb && !(*trouv) && !stop)                          // avant de juger que le placement cle n'est pas dans ce bloc
-            {                                                                // on veut regler les valeur de i et j (bloc et pos ou la cle existe ou devait exister)
-                temp_j = Buf.nb;                                             // voir la cle du bloc prochain
-                *j = 0;                                                      // peut etre que si la cle recherche n'existe pas elle doit etre a la fin du bloc parcourru
-                LireDir_TOVnC(&f, (*i) + 1, &Buf);                           // donc on lie le bloc prochain
-                extraire_chaine_TOVnC(Cle_Min, j, TAILLE_IDENTIFIANT, &Buf); // on verirife la cle min du bloc prochain
-                if (strcmp(Cle_Min, Identifiant_Recherche) > 0)              // si la cle min du bloc prochain > a la cle recherche
+            if (*j >= Buf.nb)                   // avant de juger que le placement cle n'est pas dans ce bloc
+            {                                   // on veut regler les valeur de i et j (bloc et pos ou la cle existe ou devait exister)
+                if ((*i) < Entete_TOVnC(&f, 1)) // si ce n'est pas le dernier bloc
                 {
-                    stop = 1;    // donc le i doit retourner le bloc precedent
-                    *j = temp_j; // avec la pos du buf.nb qui veut dire la fin du bloc
-                    printf("\n\n---------------- L'enregistrement n'exsite pas, il devait exister: ------------------\n", *i, *j);
-                    printf("|    -> Dans le bloc numero : %i\n", *i);
-                    printf("|    -> Dans la position : %i\n", *j);
-                    printf("-------------------------------------------------------------------------------------\n\n");
+                    temp_j = Buf.nb;                                             // voir la cle du bloc prochain
+                    *j = 0;                                                      // peut etre que si la cle recherche n'existe pas elle doit etre a la fin du bloc parcourru
+                    LireDir_TOVnC(&f, (*i) + 1, &Buf);                           // donc on lie le bloc prochain
+                    extraire_chaine_TOVnC(Cle_Min, j, TAILLE_IDENTIFIANT, &Buf); // on verirife la cle min du bloc prochain
+                    if (strcmp(Cle_Min, Identifiant_Recherche) > 0)              // si la cle min du bloc prochain > a la cle recherche
+                    {
+                        stop = 1;    // donc le i doit retourner le bloc precedent
+                        *j = temp_j; // avec la pos du buf.nb qui veut dire la fin du bloc
+                    }
+                    else               // si la cle recherche < a la cle min du bloc
+                        binf = *i + 1; // cle  doit être après le bloc courant
                 }
-                else               // si la cle recherche < a la cle min du bloc
-                    binf = *i + 1; // cle  doit être après le bloc courant
+                else
+                    stop = 1;
             }
         }
         else               // si la cle recherche > a la cle min du bloc
@@ -1082,7 +1080,11 @@ void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trou
     {
         *i = binf;   // le bloc ou devait exister l'identifiant = binf
         *j = temp_j; // la pos ou devait commencer le materiel = temp_j
-        printf("\n\n!---------------- L'enregistrement n'exsite pas, il devait exister: ------------------\n", *i, *j);
+        stop = 1;
+    }
+    if (stop)
+    {
+        printf("\n\n---------------- L'enregistrement n'exsite pas, il devait exister: ------------------\n", *i, *j);
         printf("|    -> Dans le bloc numero : %i\n", *i);
         printf("|    -> Dans la position : %i\n", *j);
         printf("-------------------------------------------------------------------------------------\n\n");
@@ -1357,8 +1359,10 @@ int main(void)
     printf("a printing is needed");
     int trouv,
         i, j;
+    afficher_fichier_TOVnC(FICHIER_ORIGINAL);
     //  Suppression_TOVnC(FICHIER_ORIGINAL, "00025");
-    //  Recherche_TOVnC(FICHIER_ORIGINAL, "00025", &trouv, &i, &j);
+    // afficher_fichier_TOVnC(FICHIER_ORIGINAL);
+    // Chargement_initial_TOVnC(FICHIER_ORIGINAL, 10);
     //  Reorganisation_TOVnC(FICHIER_ORIGINAL, FICHIER_MATERIEL_FONCTIONNE, FICHIER_MATERIEL_NON_FONCTIONNE);
     //  Generation_fichiers_Materiel(FICHIER_ORIGINAL);
 }
