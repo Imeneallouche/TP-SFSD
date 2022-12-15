@@ -103,7 +103,7 @@ void Recherche_LOVC(char nom_fichier2[], int Prix_Min , int Prix_Max , int monta
      int Prix_Min, Prix_Max , montant;
      printf("Entrez le Prix minimal :");
      scanf("%ls",Prix_Min);
-     printf("Entrez le Prix maximal %ls ",&Prix_Max);
+     printf("Entrez le Prix maximal: ");
      scanf("%ls",Prix_Max);
      Recherche_LOVC(FICHIER_MATERIEL_NON_FONCTIONNE,  Prix_Min , Prix_Max , montant);
 }
