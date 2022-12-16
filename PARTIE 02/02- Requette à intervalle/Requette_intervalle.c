@@ -42,7 +42,7 @@ void extraire_chaine_LOVC(fichier_LOVC *f2 , char destination[], int *i,int *j, 
 
 /***************************************************************************************************************************************************/
 
-void Recherche_LOVC(char nom_fichier2[], int Prix_Min , int Prix_Max , int montant)
+void Recherche_LOVC(char nom_fichier2[], int Prix_Min , int Prix_Max , int *montant)
 {
     fichier_LOVC f2;
     Ouvrir_LOVC(&f2, nom_fichier2, 'A');
@@ -59,7 +59,7 @@ void Recherche_LOVC(char nom_fichier2[], int Prix_Min , int Prix_Max , int monta
     
     i = entete_LOVC(&f2, 1)  ;                        // le numero (adresse)du dernier bloc
                                            
-    while ( i != -1  && buf.suivant != -1 )
+    while ( (i != -1)  && (buf.suivant != -1) )
     {
 
 
@@ -96,16 +96,4 @@ void Recherche_LOVC(char nom_fichier2[], int Prix_Min , int Prix_Max , int monta
 
 
 
- /* int main(void)
-{
-     printf("a printing is needed");
-    
-     int Prix_Min, Prix_Max , montant;
-     printf("Entrez le Prix minimal :");
-     scanf("%ls",Prix_Min);
-     printf("Entrez le Prix maximal: ");
-     scanf("%ls",Prix_Max);
-     Recherche_LOVC(FICHIER_MATERIEL_NON_FONCTIONNE,  Prix_Min , Prix_Max , montant);
-}
-} */
-
+ 
