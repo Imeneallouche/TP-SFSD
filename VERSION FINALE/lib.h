@@ -155,8 +155,8 @@ typedef struct fichier_TOF
 |*********************************************/
 void Ouvrir_TOF(fichier_TOF *f, char nom_fichier[], char mode);
 void Fermer_TOF(fichier_TOF f);
-void LireDir_TOF(fichier_TOF f, int i, Tampon_TOF *buf, int *cpt_lect);
-void EcrireDir_TOF(fichier_TOF f, int i, Tampon_TOF *buf, int *cpt_ecr);
+void LireDir_TOF(fichier_TOF f, int i, Tampon_TOF *buf);
+void EcrireDir_TOF(fichier_TOF f, int i, Tampon_TOF *buf);
 int Entete_TOF(fichier_TOF f, int i);
 void Aff_Entete_TOF(fichier_TOF *f, int i, int val);
 int Alloc_bloc_TOF(fichier_TOF *f);
@@ -352,15 +352,15 @@ char *FICHIER_MATERIEL_NON_FONCTIONNE = "Materiel_informatique_en_panne_LOVC.bin
 
 typedef struct FICHIER_MATERIEL
 {
-    fichier_TOF f;                   // fichier TOF
-    char nom_fichier[maxNomFichier]; // le nom du fichier TOF
-    char Materiel[TAILLE_MATERIEL];  // le type du materiel associe au fichier
-    Tampon_TOF Buf;                  // le buffer qu'on remplira pour chaque fichier jusqu'a finir le fichier ou jusqu'a ce qu'il soit plein
-    int i;                           // le numero du bloc ou l'insertion s'est arrete
-    int j;                           // l'enregistrement dans bloc i ou l'insertion s'est arrete
+    fichier_TOF f;                  // fichier TOF
+    char file_name[maxNomFichier];  // le nom du fichier TOF
+    char Materiel[TAILLE_MATERIEL]; // le type du materiel associe au fichier
+    Tampon_TOF Buf;                 // le buffer qu'on remplira pour chaque fichier jusqu'a finir le fichier ou jusqu'a ce qu'il soit plein
+    int i;                          // le numero du bloc ou l'insertion s'est arrete
+    int j;                          // l'enregistrement dans bloc i ou l'insertion s'est arrete
 } FICHIER_MATERIEL;
 
-FICHIER_MATERIEL fichier_materiel[NB_TYPE_MATERIEL];
+FICHIER_MATERIEL Files[NB_TYPE_MATERIEL];
 
 /*
 
@@ -396,6 +396,7 @@ FICHIER_MATERIEL fichier_materiel[NB_TYPE_MATERIEL];
 void Generer_Chaine(char chaine[], int length, int number);
 void concatenate(char *destination, char *identifiant, char *fonctionne, char *materiel, char *prix, char *taille, char *description);
 int Random_Number(int lower, int upper);
+void Random_String(int length, char chaine[]);
 
 /*******************************|
 |                               |
@@ -425,8 +426,9 @@ void Suppression_TOVnC(char nom_fichier[], char identifiant_a_supprimer[]);
 |  (5 bytes)  |   (12 bytes)  | (6 bytes) |  (3 bytes) |    (variable)      |
 |***************************************************************************/
 void Ecrire_Chaine_TOVC(fichier_TOVC *fichier, int *i, int *j, char chaine[], Tampon_TOVC *buf);
-void extraire_chaine_TOVC(char destination[], int *i, int *j, int taille, Tampon_TOVC *Buf);
+void extraire_chaine_TOVC(fichier_TOVC *f, char destination[], int *i, int *j, int taille, Tampon_TOVC *Buf);
 void affichage_entete_TOVC(char nom_fichier[]);
+void afficher_fichier_TOVC(char nom_fichier[]);
 
 /*******************************|
 |                               |
@@ -438,8 +440,9 @@ void affichage_entete_TOVC(char nom_fichier[]);
 |  (5 bytes)  |   (12 bytes)  | (6 bytes) |  (3 bytes) |    (variable)      |
 |***************************************************************************/
 void Ecrire_Chaine_LOVC(fichier_LOVC *fichier, int *i, int *j, char chaine[], Tampon_LOVC *buf);
-void extraire_chaine_LOVC(char destination[], int *i, int *j, int taille, Tampon_LOVC *Buf);
+void extraire_chaine_LOVC(fichier_LOVC *f, char destination[], int *i, int *j, int taille, Tampon_LOVC *Buf);
 void affichage_entete_LOVC(char nom_fichier[]);
+void afficher_fichier_LOVC(char nom_fichier[]);
 
 /*
 
