@@ -274,7 +274,10 @@ void Ouvrir_TOF(fichier_TOF *f, char nom_fichier[], char mode)
         if (f->fichier == NULL)
             printf("Erreur lors de l'ouverture du fichier... verifier le nom du fichier");
         else
+        {
+            rewind(f->fichier); /// positionnement au debut du fichier
             fread(&(f->entete), sizeof(entete_TOF), 1, f->fichier);
+        }
     }
     else if (tolower(mode) == 'n')
     {
@@ -282,6 +285,9 @@ void Ouvrir_TOF(fichier_TOF *f, char nom_fichier[], char mode)
         Aff_Entete_TOF(f, 1, 0); // mettre le nombre de blocs à 0
         Aff_Entete_TOF(f, 2, 0); // mettre le nombre d'enregistrements inseres à 0
         Aff_Entete_TOF(f, 3, 0); // mettre le nombre d'enregistrements supprimes à 0
+
+        rewind(f->fichier); /// positionnement au debut du fichier
+        fwrite(&(f->entete), sizeof(entete_TOF), 1, f->fichier);
     }
     else
     {
@@ -376,6 +382,39 @@ int Alloc_bloc_TOF(fichier_TOF *f)
     int i = Entete_TOF(*f, 1);   // le nombre de bloc = le numero du dernier bloc -1
     Aff_Entete_TOF(f, 1, i + 1); // mettre a jour le nombre de bloc dans l'entete
     return Entete_TOF(*f, 1);    // le nombre anciens de bloc = numero du dernier bloc
+}
+
+/**************************************************|
+|                                                  |
+|    afficher les caracteristqiues (entete) d'un   |
+|        fichier "nom fichier" de type TOF         |
+|          Realise par : Imene ALLOUCHE            |
+|                                                  |
+|**************************************************/
+void affichage_entete_TOF(char nom_fichier[])
+{
+    fichier_TOF f;
+    Ouvrir_TOF(&f, nom_fichier, 'A');
+    printf("\n\n\n*************************************************\n");
+    printf("*                                               *\n");
+    printf("*       caracteristiques du fichier             *\n");
+    printf("*                                               *\n");
+    printf("*************************************************\n");
+    printf(" -> Nombre de Blocs : %d\n", Entete_TOVnC(&f, 1));
+    printf(" -> Nombre d'enregistrements inseres : %d\n", Entete_TOVnC(&f, 2));
+    printf(" -> Nombre d'enregistrements supprimes : %d\n", Entete_TOVnC(&f, 3));
+}
+
+/**********************************************|
+|                                              |
+|       affichier le contenu d'un fichier      |
+|                de type TOF                   |
+|        Realise par : Imene ALLOUCHE          |
+|                                              |
+|**********************************************/
+void afficher_fichier_TOF(char nom_fichier[])
+{
+    printf("en cours...");
 }
 
 /*

@@ -472,6 +472,8 @@ void afficher_fichier_LOVC(char nom_fichier[]);
 |*****************************/
 void Generation_fichiers_Materiel(char nom_fichier[]);
 void Inserer_Enreg_TOF(fichier_TOF *f, int Identifiant, int Prix, int *i, int *j, Tampon_TOF *Buf);
+void affichage_entete_TOF(char nom_fichier[]);
+void afficher_fichier_TOF(char nom_fichier[]);
 /*
 
 
