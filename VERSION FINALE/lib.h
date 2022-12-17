@@ -154,10 +154,10 @@ typedef struct fichier_TOF
 |                                             |
 |*********************************************/
 void Ouvrir_TOF(fichier_TOF *f, char nom_fichier[], char mode);
-void Fermer_TOF(fichier_TOF f);
-void LireDir_TOF(fichier_TOF f, int i, Tampon_TOF *buf);
-void EcrireDir_TOF(fichier_TOF f, int i, Tampon_TOF *buf);
-int Entete_TOF(fichier_TOF f, int i);
+void Fermer_TOF(fichier_TOF *f);
+void LireDir_TOF(fichier_TOF *f, int i, Tampon_TOF *buf);
+void EcrireDir_TOF(fichier_TOF *f, int i, Tampon_TOF *buf);
+int Entete_TOF(fichier_TOF *f, int i);
 void Aff_Entete_TOF(fichier_TOF *f, int i, int val);
 int Alloc_bloc_TOF(fichier_TOF *f);
 
@@ -471,7 +471,7 @@ void afficher_fichier_LOVC(char nom_fichier[]);
 |   (5 bytes)   |  (6 bytes)  |
 |*****************************/
 void Generation_fichiers_Materiel(char nom_fichier[]);
-void Inserer_Enreg_TOF(fichier_TOF *f, int Identifiant, int Prix, int *i, int *j, Tampon_TOF *Buf);
+void Inserer_Enreg_TOF(fichier_TOF *f, Tenreg_TOF Enregistrement_TOF, int *i, int *j, Tampon_TOF *Buf);
 void affichage_entete_TOF(char nom_fichier[]);
 void afficher_fichier_TOF(char nom_fichier[]);
 /*

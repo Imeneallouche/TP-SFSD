@@ -302,11 +302,11 @@ void Ouvrir_TOF(fichier_TOF *f, char nom_fichier[], char mode)
 |    Realise par : Imene ALLOUCHE     |
 |                                     |
 |*************************************/
-void Fermer_TOF(fichier_TOF f)
+void Fermer_TOF(fichier_TOF *f)
 {
-    fseek(f.fichier, 0, SEEK_SET);
-    fwrite(&(f.entete), sizeof(entete_TOF), 1, f.fichier);
-    fclose(f.fichier);
+    fseek(f->fichier, 0, SEEK_SET);
+    fwrite(&(f->entete), sizeof(entete_TOF), 1, f->fichier);
+    fclose(f->fichier);
 }
 
 /********************************************|
@@ -315,11 +315,11 @@ void Fermer_TOF(fichier_TOF f)
 |       Realise par : Imene ALLOUCHE         |
 |                                            |
 |********************************************/
-void LireDir_TOF(fichier_TOF f, int i, Tampon_TOF *buf)
+void LireDir_TOF(fichier_TOF *f, int i, Tampon_TOF *buf)
 {
-    rewind(f.fichier);
-    fseek(f.fichier, sizeof(fichier_TOF) + (i) * sizeof(Tampon_TOF), SEEK_SET);
-    fread(buf, sizeof(Tampon_TOF), 1, f.fichier);
+    rewind(f->fichier);
+    fseek(f->fichier, sizeof(fichier_TOF) + (i - 1) * sizeof(Tampon_TOF), SEEK_SET);
+    fread(buf, sizeof(Tampon_TOF), 1, f->fichier);
 }
 
 /*********************************************|
@@ -328,11 +328,11 @@ void LireDir_TOF(fichier_TOF f, int i, Tampon_TOF *buf)
 |        Realise par : Imene ALLOUCHE         |
 |                                             |
 |*********************************************/
-void EcrireDir_TOF(fichier_TOF f, int i, Tampon_TOF *buf)
+void EcrireDir_TOF(fichier_TOF *f, int i, Tampon_TOF *buf)
 {
-    rewind(f.fichier);
-    fseek(f.fichier, sizeof(entete_TOF) + (i) * sizeof(Tampon_TOF), SEEK_SET);
-    fwrite(buf, sizeof(Tampon_TOF), 1, f.fichier);
+    rewind(f->fichier);
+    fseek(f->fichier, sizeof(entete_TOF) + (i - 1) * sizeof(Tampon_TOF), SEEK_SET);
+    fwrite(buf, sizeof(Tampon_TOF), 1, f->fichier);
 }
 
 /********************************************|
@@ -341,14 +341,14 @@ void EcrireDir_TOF(fichier_TOF f, int i, Tampon_TOF *buf)
 |       Realise par : Imene ALLOUCHE         |
 |                                            |
 |********************************************/
-int Entete_TOF(fichier_TOF f, int i)
+int Entete_TOF(fichier_TOF *f, int i)
 {
     if (i == 1) // nombre de blocs total
-        return f.entete.blocs_total;
+        return f->entete.blocs_total;
     else if (i == 2) // nombre d'enregistrements inseres
-        return f.entete.enreg_inseres;
+        return f->entete.enreg_inseres;
     else if (i == 3) // nombre d'enregistrements supprimes
-        return f.entete.enreg_supprimes;
+        return f->entete.enreg_supprimes;
     else
         return -1;
 }
@@ -379,9 +379,9 @@ void Aff_Entete_TOF(fichier_TOF *f, int i, int val)
 |********************************************/
 int Alloc_bloc_TOF(fichier_TOF *f)
 {
-    int i = Entete_TOF(*f, 1);   // le nombre de bloc = le numero du dernier bloc -1
+    int i = Entete_TOF(f, 1);    // le nombre de bloc = le numero du dernier bloc
     Aff_Entete_TOF(f, 1, i + 1); // mettre a jour le nombre de bloc dans l'entete
-    return Entete_TOF(*f, 1);    // le nombre anciens de bloc = numero du dernier bloc
+    return Entete_TOF(f, 1);     // le nombre anciens de bloc = numero du dernier bloc
 }
 
 /**************************************************|
@@ -400,9 +400,9 @@ void affichage_entete_TOF(char nom_fichier[])
     printf("*       caracteristiques du fichier             *\n");
     printf("*                                               *\n");
     printf("*************************************************\n");
-    printf(" -> Nombre de Blocs : %d\n", Entete_TOVnC(&f, 1));
-    printf(" -> Nombre d'enregistrements inseres : %d\n", Entete_TOVnC(&f, 2));
-    printf(" -> Nombre d'enregistrements supprimes : %d\n", Entete_TOVnC(&f, 3));
+    printf(" -> Nombre de Blocs : %d\n", Entete_TOF(&f, 1));
+    printf(" -> Nombre d'enregistrements inseres : %d\n", Entete_TOF(&f, 2));
+    printf(" -> Nombre d'enregistrements supprimes : %d\n", Entete_TOF(&f, 3));
 }
 
 /**********************************************|
@@ -1654,21 +1654,19 @@ void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fich
 |         Realise par : Imene ALLOUCHE           |
 |                                                |
 |************************************************/
-void Inserer_Enreg_TOF(fichier_TOF *f, int Identifiant, int Prix, int *i, int *j, Tampon_TOF *Buf)
+void Inserer_Enreg_TOF(fichier_TOF *f, Tenreg_TOF Enregistrement_TOF, int *i, int *j, Tampon_TOF *Buf)
 {
     if (*j > MAX_ENREG)
     {
         Buf->nombre_enreg = MAX_ENREG;
-        EcrireDir_TOF(*f, *i, Buf); // ecrire le buf i                                                                                      // incrementer le i
-        Alloc_bloc_TOF(f);          // nouveau bloc + mise a jour de l'entete
+        EcrireDir_TOF(f, *i, Buf); // ecrire le buf i                                                                                      // incrementer le i
+        Alloc_bloc_TOF(f);         // nouveau bloc + mise a jour de l'entete
         *j = 0;
     }
-
-    Buf->tab[*j].Identifiant = atoi(Identifiant); // mise a jour du Buf: champs identifiant
-    Buf->tab[*j].Prix = atoi(Prix);               // mise a jour du Buf: champs prix
-    Buf->nombre_enreg = *j;                       // mise a jour du Buf: nombre d'enreg dans le buf
-    *j = *j + 1;                                  // aller a la prochaine pos libre dans le Buf
-    Aff_Entete_TOF(f, 2, Entete_TOF(*f, 2) + 1);  // mise a jour de l'entete: nombre d'enregistrement inseres++
+    Buf->tab[*j] = Enregistrement_TOF;          // mise a jour du Buf: champs identifiant
+    Buf->nombre_enreg = *j;                     // mise a jour du Buf: nombre d'enreg dans le buf
+    *j = *j + 1;                                // aller a la prochaine pos libre dans le Buf
+    Aff_Entete_TOF(f, 2, Entete_TOF(f, 2) + 1); // mise a jour de l'entete: nombre d'enregistrement inseres++
 }
 
 /*
@@ -1699,8 +1697,9 @@ void Generation_fichiers_Materiel(char nom_fichier[])
         j = 0, // parcours inter-blocs du fichier TOVC du materiel en marche
         trouv; // si on a trouve le nom du materiel dans la liste des types de materiel
 
-    fichier_TOVC f;  // le fichier TOVC des materiels en marche qu'on parcourrira
-    Tampon_TOVC Buf; // buffer avec lequel on parourrira le fichier de materiel en marche TOVC
+    fichier_TOVC f;                // le fichier TOVC des materiels en marche qu'on parcourrira
+    Tampon_TOVC Buf;               // buffer avec lequel on parourrira le fichier de materiel en marche TOVC
+    Tenreg_TOF Enregistrement_TOF; // enregistrement des fichiers TOFs formés de 3 champs: identifiant, prix, supprimer
 
     char Identifiant[TAILLE_IDENTIFIANT + 1],    // numero d'identifiant(cle)
         Materiel[TAILLE_MATERIEL],               // le type du materiel
@@ -1711,9 +1710,9 @@ void Generation_fichiers_Materiel(char nom_fichier[])
     Ouvrir_TOVC(&f, nom_fichier, 'A');     // ouvrir le fichier TOVC du materiel en marche qu'on parcourira
     for (k = 0; k < NB_TYPE_MATERIEL; k++) // Ouvrir tous les fichiers TOFs et initialiser leurs champs associes
     {
-        strcpy(Files[k].Materiel, MATERIAL_LIST[k]);                                    // affcter le nom du materiel
-        sprintf(Files[k].file_name, "Materiel_en_marche_%s_TOF.bin", MATERIAL_LIST[k]); // generer le nom du fichier selon le nom du materiel
-        Ouvrir_TOF(&(Files[k].f), Files[k].file_name, 'N');                             // ouvrir le fichier correspondant en mode nouveau
+        strcpy(Files[k].Materiel, MATERIAL_LIST[k]);                                      // affcter le nom du materiel
+        sprintf(Files[k].file_name, "Materiel_en_marche_%s_TOF.bin\0", MATERIAL_LIST[k]); // generer le nom du fichier selon le nom du materiel
+        Ouvrir_TOF(&(Files[k].f), Files[k].file_name, 'N');                               // ouvrir le fichier correspondant en mode nouveau
 
         Files[k].i = 1;                // initialisation de numero du bloc ou affecter
         Files[k].j = 0;                // initialisation de la position ou affecter
@@ -1733,6 +1732,10 @@ void Generation_fichiers_Materiel(char nom_fichier[])
         extraire_chaine_TOVC(&f, Taille, &i, &j, TAILLE_TAILLE, &Buf);
         extraire_chaine_TOVC(&f, Description, &i, &j, atoi(Taille), &Buf);
 
+        Enregistrement_TOF.Identifiant = atoi(Identifiant); // mise a jour de l'enreg a inserer: champ identifiant
+        Enregistrement_TOF.Prix = atoi(Prix);               // mise a jour de l'enreg a inserer: champ Prix
+        Enregistrement_TOF.supprimer = 0;                   // mise a jour de l'enreg a inserer: champ Supprimer
+
         trouv = 0; // pour arreter si on a trouve le fichier correspondant au type du materiel qu'on veut inserer
         k = 0;     // le numero du materiel dans la liste des types de materiel
 
@@ -1740,10 +1743,8 @@ void Generation_fichiers_Materiel(char nom_fichier[])
         {
             if (strcmp(Files[k].Materiel, Materiel) == 0) // si on a trouve le fichier
             {
-                printf("\n il sera insere dans le fichier %s", Files[k].Materiel);
                 trouv = 1; // fichier correspondant trouve
-                Inserer_Enreg_TOF(&(Files[k].f), atoi(Identifiant), atoi(Prix), &(Files[k].i), &(Files[k].j), &(Files[k].Buf));
-                printf("\ndayen");
+                Inserer_Enreg_TOF(&(Files[k].f), Enregistrement_TOF, &(Files[k].i), &(Files[k].j), &(Files[k].Buf));
             }
             else // si on a pas trouve le fichier aller au prochain fichier
                 k++;
@@ -1752,8 +1753,8 @@ void Generation_fichiers_Materiel(char nom_fichier[])
 
     for (k = 0; k < NB_TYPE_MATERIEL; k++) // fermiture de tous les fichier TOFs
     {
-        EcrireDir_TOF(Files[k].f, Files[k].i, &(Files[k].Buf));
-        Fermer_TOF(Files[k].f);
+        EcrireDir_TOF(&(Files[k].f), Files[k].i, &(Files[k].Buf));
+        Fermer_TOF(&(Files[k].f));
     }
 }
 
@@ -1778,5 +1779,5 @@ int main(void)
     int trouv,
         i,
         j;
-    Generation_fichiers_Materiel(FICHIER_MATERIEL_FONCTIONNE);
+    // Generation_fichiers_Materiel(FICHIER_MATERIEL_FONCTIONNE);
 }
