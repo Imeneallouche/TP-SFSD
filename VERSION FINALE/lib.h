@@ -8,7 +8,7 @@
 #define TAILLE_MAX_DESCRIPTION 273 // taille maximal du champs description (le nombre max de chars dans le bloc - la taille des autres champs)
 #define PRIX_MAX 999999            // le prix max d'un materiel
 #define MAX_ENREG 10               // max d'enregistrement dans un seul bloc (TOF)
-#define maxNomFichier 30           // la taille max d'un nom du fichier
+#define MAX_NOM_FICHIER 40         // la taille max d'un nom du fichier
 #define facteur_reorganisation 0.5 // le facteur de reorganisation du fichier
 
 /***************************************************************************************************|
@@ -352,12 +352,12 @@ char *FICHIER_MATERIEL_NON_FONCTIONNE = "Materiel_informatique_en_panne_LOVC.bin
 
 typedef struct FICHIER_MATERIEL
 {
-    fichier_TOF f;                  // fichier TOF
-    char file_name[maxNomFichier];  // le nom du fichier TOF
-    char Materiel[TAILLE_MATERIEL]; // le type du materiel associe au fichier
-    Tampon_TOF Buf;                 // le buffer qu'on remplira pour chaque fichier jusqu'a finir le fichier ou jusqu'a ce qu'il soit plein
-    int i;                          // le numero du bloc ou l'insertion s'est arrete
-    int j;                          // l'enregistrement dans bloc i ou l'insertion s'est arrete
+    fichier_TOF f;                   // fichier TOF
+    char file_name[MAX_NOM_FICHIER]; // le nom du fichier TOF
+    char Materiel[TAILLE_MATERIEL];  // le type du materiel associe au fichier
+    Tampon_TOF Buf;                  // le buffer qu'on remplira pour chaque fichier jusqu'a finir le fichier ou jusqu'a ce qu'il soit plein
+    int i;                           // le numero du bloc ou l'insertion s'est arrete
+    int j;                           // l'enregistrement dans bloc i ou l'insertion s'est arrete
 } FICHIER_MATERIEL;
 
 FICHIER_MATERIEL Files[NB_TYPE_MATERIEL];
@@ -471,7 +471,7 @@ void afficher_fichier_LOVC(char nom_fichier[]);
 |   (5 bytes)   |  (6 bytes)  |
 |*****************************/
 void Generation_fichiers_Materiel(char nom_fichier[]);
-
+void Inserer_Enreg_TOF(fichier_TOF *f, int Identifiant, int Prix, int *i, int *j, Tampon_TOF *Buf);
 /*
 
 
