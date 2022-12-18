@@ -412,8 +412,10 @@ void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], int *i, int *j, Tampon
 void extraire_chaine_TOVnC(char destination[], int *j, int taille, Tampon_TOVnC *Buf);
 void affichage_entete_TOVnC(char nom_fichier[]);
 void afficher_fichier_TOVnC(char nom_fichier[]);
+
 void Chargement_initial_TOVnC(char nom_fichier[], int n);
 void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trouv, int *i, int *j);
+void Insertion_TOVnC(char nom_fichier[], char chaine[]);
 void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fichier2[]);
 void Suppression_TOVnC(char nom_fichier[], char identifiant_a_supprimer[]);
 
