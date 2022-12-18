@@ -222,7 +222,7 @@ void afficher_fichier_TOVnC(char nom_fichier[])
                 printf("Fonctionne? : OUI\n");
             else
                 printf("Fonctionne? : NON\n");
-            printf("prix: %.6s\n", Prix);
+            printf("prix: %.6s DA\n", Prix);
             printf("taille de description: %.3s\n", Taille);
             printf("description: %s\n", Description);
             counter++;
@@ -447,7 +447,7 @@ void afficher_fichier_TOF(char nom_fichier[])
             printf(".........................\n");
             printf("identifiant: %i\n", Buf.tab[j].Identifiant);
             printf("Fonctionne? : %i\n", Buf.tab[j].supprimer);
-            printf("prix: %i\n", Buf.tab[j].Prix);
+            printf("prix: %i DA\n", Buf.tab[j].Prix);
             counter++;
             j++;
         }
@@ -686,7 +686,7 @@ void afficher_fichier_TOVC(char nom_fichier[])
         printf("identifiant: %.5s\n", Identifiant);
         printf("materiel: %.11s\n", Materiel);
         printf("Fonctionne? : OUI\n");
-        printf("prix: %.6s\n", Prix);
+        printf("prix: %.6s DA\n", Prix);
         printf("taille de description: %.3s\n", Taille);
         printf("description: %s\n", Description);
         counter++;
@@ -942,7 +942,7 @@ void afficher_fichier_LOVC(char nom_fichier[])
         printf("identifiant: %.5s\n", Identifiant);
         printf("materiel: %.11s\n", Materiel);
         printf("Fonctionne? : NON\n");
-        printf("prix: %.6s\n", Prix);
+        printf("prix: %.6s DA\n", Prix);
         printf("taille de description: %.3s\n", Taille);
         printf("description: %s\n", Description);
         counter++;
@@ -1069,7 +1069,7 @@ void concatenate(char *destination, char *identifiant, char *fonctionne, char *m
 |       Realise par : Imene ALLOUCHE          |
 |                                              |
 |**********************************************/
-void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], char cle[], int *i, int *j, Tampon_TOVnC *Buf)
+void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], int *i, int *j, Tampon_TOVnC *Buf)
 {
     if (*j + strlen(chaine) > B) // inserer le nouvel element dans un nouveau bloc
     {
@@ -1339,7 +1339,7 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
         printf(".........................\n");
         printf("identifiant: %.5s\n", Identifiant);
         printf("materiel: %.11s\n", Materiel);
-        printf("prix: %.6s\n", Prix);
+        printf("prix: %.6s DA\n", Prix);
         printf("taille de description: %.3s\n", Taille);
         printf("description: %s\n", Description);
 
@@ -1347,7 +1347,7 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
         char Enreg[l];
         concatenate(Enreg, Identifiant, Fonctionne, Materiel, Prix, Taille, Description);
         printf("l'element sera insere sous cette forme: %s\n", Enreg);
-        Ecrire_chaine_TOVnC(F, Enreg, Identifiant, &i, &j, &buf);
+        Ecrire_chaine_TOVnC(F, Enreg, &i, &j, &buf);
     }
     EcrireDir_TOVnC(F, i, buf); // ecrire le dernier buffer meme si il n'etait pas plein
     Fermer_TOVnC(F);            // fermer le fichier
@@ -1416,7 +1416,8 @@ void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trou
                     printf("|    -> L'identifiant : %s\n", Cle_Courrante);                 // afficher la cle
                     printf("|    -> Le type materiel : %s\n", Materiel);                   // afficher le materiel
                     printf("|    -> Fonctionnement du materiel: En marche\n", Fonctionne); // le materiel est en marche
-                    printf("|    -> Le prix d'achat du materiel : %s\n", Prix);            // afficher le prix
+                    printf("|    -> Le prix d'achat du materiel : %s DA\n", Prix);         // afficher le prix
+                    printf("|    -> La taille de la description : %s\n", Taille);          // afficher le prix
                     printf("|    -> La Description : %s\n", Description);                  // afficher la description
                     printf("---------------------------------------------------------------------------------------------\n\n");
                 }
@@ -1822,9 +1823,8 @@ void Requette_intervalle_LOVC(char nom_fichier[], int Prix_Min, int Prix_Max, in
 
     fichier_LOVC f;
     Ouvrir_LOVC(&f, nom_fichier, 'A');
-    int suivant,
-        i = entete_LOVC(&f, 1), // parcours entre bloc du fichier LOVC du materiel en panne
-        j;                      // parcours inter-bloc du fichier LOVC du materiel en panne
+    int i = entete_LOVC(&f, 1), // parcours entre bloc du fichier LOVC du materiel en panne
+        j = 0;                  // parcours inter-bloc du fichier LOVC du materiel en panne
     *montant = 0;               // pour le calcul du montant annuel du materiel dont le prix est compris en prix min et prix max
 
     char Identifiant[TAILLE_IDENTIFIANT + 1],    // la plus petite cle dans un bloc (plus petit identifiant)
@@ -1857,15 +1857,17 @@ void Requette_intervalle_LOVC(char nom_fichier[], int Prix_Min, int Prix_Max, in
             (*montant) = (*montant) + atoi(Prix);
 
             printf("\n\n----------- Materiel trouve dans le bloc %i a la pos %i dont le prix est compris [%i , %i]: ------------\n\n", i, j, Prix_Min, Prix_Max);
-            printf("|    -> L'identifiant : %s\n", Identifiant);        // afficher la cle
-            printf("|    -> Le type materiel : %s\n", Materiel);        // afficher le materiel
-            printf("|    -> Le prix d'achat du materiel : %s\n", Prix); // afficher le prix
-            printf("|    -> La Description : %s\n", Description);       // afficher la description
-            printf("---------------------------------------------------------------------------------------------------------\n\n");
+            printf("|    -> L'identifiant : %s\n", Identifiant);           // afficher la cle
+            printf("|    -> Le type materiel : %s\n", Materiel);           // afficher le materiel
+            printf("|    -> Le prix d'achat du materiel : %s DA\n", Prix); // afficher le prix
+            printf("|    -> La taille de la description : %s\n", Taille);  // afficher la taille de la description
+            printf("|    -> La Description : %s\n", Description);          // afficher la description
+            printf("----------------------------------------------------------------------------------------------------------\n\n");
         }
     }
-
-    printf("|    -> le montant global est : %d\n", *montant); //  le montant global de tous ces  matériels affichés
+    printf("\n\n-----------------------------------------------\n");
+    printf("|    -> le montant global est : %d DA\n", *montant); //  le montant global de tous ces  matériels affichés
+    printf("-----------------------------------------------\n\n");
 
     fermer_LOVC(&f);
 }
@@ -1891,7 +1893,9 @@ int main(void)
     srand(time(NULL));
     printf("a printing is needed");
     int k;
-    Generation_fichiers_Materiel(FICHIER_MATERIEL_FONCTIONNE);
+    // Generation_fichiers_Materiel(FICHIER_MATERIEL_FONCTIONNE);
+    Requette_intervalle_LOVC(FICHIER_MATERIEL_NON_FONCTIONNE, 20000, 900000, &k);
+    // afficher_fichier_LOVC(FICHIER_MATERIEL_NON_FONCTIONNE);
     /*
     for (k = 0; k < NB_TYPE_MATERIEL; k++)
     {

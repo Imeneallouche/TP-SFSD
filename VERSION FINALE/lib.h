@@ -408,7 +408,7 @@ void Random_String(int length, char chaine[]);
 | Identifiant | champs fonctionne | Type materiel |    Prix   |   taille   | Description (variable) |
 |  (5 bytes)  |   (1 bytes)       |  (12 bytes)   | (6 bytes) |  (3 bytes) |  (max sur 273 bytes)   |
 |***************************************************************************************************/
-void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], char cle[], int *i, int *j, Tampon_TOVnC *Buf);
+void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], int *i, int *j, Tampon_TOVnC *Buf);
 void extraire_chaine_TOVnC(char destination[], int *j, int taille, Tampon_TOVnC *Buf);
 void affichage_entete_TOVnC(char nom_fichier[]);
 void afficher_fichier_TOVnC(char nom_fichier[]);
