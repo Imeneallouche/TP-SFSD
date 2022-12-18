@@ -414,7 +414,45 @@ void affichage_entete_TOF(char nom_fichier[])
 |**********************************************/
 void afficher_fichier_TOF(char nom_fichier[])
 {
-    printf("en cours...");
+    fichier_TOF f;
+    Ouvrir_TOF(&f, nom_fichier, 'A');
+    int i = 1,       // parcours bloc par bloc
+        j = 0,       // parcours de position dans le bloc
+        counter = 0; // numero de l'enregistrement dans le bloc
+    Tampon_TOF Buf;  // contenu d'un bloc dans un buffer
+
+    /*****************************|
+    |  Identifiant  |     Prix    |
+    |   (5 bytes)   |  (6 bytes)  |
+    |*****************************/
+    // while (i <= Entete_TOF(&f, 1))
+    while (counter <= 2)
+    {
+        LireDir_TOF(&f, i, &Buf);
+        j = 0;
+        printf("\n\n\n*************************************************\n");
+        printf("*                                               *\n");
+        printf("*            Le bloc numero : %i                 *\n", i);
+        printf("*        rempli a %i / %i enregistrements          *\n", Buf.nombre_enreg, MAX_ENREG);
+        printf("*                                               *\n");
+        printf("*************************************************\n");
+
+        // while (j < Buf.nombre_enreg)
+        while (counter <= 2)
+        {
+            printf("\n\n.........................\n");
+            printf(".                       .\n");
+            printf(".  Materiel numero : %i  .\n", counter);
+            printf(".                       .\n");
+            printf(".........................\n");
+            printf("identifiant: %i\n", Buf.tab[j].Identifiant);
+            printf("Fonctionne? : %i\n", Buf.tab[j].supprimer);
+            printf("prix: %i\n", Buf.tab[j].Prix);
+            counter++;
+            j++;
+        }
+        i++;
+    }
 }
 
 /*
@@ -1241,12 +1279,7 @@ void extraire_chaine_LOVC(fichier_LOVC *f, char destination[], int *i, int *j, i
         {
             (*i) = Buf->suivant;      // aller au prochain bloc
             LireDir_LOVC(f, *i, Buf); // le lire
-            printf("\n\n\n*****************************\n");
-            printf("*                           *\n");
-            printf("*   au bloc Numero:  %i      *\n", *i);
-            printf("*                           *\n");
-            printf("*****************************\n");
-            *j = 0; // se placer au debut du bloc
+            *j = 0;                   // se placer au debut du bloc
         }
         destination[k] = Buf->tab[(*j)]; // recuperation du caractere dans la position k de la chaine
         (*j) = (*j) + 1;                 // deplacement d'une position dans le buffer
@@ -1336,7 +1369,7 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
 /****************************************************|
 |                                                    |
 |   Recherche dun materiel selon son identifiant     |
-|          Realise par : Imene ALLOUCHE              |
+|          Realise par : Ibtissam SEFFAH             |
 |                                                    |
 |****************************************************/
 void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trouv, int *i, int *j)
@@ -1656,14 +1689,18 @@ void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fich
 |************************************************/
 void Inserer_Enreg_TOF(fichier_TOF *f, Tenreg_TOF Enregistrement_TOF, int *i, int *j, Tampon_TOF *Buf)
 {
+    printf("\nbloc %i pos %i", *i, *j);
     if (*j > MAX_ENREG)
     {
         Buf->nombre_enreg = MAX_ENREG;
         EcrireDir_TOF(f, *i, Buf); // ecrire le buf i                                                                                      // incrementer le i
-        Alloc_bloc_TOF(f);         // nouveau bloc + mise a jour de l'entete
+        *i = Alloc_bloc_TOF(f);    // nouveau bloc + mise a jour de l'entete
         *j = 0;
     }
-    Buf->tab[*j] = Enregistrement_TOF;          // mise a jour du Buf: champs identifiant
+    Buf->tab[*j].Identifiant = Enregistrement_TOF.Identifiant; // mise a jour du Buf: champs identifiant
+    Buf->tab[*j].Prix = Enregistrement_TOF.Prix;               // mise a jour du Buf: champs Prix
+    Buf->tab[*j].supprimer = Enregistrement_TOF.supprimer;     // mise a jour du Buf: champs Supprimer
+
     Buf->nombre_enreg = *j;                     // mise a jour du Buf: nombre d'enreg dans le buf
     *j = *j + 1;                                // aller a la prochaine pos libre dans le Buf
     Aff_Entete_TOF(f, 2, Entete_TOF(f, 2) + 1); // mise a jour de l'entete: nombre d'enregistrement inseres++
@@ -1691,7 +1728,6 @@ void Inserer_Enreg_TOF(fichier_TOF *f, Tenreg_TOF Enregistrement_TOF, int *i, in
 |************************************************/
 void Generation_fichiers_Materiel(char nom_fichier[])
 {
-
     int k,     // parcourir tous les materiel existants (6 types de materiels)
         i = 1, // parcours entre-blocs du fichier TOVC du materiel en marche
         j = 0, // parcours inter-blocs du fichier TOVC du materiel en marche
@@ -1707,16 +1743,17 @@ void Generation_fichiers_Materiel(char nom_fichier[])
         Taille[TAILLE_TAILLE + 1],               // taille du champs description
         Description[TAILLE_MAX_DESCRIPTION + 1]; // la description (caracteristiques) du materiel
 
-    Ouvrir_TOVC(&f, nom_fichier, 'A');     // ouvrir le fichier TOVC du materiel en marche qu'on parcourira
+    Ouvrir_TOVC(&f, nom_fichier, 'A'); // ouvrir le fichier TOVC du materiel en marche qu'on parcourira
+
     for (k = 0; k < NB_TYPE_MATERIEL; k++) // Ouvrir tous les fichiers TOFs et initialiser leurs champs associes
     {
         strcpy(Files[k].Materiel, MATERIAL_LIST[k]);                                      // affcter le nom du materiel
         sprintf(Files[k].file_name, "Materiel_en_marche_%s_TOF.bin\0", MATERIAL_LIST[k]); // generer le nom du fichier selon le nom du materiel
         Ouvrir_TOF(&(Files[k].f), Files[k].file_name, 'N');                               // ouvrir le fichier correspondant en mode nouveau
 
-        Files[k].i = 1;                // initialisation de numero du bloc ou affecter
-        Files[k].j = 0;                // initialisation de la position ou affecter
-        Files[k].Buf.nombre_enreg = 0; // initialiser le nombre d'enregistrement dans le buf courant(buf numero 1) a 0
+        Files[k].i = Alloc_bloc_TOF(&(Files[k].f)); // initialisation de numero du bloc ou affecter
+        Files[k].j = 0;                             // initialisation de la position ou affecter
+        Files[k].Buf.nombre_enreg = 0;              // initialiser le nombre d'enregistrement dans le buf courant(buf numero 1) a 0
     }
 
     LireDir_TOVC(&f, i, &Buf);
@@ -1756,6 +1793,8 @@ void Generation_fichiers_Materiel(char nom_fichier[])
         EcrireDir_TOF(&(Files[k].f), Files[k].i, &(Files[k].Buf));
         Fermer_TOF(&(Files[k].f));
     }
+
+    Fermer_TOVC(&f); // fermer le fichier des materiel en marche TOVC
 }
 
 /*
@@ -1770,14 +1809,95 @@ void Generation_fichiers_Materiel(char nom_fichier[])
 
 
 */
+/**************************************************|
+|                                                  |
+|     Requette a intervalle par rapport au prix    |
+|    [Prix_Min , Prix_Min] dans un fichier LOVC    |
+|          Realise par : Ibtissam SEFFAH           |
+|                                                  |
+|**************************************************/
+// FICHIER_MATERIEL_NON_FONCTIONNE = "Materiel_informatique_en_panne_LOVC.bin"
+void Requette_intervalle_LOVC(char nom_fichier[], int Prix_Min, int Prix_Max, int *montant)
+{
 
+    fichier_LOVC f;
+    Ouvrir_LOVC(&f, nom_fichier, 'A');
+    int suivant,
+        i = entete_LOVC(&f, 1), // parcours entre bloc du fichier LOVC du materiel en panne
+        j;                      // parcours inter-bloc du fichier LOVC du materiel en panne
+    *montant = 0;               // pour le calcul du montant annuel du materiel dont le prix est compris en prix min et prix max
+
+    char Identifiant[TAILLE_IDENTIFIANT + 1],    // la plus petite cle dans un bloc (plus petit identifiant)
+        Materiel[TAILLE_MATERIEL],               // le type du materiel
+        Prix[TAILLE_PRIX + 1],                   // le ptix du materiel
+        Taille[TAILLE_TAILLE + 1],               // taille du champs description
+        Description[TAILLE_MAX_DESCRIPTION + 1]; // la description (caracteristiques) du materiel
+
+    Tampon_LOVC buf;           // un buffer pour charger un bloc de MS vers MC
+    LireDir_LOVC(&f, i, &buf); // lire le premier buffer buffer
+
+    while (!(i == entete_LOVC(&f, 2) && j >= entete_LOVC(&f, 3))) // tant que on est pas arrive a la fin du fichier
+    {
+
+        /*********************************************************************************|
+        | Identifiant  | Type materiel |    Prix   |   taille   | Description (variable)  |
+        |  (5 bytes)   |  (12 bytes)   | (6 bytes) |  (3 bytes) |  (max sur 272 bytes)    |
+        |*********************************************************************************/
+        // entete_LOVC(f, 3) represente la position libre dans le dernier bloc "pos_libre_dernier_bloc"
+
+        extraire_chaine_LOVC(&f, Identifiant, &i, &j, TAILLE_IDENTIFIANT, &buf); // extraire IDENTIFIANT
+        extraire_chaine_LOVC(&f, Materiel, &i, &j, TAILLE_MATERIEL - 1, &buf);   // extraire le materiel
+        extraire_chaine_LOVC(&f, Prix, &i, &j, TAILLE_PRIX, &buf);               // extraire son prix
+        extraire_chaine_LOVC(&f, Taille, &i, &j, TAILLE_TAILLE, &buf);           // extraire la taille de la description
+        extraire_chaine_LOVC(&f, Description, &i, &j, atoi(Taille), &buf);       // extraire la description
+
+        if (Prix_Min <= atoi(Prix) && atoi(Prix) <= Prix_Max)
+        { //  le pris doit etre compris entre ces deux valeurs : Pris_Max et Pris_Min
+
+            (*montant) = (*montant) + atoi(Prix);
+
+            printf("\n\n----------- Materiel trouve dans le bloc %i a la pos %i dont le prix est compris [%i , %i]: ------------\n\n", i, j, Prix_Min, Prix_Max);
+            printf("|    -> L'identifiant : %s\n", Identifiant);        // afficher la cle
+            printf("|    -> Le type materiel : %s\n", Materiel);        // afficher le materiel
+            printf("|    -> Le prix d'achat du materiel : %s\n", Prix); // afficher le prix
+            printf("|    -> La Description : %s\n", Description);       // afficher la description
+            printf("---------------------------------------------------------------------------------------------------------\n\n");
+        }
+    }
+
+    printf("|    -> le montant global est : %d\n", *montant); //  le montant global de tous ces  matériels affichés
+
+    fermer_LOVC(&f);
+}
+
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
 int main(void)
 {
     srand(time(NULL));
     printf("a printing is needed");
-
-    int trouv,
-        i,
-        j;
-    // Generation_fichiers_Materiel(FICHIER_MATERIEL_FONCTIONNE);
+    int k;
+    Generation_fichiers_Materiel(FICHIER_MATERIEL_FONCTIONNE);
+    /*
+    for (k = 0; k < NB_TYPE_MATERIEL; k++)
+    {
+        strcpy(Files[k].Materiel, MATERIAL_LIST[k]);                                      // affcter le nom du materiel
+        sprintf(Files[k].file_name, "Materiel_en_marche_%s_TOF.bin\0", MATERIAL_LIST[k]); // generer le nom du fichier selon le nom du materiel
+        afficher_fichier_TOF(Files[k].file_name);
+    }
+    */
 }

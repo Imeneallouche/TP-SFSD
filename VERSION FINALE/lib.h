@@ -403,6 +403,7 @@ void Random_String(int length, char chaine[]);
 |       FONCTIONS TOVnC         |
 |                               |
 |*******************************/
+// FICHIER_ORIGINAL = "Materiel_informatique_TOVnC.bin"
 /***************************************************************************************************|
 | Identifiant | champs fonctionne | Type materiel |    Prix   |   taille   | Description (variable) |
 |  (5 bytes)  |   (1 bytes)       |  (12 bytes)   | (6 bytes) |  (3 bytes) |  (max sur 273 bytes)   |
@@ -421,6 +422,7 @@ void Suppression_TOVnC(char nom_fichier[], char identifiant_a_supprimer[]);
 |        FONCTIONS TOVC         |
 |                               |
 |*******************************/
+// FICHIER_MATERIEL_FONCTIONNE = "Materiel_informatique_en_marche_TOVC.bin"
 /***************************************************************************|
 | Identifiant | Type materiel |   Prix    |   taille   |    Description     |
 |  (5 bytes)  |   (12 bytes)  | (6 bytes) |  (3 bytes) |    (variable)      |
@@ -435,6 +437,7 @@ void afficher_fichier_TOVC(char nom_fichier[]);
 |        FONCTIONS LOVC         |
 |                               |
 |*******************************/
+// FICHIER_MATERIEL_NON_FONCTIONNE = "Materiel_informatique_en_panne_LOVC.bin"
 /***************************************************************************|
 | Identifiant | Type materiel |   Prix    |   taille   |    Description     |
 |  (5 bytes)  |   (12 bytes)  | (6 bytes) |  (3 bytes) |    (variable)      |
@@ -474,56 +477,18 @@ void Generation_fichiers_Materiel(char nom_fichier[]);
 void Inserer_Enreg_TOF(fichier_TOF *f, Tenreg_TOF Enregistrement_TOF, int *i, int *j, Tampon_TOF *Buf);
 void affichage_entete_TOF(char nom_fichier[]);
 void afficher_fichier_TOF(char nom_fichier[]);
-/*
 
-
-
-
-
-
-
-
-
-BRAINSTORMING*/
-/*fichier TOVC en marche*/
-/*****************************************************************************|
-| Identifiant |Type materiel |   Prix   |   taille   | Description (variable) |
-|  (5 bytes)  |(12 bytes)   | (6 bytes) |  (3 bytes) |  (max sur 272 bytes)   |
-|*****************************************************************************/
-
-// les fichiers qui seront générés
-/*************************
-| Identifiant |  Prix    |
-|  (5 bytes)  |(6 bytes) /
-|************************/
-/*« Materiel_en_marche_typeMateriel_TOF.bin ».*/
-/*« Materiel_en_marche_typeMateriel_TOF.bin ».*/
-/*« Materiel_en_marche_typeMateriel_TOF.bin ».*/
-/*« Materiel_en_marche_typeMateriel_TOF.bin ».*/
-/*« Materiel_en_marche_typeMateriel_TOF.bin ».*/
-/*« Materiel_en_marche_typeMateriel_TOF.bin ».*/
-
-// 1-ouvrir 6 fichier mode nouveau
-// 2- parcourir TOVC
-// 3- verifier type materiel
-// 4- affecter au fichier correspondant
-/*
-
-
-
-
-
-
-
-*/
-/*fichier LOVC en panne*/
-/**********************************************************************************
-| Identifiant |Type materiel |   Prix     |   taille   | Description (variable) |
-|  (5 bytes)  |(12 bytes)   | (6 bytes)  |  (3 bytes) |  (max sur 272 bytes)    |
-|*****************************************************************************/
-// 1- afficher tous les materiaux dont le prix [a,b] (1- parcours_LOVC_sequentielle)
-// 2- afficher le montant global
-//    [ initialiser un compteur : counter=0, counter+=Prix]
+/*******************************|
+|                               |
+|        FONCTIONS LOVC         |
+|                               |
+|*******************************/
+// FICHIER_MATERIEL_NON_FONCTIONNE = "Materiel_informatique_en_panne_LOVC.bin"
+/***************************************************************************|
+| Identifiant | Type materiel |   Prix    |   taille   |    Description     |
+|  (5 bytes)  |   (12 bytes)  | (6 bytes) |  (3 bytes) |    (variable)      |
+|***************************************************************************/
+void Requette_intervalle_LOVC(char nom_fichier[], int Prix_Min, int Prix_Max, int *montant);
 
 /*
 
