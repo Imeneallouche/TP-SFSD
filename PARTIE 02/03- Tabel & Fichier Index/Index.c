@@ -1,6 +1,6 @@
 /*********************************************************|
 |                                                         |
-|       structure de l'enregistrement Table d'index     |
+|       structure de l'enregistrement Table d'index       |
 |                                                         |
 |*********************************************************/
 typedef struct Tenreg_INDEX
@@ -65,19 +65,19 @@ void creerIndex () {
            
         / **************************************************************************************************************************|
         |                                                                                                                           |
-        |                                   remplisage d'enregistrement index                                                       |
+        |                                   remplissage d'enregistrement index                                                       |
         |                                                                                                                           |
         |**************************************************************************************************************************/
             
             
-            indexEnreg.Identifiant = atoi(Id);
-            indexEnreg.numbloc = i1;
-            indexEnreg.deplacement = j1;
+            indexEnreg.Identifiant = atoi(Id);       // l'identifiant (cle )
+            indexEnreg.numbloc = i1;                // num bloc ou se trouve cet identifiant
+            indexEnreg.deplacement = j1;           // le deplacement de cet identifiant
            
            
         / **************************************************************************************************************************|
         |                                                                                                                           |
-        |                                   remplisage de la table index                                                            |
+        |                                   remplissage de la table index                                                            |
         |                                                                                                                           |
         |**************************************************************************************************************************/
            
