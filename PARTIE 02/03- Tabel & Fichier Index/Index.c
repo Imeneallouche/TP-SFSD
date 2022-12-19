@@ -61,11 +61,27 @@ void creerIndex () {
             extraire_chaine_TOVnC(Taille, &j, TAILLE_TAILLE, &Buf);
             extraire_chaine_TOVnC(Description, &j, atoi(Taille), &Buf);
 
-        /****************** remplisage d'enregistrement index  ****************************/
+       
+           
+        / **************************************************************************************************************************|
+        |                                                                                                                           |
+        |                                   remplisage d'enregistrement index                                                       |
+        |                                                                                                                           |
+        |**************************************************************************************************************************/
+            
+            
             indexEnreg.Identifiant = atoi(Id);
             indexEnreg.numbloc = i1;
             indexEnreg.deplacement = j1;
-        /******************** remplisage de la table d'enregistrement index ***************/
+           
+           
+        / **************************************************************************************************************************|
+        |                                                                                                                           |
+        |                                   remplisage de la table index                                                            |
+        |                                                                                                                           |
+        |**************************************************************************************************************************/
+           
+       
             IndexBuf.tab_INDEX[k++] = indexEnreg;
 
         }
