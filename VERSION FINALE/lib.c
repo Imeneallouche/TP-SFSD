@@ -1524,9 +1524,9 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
     int i, j,            // l'emplacement ou on va inserer le matereil(i:le bloc , j: la posistion)
         l, k, cpt,       // des variables seront utilisés pour le decalage
         taille_materiel, // la taille de tout l'enregistrement a inserer
-        taille_chaines,
-        trouv,    // boolean utilisé pour la recherche du materiel qu'on veut l'inserer
-        stop = 0; // booleen pour continuer l'operation de l'insertion
+        taille_chaines,  // la taille des chaine qui vont deborder et seront inseres dans le prochain buffer
+        trouv,           // boolean utilisé pour la recherche du materiel qu'on veut inserer
+        stop = 0;        // booleen pour continuer l'operation de l'insertion
 
     char Identifiant[TAILLE_IDENTIFIANT + 1],        // numero d'identifiant(cle)
         Fonctionne[TAILLE_FONCTIONNEMENT + 1] = "f", // fonctionne = 'f', le materiel marche, fonctionne = 'n' sinon
@@ -1556,6 +1556,7 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
 
     if (!trouv) // si l'idneiifant n'existe pas deja dans le fichier la chaine doit être inséré dans le bloc i à la position j
     {
+        Ouvrir_TOVnC(&f, nom_fichier, 'A'); // ouvrir le fichier ou inserer
         /***************************************************************************************************|
         | Identifiant | champs fonctionne | Type materiel |    Prix   |   taille   | Description (variable) |
         |  (5 bytes)  |   (1 bytes)       |  (12 bytes)   | (6 bytes) |  (3 bytes) |  (max sur 273 bytes)   |
@@ -1642,23 +1643,31 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
                 }
             }
         }
+
+        /************************************************************************************************************************|
+        |                                                                                                                        |
+        |               si on est arrive a la fin du fichier, on rajoute un nouveau bloc contenant la chaine                     |
+        |                                                                                                                        |
+        |************************************************************************************************************************/
+
+        if (i > Entete_TOVnC(&f, 1))
+        {
+            i == Alloc_bloc_TOVnC(&f);
+            strcpy(Buf.tableau, Chaine_debordantes); // insertion chaine
+            Buf.nb == taille_chaines;                // mise à jour de la position libre dans un bloc (buf.nb)
+            EcrireDir_TOVnC(&f, i, Buf);
+        }
+
+        Aff_Entete_TOVnC(&f, 2, Entete_TOVnC(&f, 2) + taille_materiel); // Entete_TOVnC(f,2) : nb d'insertion  , on incrémente le compteur d'insertions
+        Fermer_TOVnC(&f);
     }
 
-    /************************************************************************************************************************|
-    |                                                                                                                        |
-    |               si on est arrive a la fin du fichier, on rajoute un nouveau bloc contenant la chaine                     |
-    |                                                                                                                        |
-    |************************************************************************************************************************/
-
-    if (i > Entete_TOVnC(&f, 1))
+    else // si l'identifiant existe deja dans le fichier TOVnC
     {
-        i == Alloc_bloc_TOVnC(&f);
-        strcpy(Buf.tableau, Chaine_debordantes); // insertion chaine
-        Buf.nb == taille_chaines;                // mise à jour de la position libre dans un bloc (buf.nb)
-        EcrireDir_TOVnC(&f, i, Buf);
+        printf("\n\n-----------------------------------------------------------------\n");
+        printf("|   Cet identifiant existe deja, aucune insertion n'a eu lieu    |\n"); // alors informer mon audience qu'aucune suppression n'a eu lieu
+        printf("-----------------------------------------------------------------\n\n");
     }
-    Aff_Entete_TOVnC(&f, 2, Entete_TOVnC(&f, 2) + taille_materiel); // Entete_TOVnC(f,2) : nb d'insertion  , on incrémente le compteur d'insertions
-    Fermer_TOVnC(&f);
 }
 
 /*
@@ -1712,7 +1721,11 @@ void Suppression_TOVnC(char nom_fichier[], char identifiant_a_supprimer[])
         printf("\nle materiel a ete supprime");                               // pour informer l'audience
     }                                                                         // mais
     else                                                                      // si le materiel n'existe pas d'origine
-        printf("\nle materiel n'existe pas, aucune suppression n'a eu lieu"); // alors informer mon audience qu'aucune suppression n'a eu lieu
+    {
+        printf("\n\n----------------------------------------------------------------\n");
+        printf("|   le materiel n'existe pas, aucune suppression n'a eu lieu    |\n"); // alors informer mon audience qu'aucune suppression n'a eu lieu
+        printf("----------------------------------------------------------------\n\n");
+    }
 }
 
 /*
