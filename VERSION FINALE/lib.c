@@ -1493,16 +1493,11 @@ void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trou
 
 
 */
-/********************************************************|
-|                                                        |
-|   insertion d’un matériel dans le fichier de données   |
-|           Realise par : Ibtissam SEFFAH                |
-|                                                        |
-|********************************************************/
 /***********************************************|
 |                                               |
-| COPIER LA CHAINE str DANS LA CHAINE tableau   |
-| A PARTIR DE LA POSITION pos                   |
+|  COPIER LA CHAINE str DANS LA CHAINE tableau  |
+|         A PARTIR DE LA POSITION pos           |
+|        Realise par : Ibtissam SEFFAH          |
 |                                               |
 |***********************************************/
 
@@ -1517,48 +1512,69 @@ void ins_string(char tableau[B], int pos, char str[B]) // module à utilisé pou
     }
 }
 
-/****************************************************|
-|                                                    |
-|insertion d’un matériel dans le fichier de données  |
-|                                                    |
-|***************************************************/
-void Insertion_TOVnC(char nom_fichier[], char chaine[]) // procédure pour inserer une chaine dans un fichier , la chaine represente le materiel
+/********************************************************|
+|                                                        |
+|   insertion d’un matériel dans le fichier de données   |
+|           Realise par : Ibtissam SEFFAH                |
+|                                                        |
+|********************************************************/
+void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine dans un fichier , la chaine represente le materiel
 {
-    // collecter les informations necessaires sur le nouveau mateirel a inserer
 
-    int i, j,      // l'emplacement ou on va inserer le matereil(i:le bloc , j: la posistion)
-        l, k, cpt, // des variables seront utilisés pour le decalage
-        ident,
-        trouv;           // boolean utilisé pour la recherche du materiel qu'on veut l'inserer
-    int stop = 1;        // booleen pour continuer l'operation de l'insertion
-    int taille_materiel; // taille du materiel qu'on veut l'inserer
-    int TAILLE_chaine1;
-    char IDENTIFIANT[TAILLE_IDENTIFIANT + 1];
-    char chaine1[B + 1];
+    int i, j,            // l'emplacement ou on va inserer le matereil(i:le bloc , j: la posistion)
+        l, k, cpt,       // des variables seront utilisés pour le decalage
+        taille_materiel, // la taille de tout l'enregistrement a inserer
+        taille_chaines,
+        trouv,    // boolean utilisé pour la recherche du materiel qu'on veut l'inserer
+        stop = 0; // booleen pour continuer l'operation de l'insertion
+
+    char Identifiant[TAILLE_IDENTIFIANT + 1],        // numero d'identifiant(cle)
+        Fonctionne[TAILLE_FONCTIONNEMENT + 1] = "f", // fonctionne = 'f', le materiel marche, fonctionne = 'n' sinon
+        Materiel[TAILLE_MATERIEL],                   // le type du materiel
+        Prix[TAILLE_PRIX + 1],                       // le ptix du materiel
+        Taille[TAILLE_TAILLE + 1],                   // taille du champs description
+        Description[TAILLE_MAX_DESCRIPTION + 1],     // la description (caracteristiques) du materiel
+        Destination[B + 1],                          // la chaine complete a inserer
+        Chaine_debordantes[2 * B];                   /// les chaine qui seront exclues du buffer en cas de decalage et seront inserees dans les buffers qui suivent
 
     fichier_TOVnC f;
     Tbloc_TOVnC Buf;
 
-    // mettre notre identifiant de la chaine  dans 'key' pour ensuite l'utiliser pour la recherche
+    // collecter les informations necessaires sur le nouveau mateirel a insere
+    printf("\n\n---------------- Collection des information sur le materiel aa inserer ------------------\n");
+    printf("|    -> L'identifiant : ");               // demander l'identifiant
+    scanf("%s", Identifiant);                         // demander l'identifiant
+    printf("|    -> Le type materiel : ");            // maybe le materiel sera genere aleatoirement khir
+    scanf("%s", Materiel);                            // maybe le materiel sera genere aleatoirement khir
+    printf("|    -> Le prix d'achat du materiel : "); // demander le prix
+    scanf("%s", Prix);                                // demander le prix
+    printf("|    -> La Description : ");              // demander la description
+    scanf("%s", Description);                         // demander la description
+    printf("---------------------------------------------------------------------------------------------\n\n");
 
-    IDENTIFIANT[0] = chaine[0];
-    IDENTIFIANT[1] = chaine[1];
-    IDENTIFIANT[2] = chaine[2];
-    IDENTIFIANT[3] = chaine[3];
-    IDENTIFIANT[4] = chaine[4];
-    // ident=atoi(IDENTIFIANT);                                         // taille de la cle de la chaine qu'on veut l'inserer (in case we need it )
+    Recherche_TOVnC(nom_fichier, Identifiant, &trouv, &i, &j); // rechercher l'idenfiant
 
-    taille_materiel = strlen(chaine); // affecter à taille_materiel la taille du materiel (chaine) qu'on va insérer
-    // Ouvrir_TOVnC(&f, FICHIER_ORIGINAL , 'A');
-    Recherche_TOVnC(nom_fichier, IDENTIFIANT, &trouv, &i, &j); // on fait la recherche de la cle du materiel qu'on veut l'inserer
+    if (!trouv) // si l'idneiifant n'existe pas deja dans le fichier la chaine doit être inséré dans le bloc i à la position j
+    {
+        /***************************************************************************************************|
+        | Identifiant | champs fonctionne | Type materiel |    Prix   |   taille   | Description (variable) |
+        |  (5 bytes)  |   (1 bytes)       |  (12 bytes)   | (6 bytes) |  (3 bytes) |  (max sur 273 bytes)   |
+        |***************************************************************************************************/
 
-    if (!trouv)
-    { // chaine doit être inséré dans le bloc i à la position j
-        while (stop && i <= Entete_TOVnC(&f, 1))
+        Generer_Chaine(Taille, TAILLE_TAILLE, strlen(Description));                             // (calculer) generer le champ Taille de description
+        concatenate(Destination, Identifiant, Fonctionne, Materiel, Prix, Taille, Description); // concatener tous les champs dans la chaine destination
+
+        taille_materiel = TAILLE_IDENTIFIANT + TAILLE_FONCTIONNEMENT + TAILLE_MATERIEL - 1 + TAILLE_PRIX + TAILLE_TAILLE + strlen(Description); // la taille de l'enreg
+
+        while (!stop && i <= Entete_TOVnC(&f, 1)) // tant que toutes les chaine n'ont pas etees inserees et on n'est pas arrive a la fin du fichier
         {
             LireDir_TOVnC(&f, i, &Buf); // on lit le bloc ou la chaine doit etre inserer
 
-            /**  si l'espace libre peut contenir le materiel, on décale si nécessaire et puis on insere le materiel  **/
+            /************************************************************************************************************************|
+            |                                                                                                                        |
+            |     si l'espace libre dans le Buf peut contenir le materiel, on décale si nécessaire puis on insere le materiel        |
+            |                                                                                                                        |
+            |************************************************************************************************************************/
             if ((B - Buf.nb) >= taille_materiel)
             { // l'éspace libre est plus grand ou egale à la taille du materiel qu'on veut l'inserer
                 l = Buf.nb;
@@ -1571,53 +1587,74 @@ void Insertion_TOVnC(char nom_fichier[], char chaine[]) // procédure pour inser
                     l--;
                     cpt++;
                 }
-                ins_string(Buf.tableau, j, chaine); // insertion du materiel
-                Buf.nb = Buf.nb + taille_materiel;  // mise à jour de la position libre dans un bloc (buf.nb)
-                EcrireDir_TOVnC(&f, i, Buf);
-                stop = 0;
+                Ecrire_chaine_TOVnC(&f, Destination, &i, &j, &Buf); // insertion du materiel
+                Buf.nb = Buf.nb + taille_materiel;                  // mise à jour de la position libre dans un bloc (buf.nb)
+                EcrireDir_TOVnC(&f, i, Buf);                        // ecrire le buffer
+                stop = 1;                                           // arreter le process de l'insertion
             }
 
-            /** si l'espace libre ne peut pas contenir le materiel [(taille du materiel) > (B-buf.nb)] **/
+            /************************************************************************************************************************|
+            |                                                                                                                        |
+            |             si l'espace libre ne peut pas contenir le materiel [(taille du materiel) > (B-buf.nb)]                     |
+            |                                                                                                                        |
+            |************************************************************************************************************************/
             else
             {
-                /** si la taille du materiel + position ou il faut l'inserer(j) > B , on prend le materiel qu'on veut l'inserer et les matererls qui viennent apres comme
-                une nouvelle chaine à inserer **/
+
+                /************************************************************************************************************************|
+                |                                                                                                                        |
+                |     si la taille du materiel + position ou il faut l'inserer(j) > B , on prend le materiel qu'on veut l'inserer        |
+                |                et les matererls qui viennent apres comme une nouvelle chaine à inserer                                 |
+                |                                                                                                                        |
+                |************************************************************************************************************************/
+
                 if ((j + taille_materiel) > B)
                 {
-                    TAILLE_chaine1 = (Buf.nb - j);                           // la taille des enregistrements qui viennent juste apres le meterile qu'on veut l'inserer
-                    extraire_chaine_TOVnC(chaine1, j, TAILLE_chaine1, &Buf); // on fait sortir ces derniers enregistrements du bloc pour les inserer avec le materiel
-                                                                             // qu'on veut l'inserer
-                    Buf.nb = j;                                              // mise à jour de la position libre dans un bloc (buf.nb)
+                    taille_chaines = (Buf.nb - j);                                      // la taille des enregistrements qui viennent juste apres le meteril qu'on veut l'inserer
+                    extraire_chaine_TOVnC(Chaine_debordantes, j, taille_chaines, &Buf); // on fait sortir ces derniers enregistrements du bloc pour les inserer avec le materiel
+                                                                                        // qu'on veut l'inserer
+                    Buf.nb = j;                                                         // mise à jour de la position libre dans un bloc (buf.nb)
                     EcrireDir_TOVnC(&f, i, Buf);
-                    strcat(chaine, chaine1); // nouveau materiel à inserer (chaine) dans le prochain bloc = materiel qu'on veut inserer (chaine)+ les materierls
-                                             // qui viennent  apres ce dernier(chaine1)
-                    i = i + 1, j = 0;        //  l'insertion se fera à la prochaine itération du TQ , dans le prochain bloc à la premiere position
+                    strcat(chaine, Chaine_debordantes); // nouveau materiel à inserer (chaine) dans le prochain bloc = materiel qu'on veut inserer (chaine)+ les materierls
+                                                        // qui viennent  apres ce dernier(Chaine_debordantes)
+                    i = i + 1, j = 0;                   //  l'insertion se fera à la prochaine itération du TQ , dans le prochain bloc à la premiere position
                 }
+
+                /************************************************************************************************************************|
+                |                                                                                                                        |
+                |                       si la taille du materiel + position ou il faut l'inserer(j) =< B                                 |
+                |                                                                                                                        |
+                |************************************************************************************************************************/
                 else
                 {
-                    /** si la taille du materiel + position ou il faut l'inserer(j) =< B **/
-                    TAILLE_chaine1 = (Buf.nb - j);
-                    extraire_chaine_TOVnC(chaine1, j, TAILLE_chaine1, &Buf);
+                    taille_chaines = (Buf.nb - j);
+                    extraire_chaine_TOVnC(Chaine_debordantes, j, taille_chaines, &Buf);
                     ins_string(Buf.tableau, j, chaine); // on insere le materiel
                     Buf.nb = j + taille_materiel;       // mise à jour la position libre (buf.nb)
                     EcrireDir_TOVnC(&f, i, Buf);
-                    strcpy(chaine, chaine1); // le nouveau materiel qui va etre inserer dans le prochain bloc (chaine reçoit chaine1)
+                    strcpy(chaine, Chaine_debordantes); // le nouveau materiel qui va etre inserer dans le prochain bloc (chaine reçoit Chaine_debordantes)
                     i = i + 1, j = 0;
-                    /*___________________________________________________________________________________________
-                     REMARQUE: on a voulu laiser de vide dans le bloc pour faciliter les prochaines insertions
-                    ( évitant les décalages  )
-                     ____________________________________________________________________________________________*/
+
+                    /*_____________________________________________________________________________________________________
+                            REMARQUE: on a voulu laiser de vide dans le bloc pour faciliter les prochaines insertions
+                                                        ( évitant les décalages  )
+                     ______________________________________________________________________________________________________*/
                 }
             }
         }
     }
 
-    /** si on dépasse la fin de fichier, on rajoute un nouveau bloc contenant la chaine**/
+    /************************************************************************************************************************|
+    |                                                                                                                        |
+    |               si on est arrive a la fin du fichier, on rajoute un nouveau bloc contenant la chaine                     |
+    |                                                                                                                        |
+    |************************************************************************************************************************/
+
     if (i > Entete_TOVnC(&f, 1))
     {
         i == Alloc_bloc_TOVnC(&f);
-        strcpy(Buf.tableau, chaine1); // insertion chaine
-        Buf.nb == TAILLE_chaine1;     // mise à jour de la position libre dans un bloc (buf.nb)
+        strcpy(Buf.tableau, Chaine_debordantes); // insertion chaine
+        Buf.nb == taille_chaines;                // mise à jour de la position libre dans un bloc (buf.nb)
         EcrireDir_TOVnC(&f, i, Buf);
     }
     Aff_Entete_TOVnC(&f, 2, Entete_TOVnC(&f, 2) + taille_materiel); // Entete_TOVnC(f,2) : nb d'insertion  , on incrémente le compteur d'insertions
@@ -1996,6 +2033,60 @@ void Requette_intervalle_LOVC(char nom_fichier[], int Prix_Min, int Prix_Max, in
     fermer_LOVC(&f);
 }
 
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
+
+/************************************************************|
+|                                                            |
+|   Chargement de la table index du fichier "nom_fichier"    |
+|        de tupe TOF vers la MC dans la variable Index       |
+|               Realise par : Imene ALLOUCHE                 |
+|************************************************************/
+void Chargement_Table_Index_TOF()
+{
+    printf("en cours...");
+}
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
+
+/************************************************************|
+|                                                            |
+|       Sauvegarde de la tabel d'index dans un fichier       |
+|               "nom_fichier"  de type TOF                   |
+|              Realise par : Imene ALLOUCHE                  |
+|************************************************************/
+void Sauvegarde_Table_Index_TOF()
+{
+    printf("en cours...");
+}
 /*
 
 

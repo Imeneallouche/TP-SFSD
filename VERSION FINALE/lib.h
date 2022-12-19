@@ -415,7 +415,7 @@ void afficher_fichier_TOVnC(char nom_fichier[]);
 
 void Chargement_initial_TOVnC(char nom_fichier[], int n);
 void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trouv, int *i, int *j);
-void Insertion_TOVnC(char nom_fichier[], char chaine[]);
+void Insertion_TOVnC(char nom_fichier[]);
 void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fichier2[]);
 void Suppression_TOVnC(char nom_fichier[], char identifiant_a_supprimer[]);
 
@@ -479,6 +479,8 @@ void Generation_fichiers_Materiel(char nom_fichier[]);
 void Inserer_Enreg_TOF(fichier_TOF *f, Tenreg_TOF Enregistrement_TOF, int *i, int *j, Tampon_TOF *Buf);
 void affichage_entete_TOF(char nom_fichier[]);
 void afficher_fichier_TOF(char nom_fichier[]);
+void Chargement_Table_Index_TOF();
+void Sauvegarde_Table_Index_TOF();
 
 /*******************************|
 |                               |
