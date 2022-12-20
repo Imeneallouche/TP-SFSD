@@ -1,6 +1,6 @@
 /*********************************************************|
 |                                                         |
-|       structure de l'enregistrement Table d'index     |
+|       structure de l'enregistrement Table d'index       |
 |                                                         |
 |*********************************************************/
 typedef struct Tenreg_INDEX
@@ -61,11 +61,27 @@ void creerIndex () {
             extraire_chaine_TOVnC(Taille, &j, TAILLE_TAILLE, &Buf);
             extraire_chaine_TOVnC(Description, &j, atoi(Taille), &Buf);
 
-        /****************** remplisage d'enregistrement index  ****************************/
-            indexEnreg.Identifiant = atoi(Id);
-            indexEnreg.numbloc = i1;
-            indexEnreg.deplacement = j1;
-        /******************** remplisage de la table d'enregistrement index ***************/
+       
+           
+        / **************************************************************************************************************************|
+        |                                                                                                                           |
+        |                                   remplissage d'enregistrement index                                                       |
+        |                                                                                                                           |
+        |**************************************************************************************************************************/
+            
+            
+            indexEnreg.Identifiant = atoi(Id);       // l'identifiant (cle )
+            indexEnreg.numbloc = i1;                // num bloc ou se trouve cet identifiant
+            indexEnreg.deplacement = j1;           // le deplacement de cet identifiant
+           
+           
+        / **************************************************************************************************************************|
+        |                                                                                                                           |
+        |                                   remplissage de la table index                                                            |
+        |                                                                                                                           |
+        |**************************************************************************************************************************/
+           
+       
             IndexBuf.tab_INDEX[k++] = indexEnreg;
 
         }
