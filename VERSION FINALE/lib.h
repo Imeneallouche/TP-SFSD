@@ -89,7 +89,7 @@ int Alloc_bloc_TOVnC(fichier_TOVnC *f);
 
 
 
- */
+*/
 
 /*********************************************|
 |                                             |
@@ -178,7 +178,7 @@ int Alloc_bloc_TOF(fichier_TOF *f);
 
 
 
- */
+*/
 
 /**********************************************|
 |                                              |
@@ -253,7 +253,7 @@ int Alloc_bloc_TOVC(fichier_TOVC *f);
 
 
 
- */
+*/
 
 /*********************************************|
 |                                             |
@@ -329,7 +329,7 @@ int alloc_bloc_LOVC(fichier_LOVC *fichier, Tampon_LOVC *buf);
 
 
 
- */
+*/
 
 /*********************************************|
 |                                             |
@@ -357,9 +357,11 @@ typedef struct Tenreg_INDEX
 |*******************************************/
 typedef struct Table_Index
 {
-    Tenreg_INDEX Index[MAX_ENREG_INDEX]; // tableau d'enregistrement d'index pas plus de MAX_ENREG_INDEX (variable globale)
-    int nombre_enreg_inseres;            // nombre d'enregistrements inseres dans la table (<MAX_ENREG_INDEX)
+    Tenreg_INDEX table_Index[MAX_ENREG_INDEX]; // tableau d'enregistrement d'index pas plus de MAX_ENREG_INDEX (variable globale)
+    int nombre_enreg_inseres;                  // nombre d'enregistrements inseres dans la table (<MAX_ENREG_INDEX)
 } Table_Index;
+
+Table_Index Index; // declaration d'une table d'index globale
 
 /*********************************************|
 |                                             |
@@ -458,7 +460,7 @@ FICHIER_MATERIEL Files[NB_TYPE_MATERIEL];
 
 
 
- */
+*/
 
 /***********************************************|
 |                                               |
@@ -536,7 +538,7 @@ void afficher_fichier_LOVC(char nom_fichier[]);
 
 
 
- */
+*/
 
 /***********************************************|
 |                                               |

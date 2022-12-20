@@ -2109,8 +2109,31 @@ void Insertion_TnOVnC(char nom_fichier[])
 |************************************************************/
 void Recherche_Dichotomique_Table_Index_TOF(char Cle[], int *trouv, int *k)
 {
-    *trouv = 0;
-    printf("en cours ...");
+    *trouv = 0;                           // booleen pour indiquer si on a trouve l'identifiant ou pas
+    int inf = 0,                          // l'inf dans la table d'index pendant la recherche dichotomique
+        sup = Index.nombre_enreg_inseres; // le sup dans la table d'index pendant la recherche dichotomique
+
+    while (!trouv && inf <= sup)
+    {
+        *k = (inf + sup) / 2;                                    // diviser la recherche sur 2 intervalles
+        if (strcpy(Index.table_Index[*k].Identifiant, Cle) == 0) // si la cle recherche = la cle courante de la pos k
+        {                                                        // donc la cle existe deja dans la table d'index
+            *trouv = 1;                                          // dans l'emplacement *k
+        }                                                        // donc dans le fichier TOVnC egalement (i,j) peuvent etre extraits de l'enreg k dans la tabel d'index
+
+        else // si la cle recherche est differente de la cle courrante
+        {    // decouper l'espace de recherche again
+
+            if (strcpy(Cle, Index.table_Index[*k].Identifiant) > 0) // si la cle recherche > la cle courante
+            {                                                       // regler l'inf
+                inf = *k + 1;
+            }
+            else // si al cle recherche < la cle courante
+            {    // regler le sup
+                sup = *k - 1;
+            }
+        }
+    }
 }
 /*
 
@@ -2137,7 +2160,28 @@ void Recherche_Dichotomique_Table_Index_TOF(char Cle[], int *trouv, int *k)
 |************************************************************/
 void Insertion_Table_Index(Tenreg_INDEX enregistrement_index, int k)
 {
-    printf("en cours...");
+    int temp = Index.nombre_enreg_inseres; // variable temp pour faire le decalage avec
+
+    if (temp + 1 <= MAX_ENREG_INDEX) // si la table d'index nest pas encore pleine
+    {
+
+        while (temp > k)
+        {
+            Index.table_Index[temp] = Index.table_Index[temp - 1]; // decaler tous les elements entre [k,dernier enreg] avec un oas
+            temp--;                                                // revenir a l'arriere
+        }
+
+        Index.table_Index[k] = enregistrement_index; // finalement inserer le nouvel enreg dans sa place prebvenue k
+
+        Index.nombre_enreg_inseres++; // mettre  a jour le nombre d'enregistrements dans la table d'index
+    }
+
+    else
+    {
+        printf("\n\n-----------------------------------------------------------------------------------\n");
+        printf("|  la table d'index est pleine, aucune insertion dans la table d'index n'a eu lieu |\n");
+        printf("-----------------------------------------------------------------------------------\n\n");
+    }
 }
 
 /*
