@@ -10,6 +10,7 @@
 #define MAX_ENREG 10               // max d'enregistrement dans un seul bloc (TOF)
 #define MAX_NOM_FICHIER 40         // la taille max d'un nom du fichier
 #define facteur_reorganisation 0.5 // le facteur de reorganisation du fichier
+#define MAX_ENREG_INDEX 1000       // le nombre max d'enreg que la tabel d'index peut contenir
 
 /***************************************************************************************************|
 | Identifiant | champs fonctionne | Type materiel |    Prix   |   taille   | Description (variable) |
@@ -104,9 +105,9 @@ typedef int typeval_TOF; // type de la valeur stockee dans l'enregistrement
 |*********************************************/
 typedef struct Tenreg_TOF
 {
-    int Identifiant; // cle unique a chaque enregistrement (identifiant)
-    int Prix;        // le prix du materiel
-    int supprimer;   // booleen si efface ou non
+    char Identifiant[TAILLE_IDENTIFIANT + 1]; // cle unique a chaque enregistrement (identifiant)
+    int Prix;                                 // le prix du materiel
+    int supprimer;                            // booleen si efface ou non
 } Tenreg_TOF;
 
 /*********************************************|
@@ -328,16 +329,81 @@ int alloc_bloc_LOVC(fichier_LOVC *fichier, Tampon_LOVC *buf);
 
 
 
-
-
-
  */
+
+/*********************************************|
+|                                             |
+|   STRUCTURES ET VARIABLES GLOBALES de la    |
+|      table d'index et fichier d'index       |
+|                                             |
+|*********************************************/
+/*******************************************|
+|                                           |
+|    structure de l'enregistrement de la    |
+|         table et fichier d'index          |
+|                                           |
+|*******************************************/
+typedef struct Tenreg_INDEX
+{
+    char Identifiant[TAILLE_IDENTIFIANT + 1]; // l'identifiant ou la cle
+    int NumBloc;                              // 1ere coordonnee (numero du bloc) de l'adresse de l'identifiant dans le fichier TOVnC
+    int Deplacement;                          // 2eme coordonnee(deplacement dans loe bloc) de l'adresse de l'identifiant dans TOVnC
+} Tenreg_INDEX;
+
+/*******************************************|
+|                                           |
+|    Structure de la table d'index en MC    |
+|                                           |
+|*******************************************/
+typedef struct Table_Index
+{
+    Tenreg_INDEX Index[MAX_ENREG_INDEX]; // tableau d'enregistrement d'index pas plus de MAX_ENREG_INDEX (variable globale)
+    int nombre_enreg_inseres;            // nombre d'enregistrements inseres dans la table (<MAX_ENREG_INDEX)
+} Table_Index;
+
+/*********************************************|
+|                                             |
+|  Structure du Bloc du fichier d'index en MS |
+|                                             |
+|*********************************************/
+typedef struct Tbloc_INDEX
+{
+    Tenreg_INDEX tab_INDEX[MAX_ENREG]; // max d'enreg = 10 dans un bloc de fichier TOF index
+    int nombre_enreg;                  // nombre d'enregistrements inseres dans le bloc
+
+} Tbloc_INDEX;
+
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
 
 /***********************************************|
 |                                               |
 |          VARIABLES GLOBALES DU TP             |
 |                                               |
 |***********************************************/
+/***********************************|
+|                                   |
+|    liste de materiel (6 types)    |
+|                                   |
+|***********************************/
 char *MATERIAL_LIST[] = {
     "Imprimante ",
     "PC Bureau  ",
@@ -346,10 +412,21 @@ char *MATERIAL_LIST[] = {
     "Telephone  ",
     "Projecteur "};
 
+/************************************|
+|                                    |
+|   noms globaux des fichiers du TP  |
+|                                    |
+|************************************/
 char *FICHIER_ORIGINAL = "Materiel_informatique_TOVnC.bin";                        // le nom du fichier original
 char *FICHIER_MATERIEL_FONCTIONNE = "Materiel_informatique_en_marche_TOVC.bin";    // le nom du fichier qui contient le materiel en fonction
 char *FICHIER_MATERIEL_NON_FONCTIONNE = "Materiel_informatique_en_panne_LOVC.bin"; // le nom du fichier qui contient le materiel en panne
 
+/**************************************************|
+|                                                  |
+|       structure pour faciliter generation        |
+|     les 6 fichiers TOF des 6 types de materile   |
+|                                                  |
+|**************************************************/
 typedef struct FICHIER_MATERIEL
 {
     fichier_TOF f;                   // fichier TOF
@@ -471,16 +548,19 @@ void afficher_fichier_LOVC(char nom_fichier[]);
 |         FONCTIONS TOF         |
 |                               |
 |*******************************/
-/*****************************|
-|  Identifiant  |     Prix    |
-|   (5 bytes)   |  (6 bytes)  |
-|*****************************/
+/************************************************|
+|  Identifiant  |     Prix    |     Supprimer    |
+|   (5 bytes)   |  (integer)  |     (integer)    |
+|************************************************/
 void Generation_fichiers_Materiel(char nom_fichier[]);
 void Inserer_Enreg_TOF(fichier_TOF *f, Tenreg_TOF Enregistrement_TOF, int *i, int *j, Tampon_TOF *Buf);
 void affichage_entete_TOF(char nom_fichier[]);
 void afficher_fichier_TOF(char nom_fichier[]);
+
 void Chargement_Table_Index_TOF();
 void Sauvegarde_Table_Index_TOF();
+void Recherche_Dichotomique_Table_Index_TOF(char Cle[], int *trouv, int *k);
+void Insertion_Table_Index(Tenreg_INDEX enregistrement_index, int k);
 
 /*******************************|
 |                               |
@@ -494,14 +574,10 @@ void Sauvegarde_Table_Index_TOF();
 |***************************************************************************/
 void Requette_intervalle_LOVC(char nom_fichier[], int Prix_Min, int Prix_Max, int *montant);
 
-/*
-
-
-
-
-
-
-
-*/
-/*fichier index TOF / Table index TOF*/
-// 1-  why not taking each cle max de chaque bloc de TOVnC as a key f la table d'index et fichier index
+/*******************************|
+|                               |
+|       FONCTIONS TOVnC         |
+|                               |
+|*******************************/
+// FICHIER_ORIGINAL = "Materiel_informatique_TOVnC.bin"
+void Insertion_TnOVnC(char nom_fichier[]);

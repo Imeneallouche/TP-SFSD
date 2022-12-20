@@ -13,7 +13,6 @@
 /*************************************************************|
 |                                                             |
 | Ouvrir fichier nom_fichier avec le mode correspondant TOVnC |
-|               Realise par : Imene ALLOUCHE                  |
 |                                                             |
 |*************************************************************/
 void Ouvrir_TOVnC(fichier_TOVnC *f, char nom_fichier[], char mode_ouverture)
@@ -57,7 +56,6 @@ void Ouvrir_TOVnC(fichier_TOVnC *f, char nom_fichier[], char mode_ouverture)
 /*************************************|
 |                                     |
 |     Fermer le fichier TOVnC         |
-|   Realise par : Imene ALLOUCHE      |
 |                                     |
 |*************************************/
 void Fermer_TOVnC(fichier_TOVnC *f)
@@ -70,7 +68,6 @@ void Fermer_TOVnC(fichier_TOVnC *f)
 /********************************************|
 |                                            |
 |    Lire le i eme bloc dans buf TOVnC       |
-|       Realise par : Imene ALLOUCHE         |
 |                                            |
 |********************************************/
 void LireDir_TOVnC(fichier_TOVnC *f, int i, Tbloc_TOVnC *buf)
@@ -83,7 +80,6 @@ void LireDir_TOVnC(fichier_TOVnC *f, int i, Tbloc_TOVnC *buf)
 /**********************************************|
 |                                              |
 |  Retoure la i ème valeur del'entete  TOVnC   |
-|        Realise par : Imene ALLOUCHE          |
 |                                              |
 |**********************************************/
 int Entete_TOVnC(fichier_TOVnC *f, int i)
@@ -104,7 +100,6 @@ int Entete_TOVnC(fichier_TOVnC *f, int i)
 /*********************************************|
 |                                             |
 |    Ecrire buf dans le i eme bloc TOVnC      |
-|        Realise par : Imene ALLOUCHE         |
 |                                             |
 |*********************************************/
 void EcrireDir_TOVnC(fichier_TOVnC *f, int i, Tbloc_TOVnC buf)
@@ -117,7 +112,6 @@ void EcrireDir_TOVnC(fichier_TOVnC *f, int i, Tbloc_TOVnC buf)
 /***********************************************|
 |                                               |
 |  modifie la i ème valeur de l'entete  TOVnC   |
-|          Realise par : Imene ALLOUCHE         |
 |                                               |
 |***********************************************/
 void Aff_Entete_TOVnC(fichier_TOVnC *f, int i, int val)
@@ -135,7 +129,6 @@ void Aff_Entete_TOVnC(fichier_TOVnC *f, int i, int val)
 /**********************************************|
 |                                              |
 |   Retourne le numero du nouveau bloc TOVnC   |
-|         Realise par : Imene ALLOUCHE         |
 |                                              |
 |**********************************************/
 int Alloc_bloc_TOVnC(fichier_TOVnC *f)
@@ -149,7 +142,6 @@ int Alloc_bloc_TOVnC(fichier_TOVnC *f)
 |                                                  |
 |    afficher les caracteristqiues (entete) d'un   |
 |       fichier "nom fichier" de type TOVnC        |
-|          Realise par : Imene ALLOUCHE            |
 |                                                  |
 |**************************************************/
 void affichage_entete_TOVnC(char nom_fichier[])
@@ -170,7 +162,6 @@ void affichage_entete_TOVnC(char nom_fichier[])
 |                                              |
 |       affichier le contenu d'un fichier      |
 |                de type TOVnC                 |
-|        Realise par : Imene ALLOUCHE          |
 |                                              |
 |**********************************************/
 void afficher_fichier_TOVnC(char nom_fichier[])
@@ -263,7 +254,6 @@ void afficher_fichier_TOVnC(char nom_fichier[])
 /************************************************************|
 |                                                            |
 |  Ouvrir fichier nom_fichier avec le mode correspondant TOF |
-|                Realise par : Imene ALLOUCHE                |
 |                                                            |
 |************************************************************/
 void Ouvrir_TOF(fichier_TOF *f, char nom_fichier[], char mode)
@@ -299,7 +289,6 @@ void Ouvrir_TOF(fichier_TOF *f, char nom_fichier[], char mode)
 /*************************************|
 |                                     |
 |       Fermer le fichier TOF         |
-|    Realise par : Imene ALLOUCHE     |
 |                                     |
 |*************************************/
 void Fermer_TOF(fichier_TOF *f)
@@ -312,7 +301,6 @@ void Fermer_TOF(fichier_TOF *f)
 /********************************************|
 |                                            |
 |      Lire le i eme bloc dans buf TOF       |
-|       Realise par : Imene ALLOUCHE         |
 |                                            |
 |********************************************/
 void LireDir_TOF(fichier_TOF *f, int i, Tampon_TOF *buf)
@@ -325,7 +313,6 @@ void LireDir_TOF(fichier_TOF *f, int i, Tampon_TOF *buf)
 /*********************************************|
 |                                             |
 |      Ecrire buf dans le i eme bloc TOF      |
-|        Realise par : Imene ALLOUCHE         |
 |                                             |
 |*********************************************/
 void EcrireDir_TOF(fichier_TOF *f, int i, Tampon_TOF *buf)
@@ -338,7 +325,6 @@ void EcrireDir_TOF(fichier_TOF *f, int i, Tampon_TOF *buf)
 /********************************************|
 |                                            |
 |  Retoure la i ème valeur del'entete  TOF   |
-|       Realise par : Imene ALLOUCHE         |
 |                                            |
 |********************************************/
 int Entete_TOF(fichier_TOF *f, int i)
@@ -356,7 +342,6 @@ int Entete_TOF(fichier_TOF *f, int i)
 /*********************************************|
 |                                             |
 |  modifie la i ème valeur de l'entete  TOF   |
-|        Realise par : Imene ALLOUCHE         |
 |                                             |
 |*********************************************/
 void Aff_Entete_TOF(fichier_TOF *f, int i, int val)
@@ -388,7 +373,6 @@ int Alloc_bloc_TOF(fichier_TOF *f)
 |                                                  |
 |    afficher les caracteristqiues (entete) d'un   |
 |        fichier "nom fichier" de type TOF         |
-|          Realise par : Imene ALLOUCHE            |
 |                                                  |
 |**************************************************/
 void affichage_entete_TOF(char nom_fichier[])
@@ -409,7 +393,6 @@ void affichage_entete_TOF(char nom_fichier[])
 |                                              |
 |       affichier le contenu d'un fichier      |
 |                de type TOF                   |
-|        Realise par : Imene ALLOUCHE          |
 |                                              |
 |**********************************************/
 void afficher_fichier_TOF(char nom_fichier[])
@@ -421,10 +404,10 @@ void afficher_fichier_TOF(char nom_fichier[])
         counter = 0; // numero de l'enregistrement dans le bloc
     Tampon_TOF Buf;  // contenu d'un bloc dans un buffer
 
-    /*****************************|
-    |  Identifiant  |     Prix    |
-    |   (5 bytes)   |  (6 bytes)  |
-    |*****************************/
+    /************************************************|
+    |  Identifiant  |     Prix    |     Supprimer    |
+    |   (5 bytes)   |  (integer)  |     (1 bytes)    |
+    |************************************************/
     // while (i <= Entete_TOF(&f, 1))
     while (counter <= 2)
     {
@@ -445,9 +428,9 @@ void afficher_fichier_TOF(char nom_fichier[])
             printf(".  Materiel numero : %i  .\n", counter);
             printf(".                       .\n");
             printf(".........................\n");
-            printf("identifiant: %i\n", Buf.tab[j].Identifiant);
-            printf("Fonctionne? : %i\n", Buf.tab[j].supprimer);
+            printf("identifiant: %s\n", Buf.tab[j].Identifiant);
             printf("prix: %i DA\n", Buf.tab[j].Prix);
+            printf("Fonctionne? : %i\n", Buf.tab[j].supprimer);
             counter++;
             j++;
         }
@@ -486,7 +469,6 @@ void afficher_fichier_TOF(char nom_fichier[])
 /*************************************************************|
 |                                                             |
 |  Ouvrir fichier nom_fichier avec le mode correspondant TOVC |
-|                Realise par : Imene ALLOUCHE                 |
 |                                                             |
 |*************************************************************/
 void Ouvrir_TOVC(fichier_TOVC *f, char nom_fichier[], char mode_ouverture)
@@ -531,7 +513,6 @@ void Ouvrir_TOVC(fichier_TOVC *f, char nom_fichier[], char mode_ouverture)
 /*************************************|
 |                                     |
 |      Fermer le fichier TOVC         |
-|   Realise par : Imene ALLOUCHE      |
 |                                     |
 |*************************************/
 void Fermer_TOVC(fichier_TOVC *f)
@@ -545,7 +526,6 @@ void Fermer_TOVC(fichier_TOVC *f)
 /********************************************|
 |                                            |
 |     Lire le i eme bloc dans buf TOVC       |
-|       Realise par : Imene ALLOUCHE         |
 |                                            |
 |********************************************/
 void LireDir_TOVC(fichier_TOVC *f, int i, Tbloc_TOVC *buf)
@@ -558,7 +538,6 @@ void LireDir_TOVC(fichier_TOVC *f, int i, Tbloc_TOVC *buf)
 /********************************************|
 |                                            |
 | Retoure la i ème valeur del'entete  TOVC   |
-|       Realise par : Imene ALLOUCHE         |
 |                                            |
 |********************************************/
 int Entete_TOVC(fichier_TOVC *f, int i)
@@ -578,7 +557,6 @@ int Entete_TOVC(fichier_TOVC *f, int i)
 /*********************************************|
 |                                             |
 |     Ecrire buf dans le i eme bloc TOVC      |
-|        Realise par : Imene ALLOUCHE         |
 |                                             |
 |*********************************************/
 void EcrireDir_TOVC(fichier_TOVC *f, int i, Tbloc_TOVC buf)
@@ -591,7 +569,6 @@ void EcrireDir_TOVC(fichier_TOVC *f, int i, Tbloc_TOVC buf)
 /*********************************************|
 |                                             |
 | modifie la i ème valeur de l'entete  TOVC   |
-|       Realise par : Imene ALLOUCHE          |
 |                                             |
 |*********************************************/
 void Aff_Entete_TOVC(fichier_TOVC *f, int i, int val)
@@ -611,7 +588,6 @@ void Aff_Entete_TOVC(fichier_TOVC *f, int i, int val)
 /********************************************|
 |                                            |
 |  Retourne le numero du nouveau bloc TOVC   |
-|       Realise par : Imene ALLOUCHE          |
 |                                            |
 |********************************************/
 int Alloc_bloc_TOVC(fichier_TOVC *f)
@@ -625,7 +601,6 @@ int Alloc_bloc_TOVC(fichier_TOVC *f)
 |                                                  |
 |    afficher les caracteristqiues (entete) d'un   |
 |       fichier "nom fichier" de type TOVC         |
-|          Realise par : Imene ALLOUCHE            |
 |                                                  |
 |**************************************************/
 void affichage_entete_TOVC(char nom_fichier[])
@@ -647,7 +622,6 @@ void affichage_entete_TOVC(char nom_fichier[])
 |                                              |
 |       affichier le contenu d'un fichier      |
 |                de type TOVC                  |
-|        Realise par : Imene ALLOUCHE          |
 |                                              |
 |**********************************************/
 void afficher_fichier_TOVC(char nom_fichier[])
@@ -724,7 +698,6 @@ void afficher_fichier_TOVC(char nom_fichier[])
 /*************************************************************|
 |                                                             |
 |  Ouvrir fichier nom_fichier avec le mode correspondant LOVC |
-|                 Realise par : Imene ALLOUCHE                |
 |                                                             |
 |*************************************************************/
 void Ouvrir_LOVC(fichier_LOVC *f, char nom_fichier[], char mode)
@@ -764,7 +737,6 @@ void Ouvrir_LOVC(fichier_LOVC *f, char nom_fichier[], char mode)
 /**************************************|
 |                                      |
 |       Fermer le fichier LOVC         |
-|    Realise par : Imene ALLOUCHE      |
 |                                      |
 |**************************************/
 void fermer_LOVC(fichier_LOVC *f)
@@ -777,7 +749,6 @@ void fermer_LOVC(fichier_LOVC *f)
 /*********************************************|
 |                                             |
 |      Lire le i eme bloc dans buf LOVC       |
-|        Realise par : Imene ALLOUCHE         |
 |                                         ,   |
 |*********************************************/
 void LireDir_LOVC(fichier_LOVC *f, int i, Tampon_LOVC *buf)
@@ -791,7 +762,6 @@ void LireDir_LOVC(fichier_LOVC *f, int i, Tampon_LOVC *buf)
 /**********************************************|
 |                                              |
 |      Ecrire buf dans le i eme bloc LOVC      |
-|         Realise par : Imene ALLOUCHE         |
 |                                              |
 |*********************************************/
 void ecrireDir_LOVC(fichier_LOVC *f, int i, Tampon_LOVC *buf)
@@ -806,7 +776,6 @@ void ecrireDir_LOVC(fichier_LOVC *f, int i, Tampon_LOVC *buf)
 /*********************************************|
 |                                             |
 |  Retoure la i ème valeur del'entete  LOVC   |
-|       Realise par : Imene ALLOUCHE          |
 |                                             |
 |*********************************************/
 int entete_LOVC(fichier_LOVC *f, int i)
@@ -831,7 +800,6 @@ int entete_LOVC(fichier_LOVC *f, int i)
 /**********************************************|
 |                                              |
 |  modifie la i ème valeur de l'entete  LOVC   |
-|       Realise par : Imene ALLOUCHE          |
 |                                              |
 |**********************************************/
 void aff_entete_LOVC(fichier_LOVC *f, int i, int val)
@@ -853,7 +821,6 @@ void aff_entete_LOVC(fichier_LOVC *f, int i, int val)
 /*********************************************|
 |                                             |
 |   Retourne le numero du nouveau bloc LOVC   |
-|       Realise par : Imene ALLOUCHE          |
 |                                             |
 |*********************************************/
 int alloc_bloc_LOVC(fichier_LOVC *fichier, Tampon_LOVC *buf)
@@ -880,7 +847,6 @@ int alloc_bloc_LOVC(fichier_LOVC *fichier, Tampon_LOVC *buf)
 |                                                  |
 |    afficher les caracteristqiues (entete) d'un   |
 |       fichier "nom fichier" de type TOVC         |
-|          Realise par : Imene ALLOUCHE            |
 |                                                  |
 |**************************************************/
 void affichage_entete_LOVC(char nom_fichier[])
@@ -903,7 +869,6 @@ void affichage_entete_LOVC(char nom_fichier[])
 |                                              |
 |       affichier le contenu d'un fichier      |
 |                de type LOVC                  |
-|         Realise par : Imene ALLOUCHE         |
 |                                              |
 |**********************************************/
 void afficher_fichier_LOVC(char nom_fichier[])
@@ -981,7 +946,6 @@ void afficher_fichier_LOVC(char nom_fichier[])
 |                                              |
 |     Generer un nombre aleatoire qui se       |
 |   trouve entre les bornes [lower, upper]     |
-|       Realise par : Imene ALLOUCHE          |
 |                                              |
 |**********************************************/
 int Random_Number(int lower, int upper)
@@ -994,7 +958,6 @@ int Random_Number(int lower, int upper)
 |                                              |
 |    Generer une chaine aleatoire de taille    |
 |         length extraite de alphabet          |
-|         Realise par : Imene ALLOUCHE         |
 |                                              |
 |**********************************************/
 void Random_String(int length, char chaine[])
@@ -1012,7 +975,6 @@ void Random_String(int length, char chaine[])
 |                                              |
 |     Generer une chaine de longueur length    |
 |         a partir d'un entier number          |
-|        Realise par : Imene ALLOUCHE          |
 |                                              |
 |**********************************************/
 void Generer_Chaine(char chaine[], int length, int number)
@@ -1030,7 +992,6 @@ void Generer_Chaine(char chaine[], int length, int number)
 |                                              |
 |      Concatener tous les champs dans         |
 |       une seule chaine destination           |
-|       Realise par : Imene ALLOUCHE          |
 |                                              |
 |**********************************************/
 void concatenate(char *destination, char *identifiant, char *fonctionne, char *materiel, char *prix, char *taille, char *description)
@@ -1066,7 +1027,6 @@ void concatenate(char *destination, char *identifiant, char *fonctionne, char *m
 |                                              |
 | Ecrire la chaine d'identifiant cle a partir  |
 |       du bloc i a la pos j dans Buf          |
-|       Realise par : Imene ALLOUCHE          |
 |                                              |
 |**********************************************/
 void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], int *i, int *j, Tampon_TOVnC *Buf)
@@ -1102,7 +1062,6 @@ void Ecrire_chaine_TOVnC(fichier_TOVnC *F, char chaine[], int *i, int *j, Tampon
 |                                              |
 | Ecrire la chaine d'identifiant cle a partir  |
 |     du bloc i a la pos j dans Buf TOVC       |
-|       Realise par : Imene ALLOUCHE          |
 |                                              |
 |**********************************************/
 void Ecrire_Chaine_TOVC(fichier_TOVC *fichier, int *i, int *j, char chaine[], Tampon_TOVC *buf)
@@ -1146,7 +1105,6 @@ void Ecrire_Chaine_TOVC(fichier_TOVC *fichier, int *i, int *j, char chaine[], Ta
 |                                              |
 | Ecrire la chaine d'identifiant cle a partir  |
 |       du bloc i a la pos j dans Buf          |
-|       Realise par : Imene ALLOUCHE          |
 |                                              |
 |**********************************************/
 void Ecrire_Chaine_LOVC(fichier_LOVC *fichier, int *i, int *j, char chaine[], Tampon_LOVC *buf)
@@ -1191,7 +1149,6 @@ void Ecrire_Chaine_LOVC(fichier_LOVC *fichier, int *i, int *j, char chaine[], Ta
 |                                                  |
 |    extraire une chaine de taille "taille" dans   |
 |      la chaine destination a partir pos j        |
-|          Realise par : Imene ALLOUCHE            |
 |                                                  |
 |**************************************************/
 void extraire_chaine_TOVnC(char destination[], int *j, int taille, Tampon_TOVnC *Buf)
@@ -1223,7 +1180,6 @@ void extraire_chaine_TOVnC(char destination[], int *j, int taille, Tampon_TOVnC 
 |                                                  |
 |    extraire une chaine de taille "taille" dans   |
 |      la chaine destination a partir pos j        |
-|           Realise par : Imene ALLOUCHE           |
 |                                                  |
 |**************************************************/
 void extraire_chaine_TOVC(fichier_TOVC *f, char destination[], int *i, int *j, int taille, Tampon_TOVC *Buf)
@@ -1266,7 +1222,6 @@ void extraire_chaine_TOVC(fichier_TOVC *f, char destination[], int *i, int *j, i
 |                                                  |
 |    extraire une chaine de taille "taille" dans   |
 |      la chaine destination a partir pos j        |
-|           Realise par : Imene ALLOUCHE           |
 |                                                  |
 |**************************************************/
 void extraire_chaine_LOVC(fichier_LOVC *f, char destination[], int *i, int *j, int taille, Tampon_LOVC *Buf)
@@ -1303,7 +1258,6 @@ void extraire_chaine_LOVC(fichier_LOVC *f, char destination[], int *i, int *j, i
 |                                              |
 |       initialiser fichier nom_fichier        |
 |        de type TOVnC avec n valeurs          |
-|        Realise par : Imene ALLOUCHE          |
 |                                              |
 |**********************************************/
 void Chargement_initial_TOVnC(char nom_fichier[], int n)
@@ -1369,7 +1323,6 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
 /****************************************************|
 |                                                    |
 |   Recherche dun materiel selon son identifiant     |
-|          Realise par : Ibtissam SEFFAH             |
 |                                                    |
 |****************************************************/
 void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trouv, int *i, int *j)
@@ -1497,7 +1450,6 @@ void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trou
 |                                               |
 |  COPIER LA CHAINE str DANS LA CHAINE tableau  |
 |         A PARTIR DE LA POSITION pos           |
-|        Realise par : Ibtissam SEFFAH          |
 |                                               |
 |***********************************************/
 
@@ -1515,7 +1467,6 @@ void ins_string(char tableau[B], int pos, char str[B]) // module à utilisé pou
 /********************************************************|
 |                                                        |
 |   insertion d’un matériel dans le fichier de données   |
-|           Realise par : Ibtissam SEFFAH                |
 |                                                        |
 |********************************************************/
 void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine dans un fichier , la chaine represente le materiel
@@ -1616,9 +1567,9 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
                                                                                         // qu'on veut l'inserer
                     Buf.nb = j;                                                         // mise à jour de la position libre dans un bloc (buf.nb)
                     EcrireDir_TOVnC(&f, i, Buf);
-                    strcat(chaine, Chaine_debordantes); // nouveau materiel à inserer (chaine) dans le prochain bloc = materiel qu'on veut inserer (chaine)+ les materierls
-                                                        // qui viennent  apres ce dernier(Chaine_debordantes)
-                    i = i + 1, j = 0;                   //  l'insertion se fera à la prochaine itération du TQ , dans le prochain bloc à la premiere position
+                    strcat(Destination, Chaine_debordantes); // nouveau materiel à inserer (chaine) dans le prochain bloc = materiel qu'on veut inserer (chaine)+ les materierls
+                                                             // qui viennent  apres ce dernier(Chaine_debordantes)
+                    i = i + 1, j = 0;                        //  l'insertion se fera à la prochaine itération du TQ , dans le prochain bloc à la premiere position
                 }
 
                 /************************************************************************************************************************|
@@ -1630,11 +1581,12 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
                 {
                     taille_chaines = (Buf.nb - j);
                     extraire_chaine_TOVnC(Chaine_debordantes, j, taille_chaines, &Buf);
-                    ins_string(Buf.tableau, j, chaine); // on insere le materiel
-                    Buf.nb = j + taille_materiel;       // mise à jour la position libre (buf.nb)
-                    EcrireDir_TOVnC(&f, i, Buf);
-                    strcpy(chaine, Chaine_debordantes); // le nouveau materiel qui va etre inserer dans le prochain bloc (chaine reçoit Chaine_debordantes)
-                    i = i + 1, j = 0;
+                    ins_string(Buf.tableau, j, Destination); // on insere le materiel
+                    Buf.nb = j + taille_materiel;            // mise à jour la position libre (buf.nb)
+                    EcrireDir_TOVnC(&f, i, Buf);             // ecrire le buffer da sla MS
+                    strcpy(Destination, Chaine_debordantes); // le nouveau materiel qui va etre inserer dans le prochain bloc (chaine reçoit Chaine_debordantes)
+                    i++;                                     // aller au bloc prochain
+                    j = 0;                                   // se mettre au debut du bloc prochain
 
                     /*_____________________________________________________________________________________________________
                             REMARQUE: on a voulu laiser de vide dans le bloc pour faciliter les prochaines insertions
@@ -1655,11 +1607,11 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
             i == Alloc_bloc_TOVnC(&f);
             strcpy(Buf.tableau, Chaine_debordantes); // insertion chaine
             Buf.nb == taille_chaines;                // mise à jour de la position libre dans un bloc (buf.nb)
-            EcrireDir_TOVnC(&f, i, Buf);
+            EcrireDir_TOVnC(&f, i, Buf);             // ecrire le buffer
         }
 
         Aff_Entete_TOVnC(&f, 2, Entete_TOVnC(&f, 2) + taille_materiel); // Entete_TOVnC(f,2) : nb d'insertion  , on incrémente le compteur d'insertions
-        Fermer_TOVnC(&f);
+        Fermer_TOVnC(&f);                                               // fermer le fichier finally
     }
 
     else // si l'identifiant existe deja dans le fichier TOVnC
@@ -1687,7 +1639,6 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
 |                                              |
 |      Supprimer un materiel logiquement       |
 |            selon son identifiant             |
-|        Realise par : Imene ALLOUCHE          |
 |                                              |
 |**********************************************/
 void Suppression_TOVnC(char nom_fichier[], char identifiant_a_supprimer[])
@@ -1745,7 +1696,6 @@ void Suppression_TOVnC(char nom_fichier[], char identifiant_a_supprimer[])
 |                                              |
 |       reorganiser un fichier TOVnC selon     |
 |          le champs de fonctionnement         |
-|         Realise par : Imene ALLOUCHE         |
 |                                              |
 |**********************************************/
 void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fichier2[])
@@ -1859,7 +1809,6 @@ void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fich
 |                                                |
 |    Inserer un Enregistrement dans le bloc i    |
 |      dans l'enreg num j dans fichier TOF       |
-|         Realise par : Imene ALLOUCHE           |
 |                                                |
 |************************************************/
 void Inserer_Enreg_TOF(fichier_TOF *f, Tenreg_TOF Enregistrement_TOF, int *i, int *j, Tampon_TOF *Buf)
@@ -1872,9 +1821,9 @@ void Inserer_Enreg_TOF(fichier_TOF *f, Tenreg_TOF Enregistrement_TOF, int *i, in
         *i = Alloc_bloc_TOF(f);    // nouveau bloc + mise a jour de l'entete
         *j = 0;
     }
-    Buf->tab[*j].Identifiant = Enregistrement_TOF.Identifiant; // mise a jour du Buf: champs identifiant
-    Buf->tab[*j].Prix = Enregistrement_TOF.Prix;               // mise a jour du Buf: champs Prix
-    Buf->tab[*j].supprimer = Enregistrement_TOF.supprimer;     // mise a jour du Buf: champs Supprimer
+    stcpy(Buf->tab[*j].Identifiant, Enregistrement_TOF.Identifiant); // mise a jour du Buf: champs identifiant
+    Buf->tab[*j].Prix = Enregistrement_TOF.Prix;                     // mise a jour du Buf: champs Prix
+    Buf->tab[*j].supprimer = Enregistrement_TOF.supprimer;           // mise a jour du Buf: champs Supprimer
 
     Buf->nombre_enreg = *j;                     // mise a jour du Buf: nombre d'enreg dans le buf
     *j = *j + 1;                                // aller a la prochaine pos libre dans le Buf
@@ -1898,7 +1847,6 @@ void Inserer_Enreg_TOF(fichier_TOF *f, Tenreg_TOF Enregistrement_TOF, int *i, in
 |                                                |
 |  Generer fichiers TOF a partir du fichier TOVC |
 |     "nom_fichier" selon le champ materiel      |
-|         Realise par : Imene ALLOUCHE           |
 |                                                |
 |************************************************/
 void Generation_fichiers_Materiel(char nom_fichier[])
@@ -1944,7 +1892,7 @@ void Generation_fichiers_Materiel(char nom_fichier[])
         extraire_chaine_TOVC(&f, Taille, &i, &j, TAILLE_TAILLE, &Buf);
         extraire_chaine_TOVC(&f, Description, &i, &j, atoi(Taille), &Buf);
 
-        Enregistrement_TOF.Identifiant = atoi(Identifiant); // mise a jour de l'enreg a inserer: champ identifiant
+        stcpy(Enregistrement_TOF.Identifiant, Identifiant); // mise a jour de l'enreg a inserer: champ identifiant
         Enregistrement_TOF.Prix = atoi(Prix);               // mise a jour de l'enreg a inserer: champ Prix
         Enregistrement_TOF.supprimer = 0;                   // mise a jour de l'enreg a inserer: champ Supprimer
 
@@ -1988,7 +1936,6 @@ void Generation_fichiers_Materiel(char nom_fichier[])
 |                                                  |
 |     Requette a intervalle par rapport au prix    |
 |    [Prix_Min , Prix_Min] dans un fichier LOVC    |
-|          Realise par : Ibtissam SEFFAH           |
 |                                                  |
 |**************************************************/
 // FICHIER_MATERIEL_NON_FONCTIONNE = "Materiel_informatique_en_panne_LOVC.bin"
@@ -2065,9 +2012,156 @@ void Requette_intervalle_LOVC(char nom_fichier[], int Prix_Min, int Prix_Max, in
 
 /************************************************************|
 |                                                            |
+|    Inserer un nouvel element dans TOVnC a la fin pour      |
+|           qu'ils deviennent non ordonne TnOVnC             |
+|                                                            |
+|************************************************************/
+void Insertion_TnOVnC(char nom_fichier[])
+{
+    int i, j,            // l'emplacement ou on va inserer le matereil(i:le bloc , j: la posistion)
+        k,               // l'emplacement dans la table index
+        taille_materiel, // la taille de tout l'enregistrement a inserer
+        trouv;           // boolean utilisé pour la recherche du materiel qu'on veut inserer
+
+    char Identifiant[TAILLE_IDENTIFIANT + 1],        // numero d'identifiant(cle)
+        Fonctionne[TAILLE_FONCTIONNEMENT + 1] = "f", // fonctionne = 'f', le materiel marche, fonctionne = 'n' sinon
+        Materiel[TAILLE_MATERIEL],                   // le type du materiel
+        Prix[TAILLE_PRIX + 1],                       // le ptix du materiel
+        Taille[TAILLE_TAILLE + 1],                   // taille du champs description
+        Description[TAILLE_MAX_DESCRIPTION + 1],     // la description (caracteristiques) du materiel
+        Destination[B + 1];                          // la chaine complete a inserer
+
+    Tenreg_INDEX enregistrement_index; // l'enregistrement qui sera insere dans la tabel index <identifiant , i , j>
+
+    fichier_TOVnC f;
+    Tbloc_TOVnC Buf;
+
+    // collecter les informations necessaires sur le nouveau mateirel a insere
+    printf("\n\n---------------- Collection des information sur le materiel aa inserer ------------------\n");
+    printf("|    -> L'identifiant : ");               // demander l'identifiant
+    scanf("%s", Identifiant);                         // demander l'identifiant
+    printf("|    -> Le type materiel : ");            // maybe le materiel sera genere aleatoirement khir
+    scanf("%s", Materiel);                            // maybe le materiel sera genere aleatoirement khir
+    printf("|    -> Le prix d'achat du materiel : "); // demander le prix
+    scanf("%s", Prix);                                // demander le prix
+    printf("|    -> La Description : ");              // demander la description
+    scanf("%s", Description);                         // demander la description
+    printf("---------------------------------------------------------------------------------------------\n\n");
+
+    Recherche_Dichotomique_Table_Index_TOF(Identifiant, &trouv, &k); // rechercher de l'identifiant dans la table d'index
+
+    if (!trouv) // si l'identifiant n'existe pas deja dans la table d'index donc aussi dans le fichier
+    {           // on insere la chaine dans la table d'index et a la fin du fichier TOVnC egalement
+
+        Ouvrir_TOVnC(&f, nom_fichier, 'A'); // ouvrir le fichier ou inserer
+        /***************************************************************************************************|
+        | Identifiant | champs fonctionne | Type materiel |    Prix   |   taille   | Description (variable) |
+        |  (5 bytes)  |     (1 bytes)     |  (12 bytes)   | (6 bytes) |  (3 bytes) |  (max sur 273 bytes)   |
+        |***************************************************************************************************/
+
+        Generer_Chaine(Taille, TAILLE_TAILLE, strlen(Description));                             // (calculer) generer le champ Taille de description
+        concatenate(Destination, Identifiant, Fonctionne, Materiel, Prix, Taille, Description); // concatener tous les champs dans la chaine destination
+
+        taille_materiel = TAILLE_IDENTIFIANT + TAILLE_FONCTIONNEMENT + TAILLE_MATERIEL - 1 + TAILLE_PRIX + TAILLE_TAILLE + strlen(Description); // la taille de l'enreg
+
+        /*************************************************************************|
+        |                                                                         |
+        |      preparation de l'enregistrement a inserer dna la table d'index     |
+        |                                                                         |                                                                                                                      |
+        |*************************************************************************/
+        strcpy(enregistrement_index.Identifiant, Identifiant);  // remplir le champs identifiant du nouvel enreg de l'index
+        enregistrement_index.NumBloc = Entete_TOVnC(&f, 1);     // remplir le champs numero du bloc du nouve enreg de l'index
+        enregistrement_index.Deplacement = Entete_TOVnC(&f, 3); // remplir le champs deplacement du nouvel enreg de l'index
+        Insertion_Table_Index(enregistrement_index, k);         // inserer dans la table d'index
+
+        /********************************************************************************************|
+        |                                                                                            |
+        |           Entete_TOVnC(&f, 1) correspond au dernier bloc dans le fichier TOVnC  et         |
+        |     Entete_TOVnC(&f, 3) a la 1ere position libe dans le dernier bloc du fichier TOVnC      |
+        |                                                                                            |                                                                                                                      |
+        |********************************************************************************************/
+        Ecrire_chaine_TOVnC(&f, Destination, Entete_TOVnC(&f, 1), Entete_TOVnC(&f, 3), &Buf); // inserer le nouvel element a la fin du fichier TOVnC
+    }
+}
+
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
+
+/************************************************************|
+|                                                            |
+|    Recherche dichotomique d'un identifiant dans une table  |
+|        d'index, retourner trouv son enpmacement k          |
+|                                                            |
+|************************************************************/
+void Recherche_Dichotomique_Table_Index_TOF(char Cle[], int *trouv, int *k)
+{
+    *trouv = 0;
+    printf("en cours ...");
+}
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
+
+/************************************************************|
+|                                                            |
+|     Insertion d'un enregistrement_index dans la table      |
+|                  d'index a la position k                   |
+|                                                            |
+|************************************************************/
+void Insertion_Table_Index(Tenreg_INDEX enregistrement_index, int k)
+{
+    printf("en cours...");
+}
+
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
+
+/************************************************************|
+|                                                            |
 |   Chargement de la table index du fichier "nom_fichier"    |
 |        de tupe TOF vers la MC dans la variable Index       |
-|               Realise par : Imene ALLOUCHE                 |
+|                                                            |
 |************************************************************/
 void Chargement_Table_Index_TOF()
 {
@@ -2094,7 +2188,7 @@ void Chargement_Table_Index_TOF()
 |                                                            |
 |       Sauvegarde de la tabel d'index dans un fichier       |
 |               "nom_fichier"  de type TOF                   |
-|              Realise par : Imene ALLOUCHE                  |
+|                                                            |
 |************************************************************/
 void Sauvegarde_Table_Index_TOF()
 {
