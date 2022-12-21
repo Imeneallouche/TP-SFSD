@@ -124,4 +124,5 @@ void creerIndex () {
           printf("%d  ||  ",  IndexBuf.tab_INDEX[k].deplacement);
 
       }
+      Fermer_TOF(g);
 }
