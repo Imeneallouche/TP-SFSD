@@ -91,95 +91,6 @@ int Alloc_bloc_TOVnC(fichier_TOVnC *f);
 
 */
 
-/*********************************************|
-|                                             |
-|   STRUCTURES ET VARIABLES GLOBALES TOF      |
-|                                             |
-|*********************************************/
-typedef int typeval_TOF; // type de la valeur stockee dans l'enregistrement
-
-/*********************************************|
-|                                             |
-|       structure de l'enregistrement TOF     |
-|                                             |
-|*********************************************/
-typedef struct Tenreg_TOF
-{
-    char Identifiant[TAILLE_IDENTIFIANT + 1]; // cle unique a chaque enregistrement (identifiant)
-    int Prix;                                 // le prix du materiel
-    int supprimer;                            // booleen si efface ou non
-} Tenreg_TOF;
-
-/*********************************************|
-|                                             |
-|           Structure de bloc TOF             |
-|                                             |
-|*********************************************/
-typedef struct Tbloc_TOF
-{
-    Tenreg_TOF tab[MAX_ENREG];
-    int nombre_enreg;
-
-} Tbloc_TOF;
-
-/*********************************************|
-|                                             |
-|          Structure d'en_tete TOF            |
-|                                             |
-|*********************************************/
-typedef struct entete_TOF
-{
-    int blocs_total;     // nombre total des blocsdans le fichier
-    int enreg_inseres;   // nombre d'enregistrements inserés
-    int enreg_supprimes; // nombre d'enregistrement supprimés
-
-} entete_TOF;
-
-typedef Tbloc_TOF Tampon_TOF; // definition du type Tampon TOF(un alias du type tbloc)
-
-/*********************************************|
-|                                             |
-|          structure du fichier TOF           |
-|                                             |
-|*********************************************/
-typedef struct fichier_TOF
-{
-    FILE *fichier;     // pointeur vers le fichier
-    entete_TOF entete; // lentete du fichier
-
-} fichier_TOF;
-
-/*********************************************|
-|                                             |
-|            Machine Abstraite TOF            |
-|                                             |
-|*********************************************/
-void Ouvrir_TOF(fichier_TOF *f, char nom_fichier[], char mode);
-void Fermer_TOF(fichier_TOF *f);
-void LireDir_TOF(fichier_TOF *f, int i, Tampon_TOF *buf);
-void EcrireDir_TOF(fichier_TOF *f, int i, Tampon_TOF *buf);
-int Entete_TOF(fichier_TOF *f, int i);
-void Aff_Entete_TOF(fichier_TOF *f, int i, int val);
-int Alloc_bloc_TOF(fichier_TOF *f);
-
-/*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-*/
-
 /**********************************************|
 |                                              |
 |    STRUCTURES ET VARIABLES GLOBALES TOVC     |
@@ -333,6 +244,95 @@ int alloc_bloc_LOVC(fichier_LOVC *fichier, Tampon_LOVC *buf);
 
 /*********************************************|
 |                                             |
+|   STRUCTURES ET VARIABLES GLOBALES TOF      |
+|                                             |
+|*********************************************/
+typedef int typeval_TOF; // type de la valeur stockee dans l'enregistrement
+
+/*********************************************|
+|                                             |
+|       structure de l'enregistrement TOF     |
+|                                             |
+|*********************************************/
+typedef struct Tenreg_TOF
+{
+    char Identifiant[TAILLE_IDENTIFIANT + 1]; // cle unique a chaque enregistrement (identifiant)
+    int Prix;                                 // le prix du materiel
+    int supprimer;                            // booleen si efface ou non
+} Tenreg_TOF;
+
+/*********************************************|
+|                                             |
+|           Structure de bloc TOF             |
+|                                             |
+|*********************************************/
+typedef struct Tbloc_TOF
+{
+    Tenreg_TOF tab[MAX_ENREG];
+    int nombre_enreg;
+
+} Tbloc_TOF;
+
+/*********************************************|
+|                                             |
+|          Structure d'en_tete TOF            |
+|                                             |
+|*********************************************/
+typedef struct entete_TOF
+{
+    int blocs_total;     // nombre total des blocsdans le fichier
+    int enreg_inseres;   // nombre d'enregistrements inserés
+    int enreg_supprimes; // nombre d'enregistrement supprimés
+
+} entete_TOF;
+
+typedef Tbloc_TOF Tampon_TOF; // definition du type Tampon TOF(un alias du type tbloc)
+
+/*********************************************|
+|                                             |
+|          structure du fichier TOF           |
+|                                             |
+|*********************************************/
+typedef struct fichier_TOF
+{
+    FILE *fichier;     // pointeur vers le fichier
+    entete_TOF entete; // lentete du fichier
+
+} fichier_TOF;
+
+/*********************************************|
+|                                             |
+|            Machine Abstraite TOF            |
+|                                             |
+|*********************************************/
+void Ouvrir_TOF(fichier_TOF *f, char nom_fichier[], char mode);
+void Fermer_TOF(fichier_TOF *f);
+void LireDir_TOF(fichier_TOF *f, int i, Tampon_TOF *buf);
+void EcrireDir_TOF(fichier_TOF *f, int i, Tampon_TOF *buf);
+int Entete_TOF(fichier_TOF *f, int i);
+void Aff_Entete_TOF(fichier_TOF *f, int i, int val);
+int Alloc_bloc_TOF(fichier_TOF *f);
+
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
+
+/*********************************************|
+|                                             |
 |   STRUCTURES ET VARIABLES GLOBALES de la    |
 |      table d'index et fichier d'index       |
 |                                             |
@@ -358,7 +358,7 @@ typedef struct Tenreg_INDEX
 typedef struct Table_Index
 {
     Tenreg_INDEX table_Index[MAX_ENREG_INDEX]; // tableau d'enregistrement d'index pas plus de MAX_ENREG_INDEX (variable globale)
-    int nombre_enreg_inseres;                  // nombre d'enregistrements inseres dans la table (<MAX_ENREG_INDEX)
+    int nombre_enreg_inseres;                  // nombre d'enregistrements inseres dans la table ( < MAX_ENREG_INDEX)
 } Table_Index;
 
 Table_Index Index; // declaration d'une table d'index globale
@@ -375,6 +375,36 @@ typedef struct Tbloc_INDEX
 
 } Tbloc_INDEX;
 
+typedef Tbloc_INDEX Tampon_INDEX; // definition du type Tampon Index(un alias du type tbloc)
+
+/*********************************************|
+|                                             |
+|    Structure d'en_tete du fichier Index     |
+|                                             |
+|*********************************************/
+/*___________________________________________________
+|   Meme structure que le fichier TOF des materiels  |
+/*___________________________________________________
+
+/*********************************************|
+|                                             |
+|         structure du fichier Index          |
+|                                             |
+|*********************************************/
+/*___________________________________________________
+|   Meme structure que le fichier TOF des materiels  |
+/*___________________________________________________*/
+
+/*********************************************|
+|                                             |
+|     Machine Abstraite FICHIER INDEX TOF     |
+|                                             |
+|*********************************************/
+/*___________________________________________________________________________________________________________
+|   Ouvrir, fermer, entete, aff_entete, alloc_bloc sont identiques a la structure TOF declaree precedement  |
+/*__________________________________________________________________________________________________________*/
+void LireDir_Index_TOF(fichier_TOF *f, int i, Tampon_INDEX *buf);
+void EcrireDir_Index_TOF(fichier_TOF *f, int i, Tampon_INDEX *buf);
 /*
 
 

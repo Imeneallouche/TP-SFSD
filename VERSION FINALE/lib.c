@@ -248,221 +248,6 @@ void afficher_fichier_TOVnC(char nom_fichier[])
 
 /*************************************|
 |                                     |
-|           FICHIER TYPE TOF          |
-|                                     |
-|*************************************/
-/************************************************************|
-|                                                            |
-|  Ouvrir fichier nom_fichier avec le mode correspondant TOF |
-|                                                            |
-|************************************************************/
-void Ouvrir_TOF(fichier_TOF *f, char nom_fichier[], char mode)
-{
-    if (tolower(mode) == 'a')
-    {
-        f->fichier = fopen(nom_fichier, "rb+");
-        if (f->fichier == NULL)
-            printf("Erreur lors de l'ouverture du fichier... verifier le nom du fichier");
-        else
-        {
-            rewind(f->fichier); /// positionnement au debut du fichier
-            fread(&(f->entete), sizeof(entete_TOF), 1, f->fichier);
-        }
-    }
-    else if (tolower(mode) == 'n')
-    {
-        f->fichier = fopen(nom_fichier, "wb+");
-        Aff_Entete_TOF(f, 1, 0); // mettre le nombre de blocs à 0
-        Aff_Entete_TOF(f, 2, 0); // mettre le nombre d'enregistrements inseres à 0
-        Aff_Entete_TOF(f, 3, 0); // mettre le nombre d'enregistrements supprimes à 0
-
-        rewind(f->fichier); /// positionnement au debut du fichier
-        fwrite(&(f->entete), sizeof(entete_TOF), 1, f->fichier);
-    }
-    else
-    {
-        f->fichier = NULL;
-        printf("Mode d'ouverture erronne\n");
-    }
-}
-
-/*************************************|
-|                                     |
-|       Fermer le fichier TOF         |
-|                                     |
-|*************************************/
-void Fermer_TOF(fichier_TOF *f)
-{
-    fseek(f->fichier, 0, SEEK_SET);
-    fwrite(&(f->entete), sizeof(entete_TOF), 1, f->fichier);
-    fclose(f->fichier);
-}
-
-/********************************************|
-|                                            |
-|      Lire le i eme bloc dans buf TOF       |
-|                                            |
-|********************************************/
-void LireDir_TOF(fichier_TOF *f, int i, Tampon_TOF *buf)
-{
-    rewind(f->fichier);
-    fseek(f->fichier, sizeof(fichier_TOF) + (i - 1) * sizeof(Tampon_TOF), SEEK_SET);
-    fread(buf, sizeof(Tampon_TOF), 1, f->fichier);
-}
-
-/*********************************************|
-|                                             |
-|      Ecrire buf dans le i eme bloc TOF      |
-|                                             |
-|*********************************************/
-void EcrireDir_TOF(fichier_TOF *f, int i, Tampon_TOF *buf)
-{
-    rewind(f->fichier);
-    fseek(f->fichier, sizeof(entete_TOF) + (i - 1) * sizeof(Tampon_TOF), SEEK_SET);
-    fwrite(buf, sizeof(Tampon_TOF), 1, f->fichier);
-}
-
-/********************************************|
-|                                            |
-|  Retoure la i ème valeur del'entete  TOF   |
-|                                            |
-|********************************************/
-int Entete_TOF(fichier_TOF *f, int i)
-{
-    if (i == 1) // nombre de blocs total
-        return f->entete.blocs_total;
-    else if (i == 2) // nombre d'enregistrements inseres
-        return f->entete.enreg_inseres;
-    else if (i == 3) // nombre d'enregistrements supprimes
-        return f->entete.enreg_supprimes;
-    else
-        return -1;
-}
-
-/*********************************************|
-|                                             |
-|  modifie la i ème valeur de l'entete  TOF   |
-|                                             |
-|*********************************************/
-void Aff_Entete_TOF(fichier_TOF *f, int i, int val)
-{
-    if (i == 1) // nombre de blocs total
-        f->entete.blocs_total = val;
-    else if (i == 2) // nombre d'enregistrements inseres
-        f->entete.enreg_inseres = val;
-    else if (i == 3) // nombre d'enregistrements supprimes
-        f->entete.enreg_supprimes = val;
-    else
-        printf("Parametre inexistant dans l'entete\n");
-}
-
-/********************************************|
-|                                            |
-|   Retourne le numero du nouveau bloc TOF   |
-|        Realise par : Imene ALLOUCHE        |
-|                                            |
-|********************************************/
-int Alloc_bloc_TOF(fichier_TOF *f)
-{
-    int i = Entete_TOF(f, 1);    // le nombre de bloc = le numero du dernier bloc
-    Aff_Entete_TOF(f, 1, i + 1); // mettre a jour le nombre de bloc dans l'entete
-    return Entete_TOF(f, 1);     // le nombre anciens de bloc = numero du dernier bloc
-}
-
-/**************************************************|
-|                                                  |
-|    afficher les caracteristqiues (entete) d'un   |
-|        fichier "nom fichier" de type TOF         |
-|                                                  |
-|**************************************************/
-void affichage_entete_TOF(char nom_fichier[])
-{
-    fichier_TOF f;
-    Ouvrir_TOF(&f, nom_fichier, 'A');
-    printf("\n\n\n*************************************************\n");
-    printf("*                                               *\n");
-    printf("*       caracteristiques du fichier             *\n");
-    printf("*                                               *\n");
-    printf("*************************************************\n");
-    printf(" -> Nombre de Blocs : %d\n", Entete_TOF(&f, 1));
-    printf(" -> Nombre d'enregistrements inseres : %d\n", Entete_TOF(&f, 2));
-    printf(" -> Nombre d'enregistrements supprimes : %d\n", Entete_TOF(&f, 3));
-}
-
-/**********************************************|
-|                                              |
-|       affichier le contenu d'un fichier      |
-|                de type TOF                   |
-|                                              |
-|**********************************************/
-void afficher_fichier_TOF(char nom_fichier[])
-{
-    fichier_TOF f;
-    Ouvrir_TOF(&f, nom_fichier, 'A');
-    int i = 1,       // parcours bloc par bloc
-        j = 0,       // parcours de position dans le bloc
-        counter = 0; // numero de l'enregistrement dans le bloc
-    Tampon_TOF Buf;  // contenu d'un bloc dans un buffer
-
-    /************************************************|
-    |  Identifiant  |     Prix    |     Supprimer    |
-    |   (5 bytes)   |  (integer)  |     (1 bytes)    |
-    |************************************************/
-    // while (i <= Entete_TOF(&f, 1))
-    while (counter <= 2)
-    {
-        LireDir_TOF(&f, i, &Buf);
-        j = 0;
-        printf("\n\n\n*************************************************\n");
-        printf("*                                               *\n");
-        printf("*            Le bloc numero : %i                 *\n", i);
-        printf("*        rempli a %i / %i enregistrements          *\n", Buf.nombre_enreg, MAX_ENREG);
-        printf("*                                               *\n");
-        printf("*************************************************\n");
-
-        // while (j < Buf.nombre_enreg)
-        while (counter <= 2)
-        {
-            printf("\n\n.........................\n");
-            printf(".                       .\n");
-            printf(".  Materiel numero : %i  .\n", counter);
-            printf(".                       .\n");
-            printf(".........................\n");
-            printf("identifiant: %s\n", Buf.tab[j].Identifiant);
-            printf("prix: %i DA\n", Buf.tab[j].Prix);
-            printf("Fonctionne? : %i\n", Buf.tab[j].supprimer);
-            counter++;
-            j++;
-        }
-        i++;
-    }
-}
-
-/*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-*/
-
-/*************************************|
-|                                     |
 |           FICHIER TYPE TOVC         |
 |                                     |
 |*************************************/
@@ -913,6 +698,275 @@ void afficher_fichier_LOVC(char nom_fichier[])
         counter++;
     }
 }
+
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
+
+/*************************************|
+|                                     |
+|           FICHIER TYPE TOF          |
+|                                     |
+|*************************************/
+/************************************************************|
+|                                                            |
+|  Ouvrir fichier nom_fichier avec le mode correspondant TOF |
+|                                                            |
+|************************************************************/
+void Ouvrir_TOF(fichier_TOF *f, char nom_fichier[], char mode)
+{
+    if (tolower(mode) == 'a')
+    {
+        f->fichier = fopen(nom_fichier, "rb+");
+        if (f->fichier == NULL)
+            printf("Erreur lors de l'ouverture du fichier... verifier le nom du fichier");
+        else
+        {
+            rewind(f->fichier); /// positionnement au debut du fichier
+            fread(&(f->entete), sizeof(entete_TOF), 1, f->fichier);
+        }
+    }
+    else if (tolower(mode) == 'n')
+    {
+        f->fichier = fopen(nom_fichier, "wb+");
+        Aff_Entete_TOF(f, 1, 0); // mettre le nombre de blocs à 0
+        Aff_Entete_TOF(f, 2, 0); // mettre le nombre d'enregistrements inseres à 0
+        Aff_Entete_TOF(f, 3, 0); // mettre le nombre d'enregistrements supprimes à 0
+
+        rewind(f->fichier); /// positionnement au debut du fichier
+        fwrite(&(f->entete), sizeof(entete_TOF), 1, f->fichier);
+    }
+    else
+    {
+        f->fichier = NULL;
+        printf("Mode d'ouverture erronne\n");
+    }
+}
+
+/*************************************|
+|                                     |
+|       Fermer le fichier TOF         |
+|                                     |
+|*************************************/
+void Fermer_TOF(fichier_TOF *f)
+{
+    fseek(f->fichier, 0, SEEK_SET);
+    fwrite(&(f->entete), sizeof(entete_TOF), 1, f->fichier);
+    fclose(f->fichier);
+}
+
+/********************************************|
+|                                            |
+|      Lire le i eme bloc dans buf TOF       |
+|                                            |
+|********************************************/
+void LireDir_TOF(fichier_TOF *f, int i, Tampon_TOF *buf)
+{
+    rewind(f->fichier);
+    fseek(f->fichier, sizeof(fichier_TOF) + (i - 1) * sizeof(Tampon_TOF), SEEK_SET);
+    fread(buf, sizeof(Tampon_TOF), 1, f->fichier);
+}
+
+/*********************************************|
+|                                             |
+|      Ecrire buf dans le i eme bloc TOF      |
+|                                             |
+|*********************************************/
+void EcrireDir_TOF(fichier_TOF *f, int i, Tampon_TOF *buf)
+{
+    rewind(f->fichier);
+    fseek(f->fichier, sizeof(entete_TOF) + (i - 1) * sizeof(Tampon_TOF), SEEK_SET);
+    fwrite(buf, sizeof(Tampon_TOF), 1, f->fichier);
+}
+
+/********************************************|
+|                                            |
+|  Retoure la i ème valeur del'entete  TOF   |
+|                                            |
+|********************************************/
+int Entete_TOF(fichier_TOF *f, int i)
+{
+    if (i == 1) // nombre de blocs total
+        return f->entete.blocs_total;
+    else if (i == 2) // nombre d'enregistrements inseres
+        return f->entete.enreg_inseres;
+    else if (i == 3) // nombre d'enregistrements supprimes
+        return f->entete.enreg_supprimes;
+    else
+        return -1;
+}
+
+/*********************************************|
+|                                             |
+|  modifie la i ème valeur de l'entete  TOF   |
+|                                             |
+|*********************************************/
+void Aff_Entete_TOF(fichier_TOF *f, int i, int val)
+{
+    if (i == 1) // nombre de blocs total
+        f->entete.blocs_total = val;
+    else if (i == 2) // nombre d'enregistrements inseres
+        f->entete.enreg_inseres = val;
+    else if (i == 3) // nombre d'enregistrements supprimes
+        f->entete.enreg_supprimes = val;
+    else
+        printf("Parametre inexistant dans l'entete\n");
+}
+
+/********************************************|
+|                                            |
+|   Retourne le numero du nouveau bloc TOF   |
+|        Realise par : Imene ALLOUCHE        |
+|                                            |
+|********************************************/
+int Alloc_bloc_TOF(fichier_TOF *f)
+{
+    int i = Entete_TOF(f, 1);    // le nombre de bloc = le numero du dernier bloc
+    Aff_Entete_TOF(f, 1, i + 1); // mettre a jour le nombre de bloc dans l'entete
+    return Entete_TOF(f, 1);     // le nombre anciens de bloc = numero du dernier bloc
+}
+
+/**************************************************|
+|                                                  |
+|    afficher les caracteristqiues (entete) d'un   |
+|        fichier "nom fichier" de type TOF         |
+|                                                  |
+|**************************************************/
+void affichage_entete_TOF(char nom_fichier[])
+{
+    fichier_TOF f;
+    Ouvrir_TOF(&f, nom_fichier, 'A');
+    printf("\n\n\n*************************************************\n");
+    printf("*                                               *\n");
+    printf("*       caracteristiques du fichier             *\n");
+    printf("*                                               *\n");
+    printf("*************************************************\n");
+    printf(" -> Nombre de Blocs : %d\n", Entete_TOF(&f, 1));
+    printf(" -> Nombre d'enregistrements inseres : %d\n", Entete_TOF(&f, 2));
+    printf(" -> Nombre d'enregistrements supprimes : %d\n", Entete_TOF(&f, 3));
+}
+
+/**********************************************|
+|                                              |
+|       affichier le contenu d'un fichier      |
+|                de type TOF                   |
+|                                              |
+|**********************************************/
+void afficher_fichier_TOF(char nom_fichier[])
+{
+    fichier_TOF f;
+    Ouvrir_TOF(&f, nom_fichier, 'A');
+    int i = 1,       // parcours bloc par bloc
+        j = 0,       // parcours de position dans le bloc
+        counter = 0; // numero de l'enregistrement dans le bloc
+    Tampon_TOF Buf;  // contenu d'un bloc dans un buffer
+
+    /************************************************|
+    |  Identifiant  |     Prix    |     Supprimer    |
+    |   (5 bytes)   |  (integer)  |     (1 bytes)    |
+    |************************************************/
+    // while (i <= Entete_TOF(&f, 1))
+    while (counter <= 2)
+    {
+        LireDir_TOF(&f, i, &Buf);
+        j = 0;
+        printf("\n\n\n*************************************************\n");
+        printf("*                                               *\n");
+        printf("*            Le bloc numero : %i                 *\n", i);
+        printf("*        rempli a %i / %i enregistrements          *\n", Buf.nombre_enreg, MAX_ENREG);
+        printf("*                                               *\n");
+        printf("*************************************************\n");
+
+        // while (j < Buf.nombre_enreg)
+        while (counter <= 2)
+        {
+            printf("\n\n.........................\n");
+            printf(".                       .\n");
+            printf(".  Materiel numero : %i  .\n", counter);
+            printf(".                       .\n");
+            printf(".........................\n");
+            printf("identifiant: %s\n", Buf.tab[j].Identifiant);
+            printf("prix: %i DA\n", Buf.tab[j].Prix);
+            printf("Fonctionne? : %i\n", Buf.tab[j].supprimer);
+            counter++;
+            j++;
+        }
+        i++;
+    }
+}
+
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
+
+/*************************************|
+|                                     |
+|    FICHIER Index Type TOF avec      |
+|   structure d'enreg differente      |
+|                                     |
+|*************************************/
+/********************************************|
+|                                            |
+|      Lire le i eme bloc dans buf Index     |
+|                                            |
+|********************************************/
+void LireDir_Index_TOF(fichier_TOF *f, int i, Tampon_INDEX *buf)
+{
+    rewind(f->fichier);
+    fseek(f->fichier, sizeof(fichier_TOF) + (i - 1) * sizeof(Tampon_INDEX), SEEK_SET);
+    fread(buf, sizeof(Tampon_INDEX), 1, f->fichier);
+}
+
+/*********************************************|
+|                                             |
+|     Ecrire buf dans le i eme bloc Index     |
+|                                             |
+|*********************************************/
+void EcrireDir_Index_TOF(fichier_TOF *f, int i, Tampon_INDEX *buf)
+{
+    rewind(f->fichier);
+    fseek(f->fichier, sizeof(entete_TOF) + (i - 1) * sizeof(Tampon_INDEX), SEEK_SET);
+    fwrite(buf, sizeof(Tampon_INDEX), 1, f->fichier);
+}
+
 /*
 
 
@@ -2038,20 +2092,29 @@ void Insertion_TnOVnC(char nom_fichier[])
 
     // collecter les informations necessaires sur le nouveau mateirel a insere
     printf("\n\n---------------- Collection des information sur le materiel aa inserer ------------------\n");
-    printf("|    -> L'identifiant : ");               // demander l'identifiant
-    scanf("%s", Identifiant);                         // demander l'identifiant
-    printf("|    -> Le type materiel : ");            // maybe le materiel sera genere aleatoirement khir
-    scanf("%s", Materiel);                            // maybe le materiel sera genere aleatoirement khir
-    printf("|    -> Le prix d'achat du materiel : "); // demander le prix
-    scanf("%s", Prix);                                // demander le prix
-    printf("|    -> La Description : ");              // demander la description
-    scanf("%s", Description);                         // demander la description
-    printf("---------------------------------------------------------------------------------------------\n\n");
+    printf("|    -> L'identifiant : "); // demander l'identifiant
+    scanf("%s", Identifiant);           // demander l'identifiant
 
     Recherche_Dichotomique_Table_Index_TOF(Identifiant, &trouv, &k); // rechercher de l'identifiant dans la table d'index
 
-    if (!trouv) // si l'identifiant n'existe pas deja dans la table d'index donc aussi dans le fichier
-    {           // on insere la chaine dans la table d'index et a la fin du fichier TOVnC egalement
+    if (trouv) // si l'identifiant existe deja dans la table d'index et donc dans le fichier index egalement
+    {          // on insere pas le nouvel element
+        printf("---------------------------------------------------------------------------------------------\n\n");
+        printf("\n\n-------------------------------------------------------------------------\n");
+        printf("| l'identifiant exste deja dans le fichier, aucune insertion n'a eu lieu |");
+        printf("-------------------------------------------------------------------------\n\n");
+    }
+
+    else // si l'identifiant n'existe pas deja dans la table d'index donc aussi dans le fichier
+    {    // on insere la chaine dans la table d'index et a la fin du fichier TOVnC egalement
+
+        printf("|    -> Le type materiel : ");            // maybe le materiel sera genere aleatoirement khir
+        scanf("%s", Materiel);                            // maybe le materiel sera genere aleatoirement khir
+        printf("|    -> Le prix d'achat du materiel : "); // demander le prix
+        scanf("%s", Prix);                                // demander le prix
+        printf("|    -> La Description : ");              // demander la description
+        scanf("%s", Description);                         // demander la description
+        printf("---------------------------------------------------------------------------------------------\n\n");
 
         Ouvrir_TOVnC(&f, nom_fichier, 'A'); // ouvrir le fichier ou inserer
         /***************************************************************************************************|
@@ -2207,7 +2270,7 @@ void Insertion_Table_Index(Tenreg_INDEX enregistrement_index, int k)
 |        de tupe TOF vers la MC dans la variable Index       |
 |                                                            |
 |************************************************************/
-void Chargement_Table_Index_TOF()
+void Chargement_Table_Index_TOF(fichier)
 {
     printf("en cours...");
 }
