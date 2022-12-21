@@ -1,6 +1,6 @@
 /*********************************************************|
 |                                                         |
-|       structure de l'enregistrement Table d'index       |
+|       structure de l'enregistrement Table d'index     |
 |                                                         |
 |*********************************************************/
 typedef struct Tenreg_INDEX
@@ -17,17 +17,27 @@ typedef struct Tenreg_INDEX
 |*********************************************/
 typedef struct Tbloc_INDEX
 {
-    Tenreg_INDEX tab_INDEX[MAX];    // on ajoute le MAX au lib.h
+    Tenreg_INDEX tab_INDEX[MAX];        // #define MAX=300
     int nombre_enreg;
 
 } Tbloc_INDEX;
 
 /*********************************************|
 |                                             |
-|    la création de la table index            |
-| et du fichier index associé à cette table   |      
+|  Ecrire buf dans le i eme bloc TOF_Index    |
 |                                             |
 |*********************************************/
+void EcrireDir_TOF_Index(fichier_TOF f, int i, Tbloc_INDEX *buf)
+{
+
+    rewind(f.fichier);
+    fseek(f.fichier, sizeof(entete_TOF) + (i) * sizeof(Tbloc_INDEX), SEEK_SET);
+    fwrite(buf, sizeof(Tbloc_INDEX), 1, f.fichier);
+}
+
+
+
+
 void creerIndex () {
     fichier_TOVnC F;
     char Id[TAILLE_IDENTIFIANT + 1],             // la plus petite cle dans un bloc (plus petit identifiant)   // la cle courrant dont on s'est arrete dans le parcours
@@ -61,42 +71,54 @@ void creerIndex () {
             extraire_chaine_TOVnC(Taille, &j, TAILLE_TAILLE, &Buf);
             extraire_chaine_TOVnC(Description, &j, atoi(Taille), &Buf);
 
-       
-           
         / **************************************************************************************************************************|
         |                                                                                                                           |
-        |                                   remplissage d'enregistrement index                                                       |
+        |                                   remplissage denregistrement index                                                      |
         |                                                                                                                           |
         |**************************************************************************************************************************/
-            
-            
-            indexEnreg.Identifiant = atoi(Id);       // l'identifiant (cle )
-            indexEnreg.numbloc = i1;                // num bloc ou se trouve cet identifiant
-            indexEnreg.deplacement = j1;           // le deplacement de cet identifiant
-           
-           
+
+
+
+            indexEnreg.Identifiant = atoi(Id);
+            indexEnreg.numbloc = i1;
+            indexEnreg.deplacement = j1;
+
+
+
         / **************************************************************************************************************************|
         |                                                                                                                           |
-        |                                   remplissage de la table index                                                            |
+        |                                   remplissage de la table index                                                           |
         |                                                                                                                           |
-        |**************************************************************************************************************************/
-           
-       
+        |***************************************************************************************************************************/
+
             IndexBuf.tab_INDEX[k++] = indexEnreg;
 
+
         }
-        i++;    // passer au prochain bloc
-    } 
-    
-    /**************************** affichage table d'index ***********************************/
-    for (k = 0; k < MAX ; k++ ) {
-           printf("%d  ===   ",  IndexBuf.tab_INDEX[k].Identifiant);
-           printf("%d  ===   ",  IndexBuf.tab_INDEX[k].numbloc);
-           printf("%d  ===   ",  IndexBuf.tab_INDEX[k].deplacement);
+
+               i++;    // passer au prochain bloc
+    }
+
+
+
+      / **************************************************************************************************************************|
+        |                                                                                                                         |
+        |                                               la création                                                               |
+-       |                                du fichier index associé à cette table                                                   |
+        |                                                                                                                         |
+        |**************************************************************************************************************************/
+
+
+    IndexBuf.nombre_enreg = k;
+    fichier_TOF g;                     // g fichier index associé à la table d'index
+
+    Ouvrir_TOF(&g, "Index_Materiel_informatique.bin", 'N');   // ouvrir un nouveau fichier en MS (« Index_Materiel_informatique.bin » :fichier index associé à cette table soit)
+    EcrireDir_TOF_Index(g, 1, &IndexBuf);
+    printf("nombre bloc  %d\n",  IndexBuf.nombre_enreg);     // verification du nombre bloc du fichier TOVnC
+     for (int k = 0; k < IndexBuf.nombre_enreg ; k++ ) {     //****affichage table d'index****//
+          printf("%d  ===   ",  IndexBuf.tab_INDEX[k].Identifiant);
+          printf("%d  ===   ",  IndexBuf.tab_INDEX[k].numbloc);
+          printf("%d  ===   ",  IndexBuf.tab_INDEX[k].deplacement);
 
       }
-    }
-    
-    // reste : fichier index ( en cours )
-
-
+}
