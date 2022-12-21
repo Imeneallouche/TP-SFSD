@@ -116,9 +116,9 @@ void creerIndex () {
     EcrireDir_TOF_Index(g, 1, &IndexBuf);
     printf("nombre bloc  %d\n",  IndexBuf.nombre_enreg);     // verification du nombre bloc du fichier TOVnC
      for (int k = 0; k < IndexBuf.nombre_enreg ; k++ ) {     //****affichage table d'index****//
-          printf("%d  ===   ",  IndexBuf.tab_INDEX[k].Identifiant);
-          printf("%d  ===   ",  IndexBuf.tab_INDEX[k].numbloc);
-          printf("%d  ===   ",  IndexBuf.tab_INDEX[k].deplacement);
+          printf("%d  -->   ",  IndexBuf.tab_INDEX[k].Identifiant);
+          printf("%d  ||   ",  IndexBuf.tab_INDEX[k].numbloc);
+          printf("%d  ||  ",  IndexBuf.tab_INDEX[k].deplacement);
 
       }
 }
