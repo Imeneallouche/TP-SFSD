@@ -115,7 +115,10 @@ void creerIndex () {
     Ouvrir_TOF(&g, "Index_Materiel_informatique.bin", 'N');   // ouvrir un nouveau fichier en MS (« Index_Materiel_informatique.bin » :fichier index associé à cette table soit)
     EcrireDir_TOF_Index(g, 1, &IndexBuf);
     printf("nombre bloc  %d\n",  IndexBuf.nombre_enreg);     // verification du nombre bloc du fichier TOVnC
-     for (int k = 0; k < IndexBuf.nombre_enreg ; k++ ) {     //****affichage table d'index****//
+    
+    /******************************************** AFFICHAGE TABLE INDEX  *****************************************************************************/
+     for (int k = 0; k < IndexBuf.nombre_enreg ; k++ ) {    
+          printf("** ");
           printf("%d  -->   ",  IndexBuf.tab_INDEX[k].Identifiant);
           printf("%d  ||   ",  IndexBuf.tab_INDEX[k].numbloc);
           printf("%d  ||  ",  IndexBuf.tab_INDEX[k].deplacement);
