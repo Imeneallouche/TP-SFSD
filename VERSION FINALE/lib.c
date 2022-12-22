@@ -1518,6 +1518,97 @@ void ins_string(char tableau[B], int pos, char str[B]) // module à utilisé pou
     }
 }
 
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
+/***********************************************|
+|                                               |
+|   collecter les informations necessaires      |
+|      sur le nouveau mateirel a insere         |
+|                                               |
+|***********************************************/
+void Demande_Information_Utilisateur(char *Fonctionnement, char *Materiel, char *Prix, char *Description)
+{
+    int answers, trouv, i, counter, j, k;
+
+    /*__________________________________
+    |    CHAMPS 02 : FONCTIONNEMENT     |
+    |___________________________________*/
+    printf("|    -> etat du materiel : \n");
+    printf("    1 - en marche\n");
+    printf("    2 - en panne\n");
+    printf("    votre choix: ");
+    scanf("%i", answers); // le numero du materiel
+    while (answers < 1 || answers > 2)
+    {
+        printf("    choix inexistant, veuillez entrer 1 ou 2: ");
+        scanf("%i", answers);
+    }
+    if (answers == 1)
+        strcpy(Fonctionnement, "f");
+    else
+        strcpy(Fonctionnement, "n");
+
+    /*_____________________________
+    |    CHAMPS 03 : MATERIEL     |
+    |____________________________*/
+    printf("|    -> Le type materiel : \n");                  // demander le type du materiel
+    for (counter = 1; counter <= NB_TYPE_MATERIEL; counter++) // la liste des matreiel a proposer sur l'utilisateur
+    {
+        printf("    %i - %s\n", counter, MATERIAL_LIST[counter]);
+    }
+    printf("    votre choix: ");
+    scanf("%i", answers); // le numero du materiel
+    while (answers < 1 || answers > NB_TYPE_MATERIEL)
+    {
+        printf("    numero inexistant, veuillez rentrer un autre entre [%i, %i]: ", 1, NB_TYPE_MATERIEL);
+        scanf("%i", answers);
+    }
+    strcpy(Materiel, MATERIAL_LIST[answers - 1]); // remplir le champs materiel
+
+    /*_____________________________
+    |    CHAMPS 04 : PRIX         |
+    |____________________________*/
+    printf("|    -> Le prix d'achat du materiel : "); // demander le prix
+    scanf("%i", answers);                             // demander le prix
+    Generer_Chaine(Prix, TAILLE_PRIX, answers);
+
+    /*_____________________________
+    |   CHAMPS 05 : DESCRIPTION   |
+    |____________________________*/
+    printf("|    -> La Description : "); // demander la description
+    scanf("%s", Description);            // demander la description
+    printf("---------------------------------------------------------------------------------------------\n\n");
+}
+
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
+
 /********************************************************|
 |                                                        |
 |   insertion d’un matériel dans le fichier de données   |
@@ -1531,6 +1622,7 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
         taille_materiel, // la taille de tout l'enregistrement a inserer
         taille_chaines,  // la taille des chaine qui vont deborder et seront inseres dans le prochain buffer
         trouv,           // boolean utilisé pour la recherche du materiel qu'on veut inserer
+        answers,         // pour recevoir les donnees temporels de l'utilisateur sous forme d'entier
         stop = 0;        // booleen pour continuer l'operation de l'insertion
 
     char Identifiant[TAILLE_IDENTIFIANT + 1],        // numero d'identifiant(cle)
@@ -1546,21 +1638,30 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
     Tbloc_TOVnC Buf;
 
     // collecter les informations necessaires sur le nouveau mateirel a insere
-    printf("\n\n---------------- Collection des information sur le materiel aa inserer ------------------\n");
-    printf("|    -> L'identifiant : ");               // demander l'identifiant
-    scanf("%s", Identifiant);                         // demander l'identifiant
-    printf("|    -> Le type materiel : ");            // maybe le materiel sera genere aleatoirement khir
-    scanf("%s", Materiel);                            // maybe le materiel sera genere aleatoirement khir
-    printf("|    -> Le prix d'achat du materiel : "); // demander le prix
-    scanf("%s", Prix);                                // demander le prix
-    printf("|    -> La Description : ");              // demander la description
-    scanf("%s", Description);                         // demander la description
-    printf("---------------------------------------------------------------------------------------------\n\n");
+    printf("\n\n---------------- Collection des information sur le materiel a inserer -------------------\n");
+
+    /*_____________________________
+    |    CHAMPS 01 : IDENTIFIANT  |
+    |____________________________*/
+    printf("|    -> L'identifiant : ");                       // demander l'identifiant
+    scanf("%i", answers);                                     // recevoir l'identifiant
+    Generer_Chaine(Identifiant, TAILLE_IDENTIFIANT, answers); // generer la chaine identifiant pour la rechercher dans la table d'index
 
     Recherche_TOVnC(nom_fichier, Identifiant, &trouv, &i, &j); // rechercher l'idenfiant
 
-    if (!trouv) // si l'idneiifant n'existe pas deja dans le fichier la chaine doit être inséré dans le bloc i à la position j
+    if (trouv) // si l'identifiant existe deja dans la table d'index et donc dans le fichier index egalement
+    {          // on insere pas le nouveau materiel
+        printf("---------------------------------------------------------------------------------------------\n\n");
+        printf("\n\n-------------------------------------------------------------------------\n");
+        printf("| l'identifiant exste deja dans le fichier, aucune insertion n'a eu lieu |");
+        printf("-------------------------------------------------------------------------\n\n");
+    }
+
+    else // si l'identifiant n'existe pas deja dans le fichier la chaine doit être inséré dans le bloc i à la position j
     {
+
+        Demande_Information_Utilisateur(Fonctionne, Materiel, Prix, Description); // collecter les informations de l'utilisateur
+
         Ouvrir_TOVnC(&f, nom_fichier, 'A'); // ouvrir le fichier ou inserer
         /***************************************************************************************************|
         | Identifiant | champs fonctionne | Type materiel |    Prix   |   taille   | Description (variable) |
@@ -1666,13 +1767,6 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
 
         Aff_Entete_TOVnC(&f, 2, Entete_TOVnC(&f, 2) + taille_materiel); // Entete_TOVnC(f,2) : nb d'insertion  , on incrémente le compteur d'insertions
         Fermer_TOVnC(&f);                                               // fermer le fichier finally
-    }
-
-    else // si l'identifiant existe deja dans le fichier TOVnC
-    {
-        printf("\n\n-----------------------------------------------------------------\n");
-        printf("|   Cet identifiant existe deja, aucune insertion n'a eu lieu    |\n"); // alors informer mon audience qu'aucune suppression n'a eu lieu
-        printf("-----------------------------------------------------------------\n\n");
     }
 }
 
@@ -2074,6 +2168,7 @@ void Insertion_TnOVnC(char nom_fichier[])
 {
     int i, j,            // l'emplacement ou on va inserer le matereil(i:le bloc , j: la posistion)
         k,               // l'emplacement dans la table index
+        answers,         // pour recevoir les donnees temporels de l'utilisateur sous forme d'entier
         taille_materiel, // la taille de tout l'enregistrement a inserer
         trouv;           // boolean utilisé pour la recherche du materiel qu'on veut inserer
 
@@ -2091,9 +2186,10 @@ void Insertion_TnOVnC(char nom_fichier[])
     Tbloc_TOVnC Buf;
 
     // collecter les informations necessaires sur le nouveau mateirel a insere
-    printf("\n\n---------------- Collection des information sur le materiel aa inserer ------------------\n");
-    printf("|    -> L'identifiant : "); // demander l'identifiant
-    scanf("%s", Identifiant);           // demander l'identifiant
+    printf("\n\n---------------- Collection des information sur le materiel a inserer -------------------\n");
+    printf("|    -> L'identifiant : ");                       // demander l'identifiant
+    scanf("%i", answers);                                     // recevoir l'identifiant
+    Generer_Chaine(Identifiant, TAILLE_IDENTIFIANT, answers); // generer la chaine identifiant pour la rechercher dans la table d'index
 
     Recherche_Dichotomique_Table_Index_TOF(Identifiant, &trouv, &k); // rechercher de l'identifiant dans la table d'index
 
@@ -2108,13 +2204,7 @@ void Insertion_TnOVnC(char nom_fichier[])
     else // si l'identifiant n'existe pas deja dans la table d'index donc aussi dans le fichier
     {    // on insere la chaine dans la table d'index et a la fin du fichier TOVnC egalement
 
-        printf("|    -> Le type materiel : ");            // maybe le materiel sera genere aleatoirement khir
-        scanf("%s", Materiel);                            // maybe le materiel sera genere aleatoirement khir
-        printf("|    -> Le prix d'achat du materiel : "); // demander le prix
-        scanf("%s", Prix);                                // demander le prix
-        printf("|    -> La Description : ");              // demander la description
-        scanf("%s", Description);                         // demander la description
-        printf("---------------------------------------------------------------------------------------------\n\n");
+        Demande_Information_Utilisateur(Fonctionne, Materiel, Prix, Description);
 
         Ouvrir_TOVnC(&f, nom_fichier, 'A'); // ouvrir le fichier ou inserer
         /***************************************************************************************************|
@@ -2129,7 +2219,7 @@ void Insertion_TnOVnC(char nom_fichier[])
 
         /*************************************************************************|
         |                                                                         |
-        |      preparation de l'enregistrement a inserer dna la table d'index     |
+        |      preparation de l'enregistrement a inserer dans la table d'index    |
         |                                                                         |                                                                                                                      |
         |*************************************************************************/
         strcpy(enregistrement_index.Identifiant, Identifiant);  // remplir le champs identifiant du nouvel enreg de l'index
@@ -2147,6 +2237,7 @@ void Insertion_TnOVnC(char nom_fichier[])
         j = Entete_TOVnC(&f, 3);                            // la 1ere pos libre dans le dernier fichier TOVnC
         Ecrire_chaine_TOVnC(&f, Destination, &i, &j, &Buf); // inserer le nouvel element a la fin du fichier TOVnC
         EcrireDir_TOVnC(&f, i, Buf);                        // ecrire le dernier bloc dans le fichier
+        Fermer_TOVnC(&f);                                   // fermer le fichier TOVnC
     }
 }
 /*
@@ -2173,7 +2264,7 @@ void Insertion_TnOVnC(char nom_fichier[])
 |  partir d'un fichier TOVnC "nom_fichier_TOVnC"   |
 |                                                  |
 |**************************************************/
-void Creer_Index(char nom_fichier_TOVnC, char nom_fichier_Index)
+void Creer_Index(char nom_fichier_TOVnC[], char nom_fichier_Index[])
 {
     fichier_TOVnC F;                             // le fichier TOVnC
     char Identifiant[TAILLE_IDENTIFIANT + 1],    // la plus petite cle dans un bloc (plus petit identifiant)   // la cle courrant dont on s'est arrete dans le parcours

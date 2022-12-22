@@ -505,6 +505,7 @@ FICHIER_MATERIEL Files[NB_TYPE_MATERIEL];
 |*******************************/
 void Generer_Chaine(char chaine[], int length, int number);
 void concatenate(char *destination, char *identifiant, char *fonctionne, char *materiel, char *prix, char *taille, char *description);
+void Demande_Information_Utilisateur(char *Fonctionnement, char *Materiel, char *Prix, char *Description);
 int Random_Number(int lower, int upper);
 void Random_String(int length, char chaine[]);
 
@@ -590,11 +591,12 @@ void Inserer_Enreg_TOF(fichier_TOF *f, Tenreg_TOF Enregistrement_TOF, int *i, in
 void affichage_entete_TOF(char nom_fichier[]);
 void afficher_fichier_TOF(char nom_fichier[]);
 
-void Sauvegarde_Table_Index_TOF();
-void Chargement_Table_Index_TOF(char nom_fichier_index[], Table_Index *Index);
-void Inserer_Enreg_Index_TOF(fichier_TOF *f, Tenreg_INDEX Enregistrement_Index, int *i, int *j, Tampon_INDEX);
+void Creer_Index(char nom_fichier_TOVnC[], char nom_fichier_Index[]);
+void Afficher_Table_Index(Table_Index Index);
 void Recherche_Dichotomique_Table_Index_TOF(char Cle[], int *trouv, int *k);
 void Insertion_Table_Index(Tenreg_INDEX enregistrement_index, int k);
+void Chargement_Table_Index_TOF(char nom_fichier_index[], Table_Index *Index);
+void Sauvegarde_Table_Index_TOF(char nom_fichier_index[], Table_Index Index);
 
 /*******************************|
 |                               |
