@@ -1533,10 +1533,11 @@ void ins_string(char tableau[B], int pos, char str[B]) // module à utilisé pou
 
 
 */
+
 /***********************************************|
 |                                               |
 |   collecter les informations necessaires      |
-|      sur le nouveau mateirel a insere         |
+|      sur le nouveau materiel a inserer        |
 |                                               |
 |***********************************************/
 void Demande_Information_Utilisateur(char *Fonctionnement, char *Materiel, char *Prix, char *Description)
@@ -1567,7 +1568,7 @@ void Demande_Information_Utilisateur(char *Fonctionnement, char *Materiel, char 
     printf("|    -> Le type materiel : \n");                  // demander le type du materiel
     for (counter = 1; counter <= NB_TYPE_MATERIEL; counter++) // la liste des matreiel a proposer sur l'utilisateur
     {
-        printf("    %i - %s\n", counter, MATERIAL_LIST[counter]);
+        printf("    %i - %s\n", counter, MATERIAL_LIST[counter - 1]);
     }
     printf("    votre choix: ");
     scanf("%i", answers); // le numero du materiel
@@ -1660,7 +1661,7 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
     else // si l'identifiant n'existe pas deja dans le fichier la chaine doit être inséré dans le bloc i à la position j
     {
 
-        Demande_Information_Utilisateur(Fonctionne, Materiel, Prix, Description); // collecter les informations de l'utilisateur
+        Demande_Information_Utilisateur(Fonctionne, Materiel, Prix, Description); // collecter les informations de l'utilisateur sur le materiel a inserer
 
         Ouvrir_TOVnC(&f, nom_fichier, 'A'); // ouvrir le fichier ou inserer
         /***************************************************************************************************|
