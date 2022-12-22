@@ -1616,10 +1616,10 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
 
                 if ((j + taille_materiel) > B)
                 {
-                    taille_chaines = (Buf.nb - j);                                      // la taille des enregistrements qui viennent juste apres le meteril qu'on veut l'inserer
-                    extraire_chaine_TOVnC(Chaine_debordantes, j, taille_chaines, &Buf); // on fait sortir ces derniers enregistrements du bloc pour les inserer avec le materiel
-                                                                                        // qu'on veut l'inserer
-                    Buf.nb = j;                                                         // mise à jour de la position libre dans un bloc (buf.nb)
+                    taille_chaines = (Buf.nb - j);                                       // la taille des enregistrements qui viennent juste apres le meteril qu'on veut l'inserer
+                    extraire_chaine_TOVnC(Chaine_debordantes, &j, taille_chaines, &Buf); // on fait sortir ces derniers enregistrements du bloc pour les inserer avec le materiel
+                                                                                         // qu'on veut l'inserer
+                    Buf.nb = j;                                                          // mise à jour de la position libre dans un bloc (buf.nb)
                     EcrireDir_TOVnC(&f, i, Buf);
                     strcat(Destination, Chaine_debordantes); // nouveau materiel à inserer (chaine) dans le prochain bloc = materiel qu'on veut inserer (chaine)+ les materierls
                                                              // qui viennent  apres ce dernier(Chaine_debordantes)
@@ -1634,7 +1634,7 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
                 else
                 {
                     taille_chaines = (Buf.nb - j);
-                    extraire_chaine_TOVnC(Chaine_debordantes, j, taille_chaines, &Buf);
+                    extraire_chaine_TOVnC(Chaine_debordantes, &j, taille_chaines, &Buf);
                     ins_string(Buf.tableau, j, Destination); // on insere le materiel
                     Buf.nb = j + taille_materiel;            // mise à jour la position libre (buf.nb)
                     EcrireDir_TOVnC(&f, i, Buf);             // ecrire le buffer da sla MS
@@ -1875,9 +1875,9 @@ void Inserer_Enreg_TOF(fichier_TOF *f, Tenreg_TOF Enregistrement_TOF, int *i, in
         *i = Alloc_bloc_TOF(f);    // nouveau bloc + mise a jour de l'entete
         *j = 0;
     }
-    stcpy(Buf->tab[*j].Identifiant, Enregistrement_TOF.Identifiant); // mise a jour du Buf: champs identifiant
-    Buf->tab[*j].Prix = Enregistrement_TOF.Prix;                     // mise a jour du Buf: champs Prix
-    Buf->tab[*j].supprimer = Enregistrement_TOF.supprimer;           // mise a jour du Buf: champs Supprimer
+    strcpy(Buf->tab[*j].Identifiant, Enregistrement_TOF.Identifiant); // mise a jour du Buf: champs identifiant
+    Buf->tab[*j].Prix = Enregistrement_TOF.Prix;                      // mise a jour du Buf: champs Prix
+    Buf->tab[*j].supprimer = Enregistrement_TOF.supprimer;            // mise a jour du Buf: champs Supprimer
 
     Buf->nombre_enreg = *j;                     // mise a jour du Buf: nombre d'enreg dans le buf
     *j = *j + 1;                                // aller a la prochaine pos libre dans le Buf
@@ -1946,9 +1946,9 @@ void Generation_fichiers_Materiel(char nom_fichier[])
         extraire_chaine_TOVC(&f, Taille, &i, &j, TAILLE_TAILLE, &Buf);
         extraire_chaine_TOVC(&f, Description, &i, &j, atoi(Taille), &Buf);
 
-        stcpy(Enregistrement_TOF.Identifiant, Identifiant); // mise a jour de l'enreg a inserer: champ identifiant
-        Enregistrement_TOF.Prix = atoi(Prix);               // mise a jour de l'enreg a inserer: champ Prix
-        Enregistrement_TOF.supprimer = 0;                   // mise a jour de l'enreg a inserer: champ Supprimer
+        strcpy(Enregistrement_TOF.Identifiant, Identifiant); // mise a jour de l'enreg a inserer: champ identifiant
+        Enregistrement_TOF.Prix = atoi(Prix);                // mise a jour de l'enreg a inserer: champ Prix
+        Enregistrement_TOF.supprimer = 0;                    // mise a jour de l'enreg a inserer: champ Supprimer
 
         trouv = 0; // pour arreter si on a trouve le fichier correspondant au type du materiel qu'on veut inserer
         k = 0;     // le numero du materiel dans la liste des types de materiel
@@ -2143,10 +2143,135 @@ void Insertion_TnOVnC(char nom_fichier[])
         |     Entete_TOVnC(&f, 3) a la 1ere position libe dans le dernier bloc du fichier TOVnC      |
         |                                                                                            |                                                                                                                      |
         |********************************************************************************************/
-        Ecrire_chaine_TOVnC(&f, Destination, Entete_TOVnC(&f, 1), Entete_TOVnC(&f, 3), &Buf); // inserer le nouvel element a la fin du fichier TOVnC
+        i = Entete_TOVnC(&f, 1);                            // le dernier bloc dans le fichier TOVnC
+        j = Entete_TOVnC(&f, 3);                            // la 1ere pos libre dans le dernier fichier TOVnC
+        Ecrire_chaine_TOVnC(&f, Destination, &i, &j, &Buf); // inserer le nouvel element a la fin du fichier TOVnC
+        EcrireDir_TOVnC(&f, i, Buf);                        // ecrire le dernier bloc dans le fichier
     }
 }
+/*
 
+
+
+
+
+
+
+
+
+
+*/
+/**************************************************|
+|                                                  |
+|      LES FONCTIONS ET PROCEDURE DES INDEX        |
+|             TABLE ET FICHIER INDEX               |
+|                                                  |
+|**************************************************/
+/**************************************************|
+|                                                  |
+|      Creer la table et le fichier d'Index a      |
+|  partir d'un fichier TOVnC "nom_fichier_TOVnC"   |
+|                                                  |
+|**************************************************/
+void Creer_Index(char nom_fichier_TOVnC, char nom_fichier_Index)
+{
+    fichier_TOVnC F;                             // le fichier TOVnC
+    char Identifiant[TAILLE_IDENTIFIANT + 1],    // la plus petite cle dans un bloc (plus petit identifiant)   // la cle courrant dont on s'est arrete dans le parcours
+        Materiel[TAILLE_MATERIEL],               // le type du materiel
+        Fonctionne[TAILLE_FONCTIONNEMENT + 1],   // fonctionne = 'f', le materiel marche, fonctionne = 'n' sinon
+        Prix[TAILLE_PRIX + 1],                   // le ptix du materiel
+        Taille[TAILLE_TAILLE + 1],               // taille du champs description
+        Description[TAILLE_MAX_DESCRIPTION + 1]; // la description (caracteristiques) du materiel
+    Tenreg_INDEX indexEnreg;
+    Table_Index Index;
+    Tampon_TOVnC Buf;
+
+    int i = 1, // i:  parcours bloc par bloc fichier TOVnC
+        j = 0, // j: parcours de position dans le bloc de fichier TOVnC
+        k = 0, // pour le parcour de la table d'index
+        j1;    // pour la sauvegarde de la position avant l'extraction
+
+    Ouvrir_TOVnC(&F, nom_fichier_TOVnC, 'A');
+
+    while (i <= Entete_TOVnC(&F, 1))
+    {
+        LireDir_TOVnC(&F, i, &Buf); // lire le fichier TOVnC
+        j = 0;
+
+        while (j < Buf.nb)
+        {
+            j1 = j; // sauvgarde position
+
+            /***************************************************************************************************|
+            | Identifiant | champs fonctionne | Type materiel |    Prix   |   taille   | Description (variable) |
+            |  (5 bytes)  |   (1 bytes)       |  (12 bytes)   | (6 bytes) |  (3 bytes) |  (max sur 273 bytes)   |
+            |***************************************************************************************************/
+            extraire_chaine_TOVnC(Identifiant, &j, TAILLE_IDENTIFIANT, &Buf);
+            extraire_chaine_TOVnC(Fonctionne, &j, TAILLE_FONCTIONNEMENT, &Buf);
+            extraire_chaine_TOVnC(Materiel, &j, TAILLE_MATERIEL - 1, &Buf);
+            extraire_chaine_TOVnC(Prix, &j, TAILLE_PRIX, &Buf);
+            extraire_chaine_TOVnC(Taille, &j, TAILLE_TAILLE, &Buf);
+            extraire_chaine_TOVnC(Description, &j, atoi(Taille), &Buf);
+
+            /*____________________________________
+            |                                    |
+            | remplissage d'enregistrement index |
+            |____________________________________*/
+            strcpy(indexEnreg.Identifiant, Identifiant); // remplir le champs: Identifiant (cle unique) dans l'enregistrement Index
+            indexEnreg.NumBloc = i;                      // remplir le champs: Numero du bloc dans l'enregistrement Index
+            indexEnreg.Deplacement = j1;                 // remplir le champs: Deplacement dans bloc dans l'enregistrement Index
+
+            /*____________________________________
+            |                                    |
+            |   remplissage de la table d'index  |
+            |____________________________________*/
+
+            Index.table_Index[k] = indexEnreg; // affecter l'enregistrement prepare a la pos,k dan sla table d'index
+            k++;                               // incrementer la pos libre dans k pour la prochaine insertion dans la table
+            Index.nombre_enreg_inseres = k;    // mettre a jour le nombre d'enreg inseres dans la table d'index
+        }
+
+        i++; // passer au prochain bloc
+    }
+
+    /*____________________________________________________________|
+    |                                                             |
+    |     la création du fichier index associé à cette table      |
+    |____________________________________________________________*/
+    Sauvegarde_Table_Index_TOF(nom_fichier_Index, Index);
+}
+
+/*
+
+
+
+
+
+
+
+
+
+
+*/
+/**************************************************|
+|                                                  |
+|      Creer la table et le fichier d'Index a      |
+|      partir d'un fichier TOVnC "nom_fichier"     |
+|                                                  |
+|**************************************************/
+void Afficher_Table_Index(Table_Index Index)
+{
+    int k; // pour le parcours de la table d'index
+
+    for (k = 0; k < Index.nombre_enreg_inseres; k++)
+    {
+        printf("\n________________________________________________________________________");
+        printf("\n|   L'identifiant: %s", Index.table_Index[k].Identifiant);
+        printf("\n|   Numero du Bloc: %i", Index.table_Index[k].NumBloc);
+        printf("\n|   Deplacement dans le Bloc: %i", Index.table_Index[k].Deplacement);
+    }
+    printf("\n________________________________________________________________________");
+}
 /*
 
 
@@ -2191,7 +2316,7 @@ void Recherche_Dichotomique_Table_Index_TOF(char Cle[], int *trouv, int *k)
             {                                                       // regler l'inf
                 inf = *k + 1;
             }
-            else // si al cle recherche < la cle courante
+            else // si la cle recherche < la cle courante
             {    // regler le sup
                 sup = *k - 1;
             }
@@ -2270,9 +2395,32 @@ void Insertion_Table_Index(Tenreg_INDEX enregistrement_index, int k)
 |        de tupe TOF vers la MC dans la variable Index       |
 |                                                            |
 |************************************************************/
-void Chargement_Table_Index_TOF(fichier)
+void Chargement_Table_Index_TOF(char nom_fichier_index[], Table_Index *Index)
 {
-    printf("en cours...");
+    fichier_TOF fichier_Index;
+    Ouvrir_TOF(&fichier_Index, nom_fichier_index, 'A'); // ouvrir le fichier index d'ou charger
+    int i = 1,                                          // pour le parcours du fichier Index par bloc
+        j = 0,                                          // pour le parcours inter-bloc dans le fichier Index
+        ind = 0;                                        // pour le parcours et le remplissage de la table d'index
+    Tampon_INDEX Buf;                                   // le buffer speciale pour les lecture de MS vers MC deu fichier Index
+
+    while (i <= Entete_TOF(&fichier_Index, 1)) // tant qu'on est pas arrive a la fin du fichier
+    {
+        LireDir_Index_TOF(&fichier_Index, i, &Buf); // lire le bloc courant
+        j = 0;                                      // placer le deplacement dans le bloc dans sa 1ere position
+        while (j <= Buf.nombre_enreg)               // tant que on est pas arrive a la fin du bloc
+        {
+            strcpy(Index->table_Index[ind].Identifiant, Buf.tab_INDEX[j].Identifiant); // mise a jour de l'identifiant dans la table d'index
+            Index->table_Index[ind].NumBloc = i;                                       // mise a jour de la 1ere coordonne de l'adresse de l'identifiant (numero de bloc) dans la table d'index
+            Index->table_Index[ind].Deplacement = j;                                   // mise a jour de la 2eme coordonne de l'adresse de l'identifiant (deplacement dans le bloc) dans la table d'index
+            ind++;                                                                     // mise a jour du prochain placement vide dans la table d'index pour inserer
+            j++;                                                                       // mise a jour du prochain enregistrement a lire dans le bloc i dans le fichier index
+            Index->nombre_enreg_inseres = ind;                                         // mise a jour du nombre d'enregs inseres dans la table d'index
+        }
+        i++;
+    }
+
+    Fermer_TOF(&fichier_Index);
 }
 /*
 
@@ -2293,13 +2441,37 @@ void Chargement_Table_Index_TOF(fichier)
 
 /************************************************************|
 |                                                            |
-|       Sauvegarde de la tabel d'index dans un fichier       |
-|               "nom_fichier"  de type TOF                   |
+|       Sauvegarde de la table d'index dans un fichier       |
+|               "nom_fichier" de type TOF                    |
 |                                                            |
 |************************************************************/
-void Sauvegarde_Table_Index_TOF()
+void Sauvegarde_Table_Index_TOF(char nom_fichier_index[], Table_Index Index)
 {
-    printf("en cours...");
+    fichier_TOF fichier_Index;
+    Ouvrir_TOF(&fichier_Index, nom_fichier_index, 'N'); // ouvrir le fichier index d'ou charger
+    int i = Alloc_bloc_TOF(&fichier_Index),             // pour le parcours du fichier Index par bloc
+        j = 0,                                          // pour le parcours inter-bloc dans le fichier Index
+        ind = 0;                                        // pour le parcours et le remplissage de la table d'index
+    Tampon_INDEX Buf;                                   // le buffer speciale pour les lecture de MS vers MC deu fichier Index
+
+    while (ind <= Index.nombre_enreg_inseres)
+    {
+        if (j > MAX_ENREG)
+        {
+            Buf.nombre_enreg = MAX_ENREG;
+            EcrireDir_Index_TOF(&fichier_Index, i, &Buf); // ecrire le buf i                                                                                      // incrementer le i
+            i = Alloc_bloc_TOF(&fichier_Index);           // nouveau bloc + mise a jour de l'entete
+            j = 0;
+        }
+        strcpy(Buf.tab_INDEX[j].Identifiant, Index.table_Index[ind].Identifiant); // mise a jour du Buf: champs identifiant
+        Buf.tab_INDEX[j].NumBloc = Index.table_Index[ind].NumBloc;                // mise a jour du Buf: champs Prix
+        Buf.tab_INDEX[j].Deplacement = Index.table_Index[ind].Deplacement;        // mise a jour du Buf: champs Supprimer
+
+        Buf.nombre_enreg = j;                                                 // mise a jour du Buf: nombre d'enreg dans le buf
+        j++;                                                                  // aller a la prochaine pos libre dans le Buf
+        ind++;                                                                //
+        Aff_Entete_TOF(&fichier_Index, 2, Entete_TOF(&fichier_Index, 2) + 1); // mise a jour de l'entete: nombre d'enregistrement inseres++
+    }
 }
 /*
 
@@ -2321,10 +2493,10 @@ int main(void)
 {
     srand(time(NULL));
     printf("a printing is needed");
-    int k;
-    // Generation_fichiers_Materiel(FICHIER_MATERIEL_FONCTIONNE);
-    Requette_intervalle_LOVC(FICHIER_MATERIEL_NON_FONCTIONNE, 20000, 900000, &k);
-    // afficher_fichier_LOVC(FICHIER_MATERIEL_NON_FONCTIONNE);
+    // int k;
+    //  Generation_fichiers_Materiel(FICHIER_MATERIEL_FONCTIONNE);
+    // Requette_intervalle_LOVC(FICHIER_MATERIEL_NON_FONCTIONNE, 20000, 900000, &k);
+    //  afficher_fichier_LOVC(FICHIER_MATERIEL_NON_FONCTIONNE);
     /*
     for (k = 0; k < NB_TYPE_MATERIEL; k++)
     {

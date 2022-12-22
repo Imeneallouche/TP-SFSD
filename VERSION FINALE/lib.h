@@ -452,6 +452,7 @@ char *MATERIAL_LIST[] = {
 char *FICHIER_ORIGINAL = "Materiel_informatique_TOVnC.bin";                        // le nom du fichier original
 char *FICHIER_MATERIEL_FONCTIONNE = "Materiel_informatique_en_marche_TOVC.bin";    // le nom du fichier qui contient le materiel en fonction
 char *FICHIER_MATERIEL_NON_FONCTIONNE = "Materiel_informatique_en_panne_LOVC.bin"; // le nom du fichier qui contient le materiel en panne
+char *FICHIER_INDEX = "Index_Materiel_informatique_TOF.bin";                       // le nom du fichier Index de materiel informatique de type TOF
 
 /**************************************************|
 |                                                  |
@@ -589,8 +590,9 @@ void Inserer_Enreg_TOF(fichier_TOF *f, Tenreg_TOF Enregistrement_TOF, int *i, in
 void affichage_entete_TOF(char nom_fichier[]);
 void afficher_fichier_TOF(char nom_fichier[]);
 
-void Chargement_Table_Index_TOF();
 void Sauvegarde_Table_Index_TOF();
+void Chargement_Table_Index_TOF(char nom_fichier_index[], Table_Index *Index);
+void Inserer_Enreg_Index_TOF(fichier_TOF *f, Tenreg_INDEX Enregistrement_Index, int *i, int *j, Tampon_INDEX);
 void Recherche_Dichotomique_Table_Index_TOF(char Cle[], int *trouv, int *k);
 void Insertion_Table_Index(Tenreg_INDEX enregistrement_index, int k);
 
