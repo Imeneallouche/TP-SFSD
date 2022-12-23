@@ -788,7 +788,7 @@ void Fermer_TOF(fichier_TOF *f)
 void LireDir_TOF(fichier_TOF *f, int i, Tampon_TOF *buf)
 {
     rewind(f->fichier);
-    fseek(f->fichier, sizeof(fichier_TOF) + (i - 1) * sizeof(Tampon_TOF), SEEK_SET);
+    fseek(f->fichier, sizeof(entete_TOF) + (i - 1) * sizeof(Tampon_TOF), SEEK_SET);
     fread(buf, sizeof(Tampon_TOF), 1, f->fichier);
 }
 
@@ -890,23 +890,21 @@ void afficher_fichier_TOF(char nom_fichier[])
     |  Identifiant  |     Prix    |     Supprimer    |
     |   (5 bytes)   |  (integer)  |     (1 bytes)    |
     |************************************************/
-    // while (i <= Entete_TOF(&f, 1))
 
     affichage_entete_TOF(nom_fichier);
 
-    while (counter <= 2)
+    while (i <= Entete_TOF(&f, 1))
     {
         LireDir_TOF(&f, i, &Buf);
         j = 0;
         printf("\n\n\n*************************************************\n");
         printf("*                                               *\n");
         printf("*            Le bloc numero : %i                 *\n", i);
-        printf("*        rempli a %i / %i enregistrements          *\n", Buf.nombre_enreg, MAX_ENREG);
+        printf("*        rempli a %i / %i enregistrements         *\n", Buf.nombre_enreg, MAX_ENREG);
         printf("*                                               *\n");
         printf("*************************************************\n");
 
-        // while (j < Buf.nombre_enreg)
-        while (counter <= 2)
+        while (j < Buf.nombre_enreg)
         {
             printf("\n\n.........................\n");
             printf(".                       .\n");
@@ -915,7 +913,11 @@ void afficher_fichier_TOF(char nom_fichier[])
             printf(".........................\n");
             printf("identifiant: %s\n", Buf.tab[j].Identifiant);
             printf("prix: %i DA\n", Buf.tab[j].Prix);
-            printf("Fonctionne? : %i\n", Buf.tab[j].supprimer);
+            if (Buf.tab[j].supprimer == 0)
+                printf("Supprime? : NON\n");
+            else
+                printf("Supprime? : OUI\n");
+
             counter++;
             j++;
         }
@@ -960,7 +962,7 @@ void afficher_fichier_TOF(char nom_fichier[])
 void LireDir_Index_TOF(fichier_TOF *f, int i, Tampon_INDEX *buf)
 {
     rewind(f->fichier);
-    fseek(f->fichier, sizeof(fichier_TOF) + (i - 1) * sizeof(Tampon_INDEX), SEEK_SET);
+    fseek(f->fichier, sizeof(entete_TOF) + (i - 1) * sizeof(Tampon_INDEX), SEEK_SET);
     fread(buf, sizeof(Tampon_INDEX), 1, f->fichier);
 }
 
@@ -998,20 +1000,18 @@ void afficher_fichier_Index_TOF(char nom_fichier[])
 
     affichage_entete_TOF(nom_fichier);
 
-    // while (i <= Entete_TOF(&f, 1)) //tant qu'on n'est pas arrive a la fin du fichier
-    while (counter <= 2)
+    while (i <= Entete_TOF(&f, 1)) // tant qu'on n'est pas arrive a la fin du fichier
     {
         LireDir_Index_TOF(&f, i, &Buf);
         j = 0;
         printf("\n\n\n*************************************************\n");
         printf("*                                               *\n");
         printf("*            Le bloc numero : %i                 *\n", i);
-        printf("*        rempli a %i / %i enregistrements          *\n", Buf.nombre_enreg, MAX_ENREG);
+        printf("*        rempli a %i / %i enregistrements         *\n", Buf.nombre_enreg, MAX_ENREG);
         printf("*                                               *\n");
         printf("*************************************************\n");
 
-        // while (j <= Buf.nombre_enreg) //tant que on est pas arrive a la fin du bloc numero i
-        while (counter <= 2)
+        while (j <= Buf.nombre_enreg) // tant que on est pas arrive a la fin du bloc numero i
         {
             printf("\n\n.........................\n");
             printf(".                       .\n");
@@ -1804,12 +1804,12 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
                 {
                     taille_chaines = (Buf.nb - j);
                     extraire_chaine_TOVnC(Chaine_debordantes, &j, taille_chaines, &Buf);
-                    ins_string_TOVnC(&Buf, &j, Destination); // on insere le materiel
-                    Buf.nb = j + 1;                          // mise à jour la position libre (buf.nb)
-                    EcrireDir_TOVnC(&f, i, Buf);             // ecrire le buffer dans la MS
-                    strcpy(Destination, Chaine_debordantes); // le nouveau materiel qui va etre inserer dans le prochain bloc (chaine reçoit Chaine_debordantes)
-                    i++;                                     // aller au bloc prochain
-                    j = 0;                                   // se mettre au debut du bloc prochain
+                    Insert_string_TOVnC(&Buf, &j, Destination); // on insere le materiel
+                    Buf.nb = j + 1;                             // mise à jour la position libre (buf.nb)
+                    EcrireDir_TOVnC(&f, i, Buf);                // ecrire le buffer dans la MS
+                    strcpy(Destination, Chaine_debordantes);    // le nouveau materiel qui va etre inserer dans le prochain bloc (chaine reçoit Chaine_debordantes)
+                    i++;                                        // aller au bloc prochain
+                    j = 0;                                      // se mettre au debut du bloc prochain
 
                     /*_____________________________________________________________________________________________________
                             REMARQUE: on a voulu laiser de vide dans le bloc pour faciliter les prochaines insertions
@@ -2706,6 +2706,5 @@ void Sauvegarde_Table_Index_TOF(char nom_fichier_index[], Table_Index Index)
 
 int main(void)
 {
-    // Choix_affichage_fichier_materiel();
-    Generation_fichiers_Materiel(FICHIER_MATERIEL_FONCTIONNE);
+    printf("lets verify the indexes now");
 }

@@ -39,7 +39,7 @@ int main(void)
         scanf(" %i", &int_answers);
         while (int_answers < 1 || int_answers > 16)
         {
-            printf("pas d'option correspondante à un tel numéro saisissez un autre: ");
+            printf("    pas d'option correspondante a un tel numero, saisissez un autre: ");
             scanf(" %i", &int_answers);
         }
 
