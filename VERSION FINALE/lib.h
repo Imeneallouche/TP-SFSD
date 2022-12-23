@@ -1,4 +1,4 @@
-#define B 300                      // le nombre max de caractère que peut contenir le bloc
+#define B 300                      // le nombre max de caracteres que peut contenir un bloc d'un fichier TOVnC, TOVC et LOVC
 #define NB_TYPE_MATERIEL 6         // nombre de types de materiel qui existent
 #define TAILLE_IDENTIFIANT 5       // la taille du champs identifiant (la cle) sur 5 octets
 #define TAILLE_FONCTIONNEMENT 1    // la taille du champs qui indique si le materiel fonctionne ou pas (f-> fonctionne n-> ne fonctionne pas)
@@ -7,11 +7,12 @@
 #define TAILLE_TAILLE 3            // la taille du champs taille (taille du champs description)
 #define TAILLE_MAX_DESCRIPTION 273 // taille maximal du champs description (le nombre max de chars dans le bloc - la taille des autres champs)
 #define PRIX_MAX 999999            // le prix max d'un materiel
-#define MAX_ENREG 10               // max d'enregistrement dans un seul bloc (TOF)
+#define MAX_ENREG 10               // max d'enregistrement dans un seul bloc de fichier type TOF
 #define MAX_NOM_FICHIER 40         // la taille max d'un nom du fichier
-#define facteur_reorganisation 0.5 // le facteur de reorganisation du fichier
-#define MAX_ENREG_INDEX 1000       // le nombre max d'enreg que la tabel d'index peut contenir
+#define facteur_reorganisation 0.5 // le facteur de reorganisation du fichier (en cas ou on l'a utilise pour la fragmentation -reoganisation-)
+#define MAX_ENREG_INDEX 1000       // le nombre max d'enreg que la table d'index peut contenir
 
+// strcuture fichier original TOVnC
 /***************************************************************************************************|
 | Identifiant | champs fonctionne | Type materiel |    Prix   |   taille   | Description (variable) |
 |  (5 bytes)  |   (1 bytes)       |  (12 bytes)   | (6 bytes) |  (3 bytes) |  (max sur 273 bytes)   |
@@ -582,6 +583,7 @@ void afficher_fichier_LOVC(char nom_fichier[]);
 |         FONCTIONS TOF         |
 |                               |
 |*******************************/
+// structure d'enregistrement des fichiers TOFs generes par la fragmentation selon le champ du type de materiel
 /************************************************|
 |  Identifiant  |     Prix    |     Supprimer    |
 |   (5 bytes)   |  (integer)  |     (integer)    |
@@ -590,9 +592,16 @@ void Generation_fichiers_Materiel(char nom_fichier[]);
 void Inserer_Enreg_TOF(fichier_TOF *f, Tenreg_TOF Enregistrement_TOF, int *i, int *j, Tampon_TOF *Buf);
 void affichage_entete_TOF(char nom_fichier[]);
 void afficher_fichier_TOF(char nom_fichier[]);
+void Choix_affichage_fichier_materiel();
 
-void Creer_Index(char nom_fichier_TOVnC[], char nom_fichier_Index[]);
+// structure d'enregistrements du fichier Index TOF
+/************************************************|
+|  Identifiant  |    numBloc  |   Deplacement    |
+|   (5 bytes)   |  (integer)  |    (integer)     |
+|************************************************/
+void Creer_Index(char nom_fichier_TOVnC[]);
 void Afficher_Table_Index(Table_Index Index);
+void afficher_fichier_Index_TOF(char nom_fichier[]);
 void Recherche_Dichotomique_Table_Index_TOF(char Cle[], int *trouv, int *k);
 void Insertion_Table_Index(Tenreg_INDEX enregistrement_index, int k);
 void Chargement_Table_Index_TOF(char nom_fichier_index[], Table_Index *Index);

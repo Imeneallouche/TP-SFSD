@@ -3,11 +3,11 @@
 
 int main(void)
 {
-    int int_answers;
+    int int_answers, quit = 0;
     char char_answers[B];
-    int trouv, i, j;
+    int trouv, i, j, k;
 
-    while (1)
+    while (!quit)
     {
 
         printf("    *************************************************\n");
@@ -30,12 +30,14 @@ int main(void)
         printf("    11-  Requette a interval selon le prix dans le fichier LOVC (Materiel en panne)\n");
         printf("    12-  Creation table Index et fichier index de TOVnC\n");
         printf("    13-  Afficher Table Index\n");
-        printf("    14-  Afficher fichier Index\n");
+        printf("    14-  Afficher fichier Index strcuture sous forme TOF\n");
+        printf("    15-  Insertion materiel a la fin du fichier TOVnC,dans la table index et fichier index\n");
+        printf("    16-  Quitter le programme");
 
         // le choix des options
         printf("\n    saisissez le numéro de votre option: ");
         scanf(" %i", &int_answers);
-        while (int_answers < 1 || int_answers > 11)
+        while (int_answers < 1 || int_answers > 16)
         {
             printf("pas d'option correspondante à un tel numéro saisissez un autre: ");
             scanf(" %i", &int_answers);
@@ -159,20 +161,7 @@ int main(void)
             printf("    *                 generations                   *\n");
             printf("    *                                               *\n");
             printf("    *************************************************\n\n");
-            printf("|    -> Le fichier a afficher:  ");                           // demander le type du materiel
-            for (int_answers = 1; int_answers <= NB_TYPE_MATERIEL; int_answers++) // la liste des matreiel a proposer sur l'utilisateur
-            {
-                printf("    %i - %s\n", int_answers, MATERIAL_LIST[int_answers - 1]);
-            }
-            printf("    votre choix: ");
-            scanf("%i", int_answers); // le numero du materiel
-            while (int_answers < 1 || int_answers > NB_TYPE_MATERIEL)
-            {
-                printf("    numero inexistant, veuillez entrer un autre entre [%i, %i]: ", 1, NB_TYPE_MATERIEL);
-                scanf("%i", int_answers);
-            }
-            strcpy(char_answers, MATERIAL_LIST[int_answers - 1]); // remplir le champs materiel
-            afficher_fichier_TOF("again");
+            Choix_affichage_fichier_materiel();
             break;
 
         case 11:
@@ -183,17 +172,79 @@ int main(void)
             printf("    *              dans le fichier LOVC             *\n");
             printf("    *                                               *\n");
             printf("    *************************************************\n\n");
-            printf("");
+            printf("|    -> Prix Min: "); // demander l'identifiant
+            scanf("%i", i);
+            printf("|    -> Prix Max: "); // demander l'identifiant
+            scanf("%i", j);
+            if (i > j) // si prix min> prix max permuter les 2 prix
+            {
+                k = i;
+                i = j;
+                j = k;
+            }
+            Requette_intervalle_LOVC(FICHIER_MATERIEL_NON_FONCTIONNE, i, j, k);
             break;
 
         case 12:
 
             printf("    *************************************************\n");
             printf("    *                                               *\n");
-            printf("    *       Affichage du fichier de materiel        *\n");
-            printf("    *                en panne LOVC                  *\n");
+            printf("    *        Creation table Index et fichier        *\n");
+            printf("    *                index de TOVnC                 *\n");
             printf("    *                                               *\n");
             printf("    *************************************************\n\n");
+            Creer_Index(FICHIER_ORIGINAL);
+            break;
+
+        case 13:
+
+            printf("    *************************************************\n");
+            printf("    *                                               *\n");
+            printf("    *              Afficher Table Index             *\n");
+            printf("    *                                               *\n");
+            printf("    *                                               *\n");
+            printf("    *************************************************\n\n");
+            Afficher_Table_Index(Index);
+            break;
+
+        case 14:
+
+            printf("    *************************************************\n");
+            printf("    *                                               *\n");
+            printf("    *       Afficher fichier Index strcuture        *\n");
+            printf("    *                sous forme TOF                 *\n");
+            printf("    *                                               *\n");
+            printf("    *************************************************\n\n");
+            afficher_fichier_Index_TOF(FICHIER_INDEX);
+            break;
+
+        case 15:
+
+            printf("    *************************************************\n");
+            printf("    *                                               *\n");
+            printf("    *  Insertion materiel a la fin du fichier TOVnC *\n");
+            printf("    *      dans la table index et fichier index     *\n");
+            printf("    *                                               *\n");
+            printf("    *************************************************\n\n");
+            Insertion_TnOVnC(FICHIER_ORIGINAL);
+            break;
+
+        case 16:
+            printf("    *************************************************\n");
+            printf("    *                                               *\n");
+            printf("    *             QUITTER LE PROGRAMME              *\n");
+            printf("    * SAUVEGARDE TABLE INDEX DANS FICHIER INDEX ... *\n");
+            printf("    *                                               *\n");
+            printf("    *************************************************\n\n");
+            /*________________________________________________________________________________________________________________|
+            |                                                                                                                 |
+            |             Rappelez-vous du commentaire indique dans l'insertion TOVnC et dans la creation d'index?            |
+            |      On a insiste a ne pas sauvegarder la table d'index dans le fichier index jusqu'a la fin du programme       |
+            | car le fichier index n'est utile que pour la sauvegarde apres fin d'execution du programme pour y revenir apres |
+            |     AND THATS THE RIGHT TIME TO DO SO, WE REACHED THE END OF OUR PROGRAM SAUVEGARDONS LA AVANT DE QUITTER !     |                                                           |                                                                                                                      |
+            |________________________________________________________________________________________________________________*/
+            Sauvegarde_Table_Index_TOF(FICHIER_INDEX, Index);
+            quit = 1;
             break;
         }
     }

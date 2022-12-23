@@ -179,6 +179,8 @@ void afficher_fichier_TOVnC(char nom_fichier[])
         Taille[TAILLE_TAILLE + 1],               // taille du champs description
         Description[TAILLE_MAX_DESCRIPTION + 1]; // la description (caracteristiques) du materiel
 
+    affichage_entete_TOVnC(nom_fichier);
+
     /***************************************************************************************************|
     | Identifiant | champs fonctionne | Type materiel |    Prix   |   taille   | Description (variable) |
     |  (5 bytes)  |   (1 bytes)       |  (12 bytes)   | (6 bytes) |  (3 bytes) |  (max sur 273 bytes)   |
@@ -423,6 +425,8 @@ void afficher_fichier_TOVC(char nom_fichier[])
         Prix[TAILLE_PRIX + 1],                   // le ptix du materiel
         Taille[TAILLE_TAILLE + 1],               // taille du champs description
         Description[TAILLE_MAX_DESCRIPTION + 1]; // la description (caracteristiques) du materiel
+
+    affichage_entete_TOVC(nom_fichier);
 
     LireDir_TOVC(&f, i, &Buf);
     while (!(i == Entete_TOVC(&f, 1) && j >= Entete_TOVC(&f, 2))) // tant que on est pas arrive a la fin du fichier
@@ -671,6 +675,8 @@ void afficher_fichier_LOVC(char nom_fichier[])
         Taille[TAILLE_TAILLE + 1],               // taille du champs description
         Description[TAILLE_MAX_DESCRIPTION + 1]; // la description (caracteristiques) du materiel
 
+    affichage_entete_LOVC(nom_fichier);
+
     LireDir_LOVC(&f, i, &Buf);
     while (!(i == entete_LOVC(&f, 2) && j >= entete_LOVC(&f, 3))) // tant que on est pas arrive a la fin du fichier
     {
@@ -885,6 +891,9 @@ void afficher_fichier_TOF(char nom_fichier[])
     |   (5 bytes)   |  (integer)  |     (1 bytes)    |
     |************************************************/
     // while (i <= Entete_TOF(&f, 1))
+
+    affichage_entete_TOF(nom_fichier);
+
     while (counter <= 2)
     {
         LireDir_TOF(&f, i, &Buf);
@@ -967,6 +976,57 @@ void EcrireDir_Index_TOF(fichier_TOF *f, int i, Tampon_INDEX *buf)
     fwrite(buf, sizeof(Tampon_INDEX), 1, f->fichier);
 }
 
+/**********************************************|
+|                                              |
+|     affichier le contenu d'un fichier TOF    |
+|         avec structure Tampon_Index          |
+|                                              |
+|**********************************************/
+void afficher_fichier_Index_TOF(char nom_fichier[])
+{
+    fichier_TOF f;
+    Ouvrir_TOF(&f, nom_fichier, 'A');
+    int i = 1,        // parcours bloc par bloc
+        j = 0,        // parcours de position dans le bloc
+        counter = 0;  // numero de l'enregistrement dans le bloc
+    Tampon_INDEX Buf; // contenu d'un bloc dans un buffer Index TOF
+
+    /************************************************|
+    |  Identifiant  |    numBloc  |   Deplacement    |
+    |   (5 bytes)   |  (integer)  |    (integer)     |
+    |************************************************/
+
+    affichage_entete_TOF(nom_fichier);
+
+    // while (i <= Entete_TOF(&f, 1)) //tant qu'on n'est pas arrive a la fin du fichier
+    while (counter <= 2)
+    {
+        LireDir_Index_TOF(&f, i, &Buf);
+        j = 0;
+        printf("\n\n\n*************************************************\n");
+        printf("*                                               *\n");
+        printf("*            Le bloc numero : %i                 *\n", i);
+        printf("*        rempli a %i / %i enregistrements          *\n", Buf.nombre_enreg, MAX_ENREG);
+        printf("*                                               *\n");
+        printf("*************************************************\n");
+
+        // while (j <= Buf.nombre_enreg) //tant que on est pas arrive a la fin du bloc numero i
+        while (counter <= 2)
+        {
+            printf("\n\n.........................\n");
+            printf(".                       .\n");
+            printf(".  Materiel numero : %i  .\n", counter);
+            printf(".                       .\n");
+            printf(".........................\n");
+            printf("identifiant: %s\n", Buf.tab_INDEX[j].Identifiant);
+            printf("Numero du Bloc: %i\n", Buf.tab_INDEX[j].NumBloc);
+            printf("Deplacement dans le Bloc : %i\n", Buf.tab_INDEX[j].Deplacement);
+            counter++;
+            j++;
+        }
+        i++;
+    }
+}
 /*
 
 
@@ -1712,7 +1772,7 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
                 /************************************************************************************************************************|
                 |                                                                                                                        |
                 |     si la taille du materiel + position ou il faut l'inserer(j) > B , on prend le materiel qu'on veut l'inserer        |
-                |                et les matererls qui viennent apres comme une nouvelle chaine à inserer                                 |
+                |                et les materiels qui viennent apres comme une nouvelle chaine à inserer                                 |
                 |                                                                                                                        |
                 |************************************************************************************************************************/
 
@@ -1725,7 +1785,8 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
                     EcrireDir_TOVnC(&f, i, Buf);
                     strcat(Destination, Chaine_debordantes); // nouveau materiel à inserer (chaine) dans le prochain bloc = materiel qu'on veut inserer (chaine)+ les materierls
                                                              // qui viennent  apres ce dernier(Chaine_debordantes)
-                    i = i + 1, j = 0;                        //  l'insertion se fera à la prochaine itération du TQ , dans le prochain bloc à la premiere position
+                    i = i + 1;                               //  l'insertion se fera à la prochaine itération du TQ , dans le prochain bloc
+                    j = 0;                                   // à la premiere position
                 }
 
                 /************************************************************************************************************************|
@@ -2087,6 +2148,48 @@ void Generation_fichiers_Materiel(char nom_fichier[])
 |    [Prix_Min , Prix_Min] dans un fichier LOVC    |
 |                                                  |
 |**************************************************/
+void Choix_affichage_fichier_materiel()
+{
+    int counter;
+    char Materiel[TAILLE_MATERIEL];
+    char nom_fichier[MAX_NOM_FICHIER];
+
+    printf("|    -> Le fichier a afficher:  ");               // demander le type du materiel
+    for (counter = 1; counter <= NB_TYPE_MATERIEL; counter++) // la liste des matreiel a proposer sur l'utilisateur
+    {
+        printf("    %i - %s\n", counter, MATERIAL_LIST[counter - 1]);
+    }
+    printf("    votre choix: ");
+    scanf("%i", counter); // le numero du materiel
+    while (counter < 1 || counter > NB_TYPE_MATERIEL)
+    {
+        printf("    numero inexistant, veuillez entrer un autre entre [%i, %i]: ", 1, NB_TYPE_MATERIEL);
+        scanf("%i", counter);
+    }
+    strcpy(Materiel, MATERIAL_LIST[counter - 1]); // remplir le champs materiel
+
+    sprintf(nom_fichier, "Materiel_en_marche_%s_TOF.bin\0", MATERIAL_LIST[counter - 1]); // generer le nom du fichier selon le nom du materiel
+
+    afficher_fichier_TOF(nom_fichier);
+}
+/*
+
+
+
+
+
+
+
+
+
+
+*/
+/**************************************************|
+|                                                  |
+|     Requette a intervalle par rapport au prix    |
+|    [Prix_Min , Prix_Min] dans un fichier LOVC    |
+|                                                  |
+|**************************************************/
 // FICHIER_MATERIEL_NON_FONCTIONNE = "Materiel_informatique_en_panne_LOVC.bin"
 void Requette_intervalle_LOVC(char nom_fichier[], int Prix_Min, int Prix_Max, int *montant)
 {
@@ -2239,6 +2342,13 @@ void Insertion_TnOVnC(char nom_fichier[])
         Ecrire_chaine_TOVnC(&f, Destination, &i, &j, &Buf); // inserer le nouvel element a la fin du fichier TOVnC
         EcrireDir_TOVnC(&f, i, Buf);                        // ecrire le dernier bloc dans le fichier
         Fermer_TOVnC(&f);                                   // fermer le fichier TOVnC
+
+        /*________________________________________________________________________________________|
+        |                                                                                         |
+        |   table index ne sera pas sauvegardee dans le fichier index meme apres une insertion    |
+        |         elle sera sauvegardee apres la fin de toutes les executions dans main.c         |
+        |         donc pas d'appel a la fonction :Sauvegarde_Table_Index_TOF() not yet :)         |                                                           |                                                                                                                      |
+        |_________________________________________________________________________________________*/
     }
 }
 /*
@@ -2265,7 +2375,7 @@ void Insertion_TnOVnC(char nom_fichier[])
 |  partir d'un fichier TOVnC "nom_fichier_TOVnC"   |
 |                                                  |
 |**************************************************/
-void Creer_Index(char nom_fichier_TOVnC[], char nom_fichier_Index[])
+void Creer_Index(char nom_fichier_TOVnC[])
 {
     fichier_TOVnC F;                             // le fichier TOVnC
     char Identifiant[TAILLE_IDENTIFIANT + 1],    // la plus petite cle dans un bloc (plus petit identifiant)   // la cle courrant dont on s'est arrete dans le parcours
@@ -2326,11 +2436,17 @@ void Creer_Index(char nom_fichier_TOVnC[], char nom_fichier_Index[])
         i++; // passer au prochain bloc
     }
 
-    /*____________________________________________________________|
-    |                                                             |
-    |     la création du fichier index associé à cette table      |
-    |____________________________________________________________*/
-    Sauvegarde_Table_Index_TOF(nom_fichier_Index, Index);
+    /*____________________________________
+    |                                    |
+    |       creation fichier Index       |
+    |___________________________________*/
+    /*_______________________________________________________________________________________________________________|
+    |                                                                                                                |
+    |   table index ne sera pas encore sauvegardee donc la creation du fichier index ne sera pas encore effectuee    |
+    |                 elle sera sauvegardee apres la fin de toutes les executions dans main.c                        |
+    |        Pourquoi? : pour diminuer la complexite , on sauvgardera lorsqu'on quitte le progrmme :)                |
+    |         donc pas d'appel a la fonction :Sauvegarde_Table_Index_TOF() not the right time yet :)                 |                                                           |                                                                                                                      |
+    |________________________________________________________________________________________________________________*/
 }
 
 /*
