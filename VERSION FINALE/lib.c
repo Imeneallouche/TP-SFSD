@@ -1407,6 +1407,10 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
         printf(".........................\n");
         printf("identifiant: %.5s\n", Identifiant);
         printf("materiel: %.11s\n", Materiel);
+        if (strcmp(Fonctionne, "f") == 0)
+            printf("Fonctionne : OUI\n");
+        else
+            printf("Fonctionne : NON\n");
         printf("prix: %.6s DA\n", Prix);
         printf("taille de description: %.3s\n", Taille);
         printf("description: %s\n", Description);
@@ -1416,6 +1420,11 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
         concatenate(Enreg, Identifiant, Fonctionne, Materiel, Prix, Taille, Description);
         printf("l'element sera insere sous cette forme: %s\n", Enreg);
         Ecrire_chaine_TOVnC(F, Enreg, &i, &j, &buf);
+
+        if (strcmp(Fonctionne, "f") == 0) // generer le champs fonctionnement (suppression) en alternative
+            strcpy(Fonctionne, "n");      // afin d'equilibrer les fichiers LOVC et TOVC apres fragmentation
+        else                              // si le materiel precedent fonctionnait alors le prochain ne fonctionnera pas
+            strcpy(Fonctionne, "f");      // si le materiel precedent ne fonctionnait pas alors le prochain fonctionnera
     }
     EcrireDir_TOVnC(F, i, buf); // ecrire le dernier buffer meme si il n'etait pas plein
     Fermer_TOVnC(F);            // fermer le fichier
@@ -2023,7 +2032,6 @@ void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fich
 |************************************************/
 void Inserer_Enreg_TOF(fichier_TOF *f, Tenreg_TOF Enregistrement_TOF, int *i, int *j, Tampon_TOF *Buf)
 {
-    printf("\nbloc %i pos %i", *i, *j);
     if (*j > MAX_ENREG)
     {
         Buf->nombre_enreg = MAX_ENREG;
@@ -2035,8 +2043,8 @@ void Inserer_Enreg_TOF(fichier_TOF *f, Tenreg_TOF Enregistrement_TOF, int *i, in
     Buf->tab[*j].Prix = Enregistrement_TOF.Prix;                      // mise a jour du Buf: champs Prix
     Buf->tab[*j].supprimer = Enregistrement_TOF.supprimer;            // mise a jour du Buf: champs Supprimer
 
-    Buf->nombre_enreg = *j;                     // mise a jour du Buf: nombre d'enreg dans le buf
     *j = *j + 1;                                // aller a la prochaine pos libre dans le Buf
+    Buf->nombre_enreg = *j;                     // mise a jour du Buf: nombre d'enreg dans le buf
     Aff_Entete_TOF(f, 2, Entete_TOF(f, 2) + 1); // mise a jour de l'entete: nombre d'enregistrement inseres++
 }
 
@@ -2154,21 +2162,22 @@ void Choix_affichage_fichier_materiel()
     char Materiel[TAILLE_MATERIEL];
     char nom_fichier[MAX_NOM_FICHIER];
 
-    printf("|    -> Le fichier a afficher:  ");               // demander le type du materiel
+    printf("    -> Le fichier a afficher:  \n\n");            // demander le type du materiel
     for (counter = 1; counter <= NB_TYPE_MATERIEL; counter++) // la liste des matreiel a proposer sur l'utilisateur
     {
-        printf("    %i - %s\n", counter, MATERIAL_LIST[counter - 1]);
+        printf("     %i - %s\n", counter, MATERIAL_LIST[counter - 1]);
     }
-    printf("    votre choix: ");
-    scanf("%i", counter); // le numero du materiel
+    printf("\n    votre choix: ");
+    scanf("%i", &counter); // le numero du materiel
     while (counter < 1 || counter > NB_TYPE_MATERIEL)
     {
         printf("    numero inexistant, veuillez entrer un autre entre [%i, %i]: ", 1, NB_TYPE_MATERIEL);
-        scanf("%i", counter);
+        scanf("%i", &counter);
     }
     strcpy(Materiel, MATERIAL_LIST[counter - 1]); // remplir le champs materiel
 
     sprintf(nom_fichier, "Materiel_en_marche_%s_TOF.bin\0", MATERIAL_LIST[counter - 1]); // generer le nom du fichier selon le nom du materiel
+    printf("    Nom fichier: %s", nom_fichier);
 
     afficher_fichier_TOF(nom_fichier);
 }
@@ -2697,20 +2706,9 @@ void Sauvegarde_Table_Index_TOF(char nom_fichier_index[], Table_Index Index)
 
 
 */
+
 int main(void)
 {
-    srand(time(NULL));
-    printf("a printing is needed");
-    // int k;
-    //  Generation_fichiers_Materiel(FICHIER_MATERIEL_FONCTIONNE);
-    // Requette_intervalle_LOVC(FICHIER_MATERIEL_NON_FONCTIONNE, 20000, 900000, &k);
-    //  afficher_fichier_LOVC(FICHIER_MATERIEL_NON_FONCTIONNE);
-    /*
-    for (k = 0; k < NB_TYPE_MATERIEL; k++)
-    {
-        strcpy(Files[k].Materiel, MATERIAL_LIST[k]);                                      // affcter le nom du materiel
-        sprintf(Files[k].file_name, "Materiel_en_marche_%s_TOF.bin\0", MATERIAL_LIST[k]); // generer le nom du fichier selon le nom du materiel
-        afficher_fichier_TOF(Files[k].file_name);
-    }
-    */
+    // Choix_affichage_fichier_materiel();
+    Generation_fichiers_Materiel(FICHIER_MATERIEL_FONCTIONNE);
 }
