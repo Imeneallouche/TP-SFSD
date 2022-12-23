@@ -797,11 +797,11 @@ void LireDir_TOF(fichier_TOF *f, int i, Tampon_TOF *buf)
 |      Ecrire buf dans le i eme bloc TOF      |
 |                                             |
 |*********************************************/
-void EcrireDir_TOF(fichier_TOF *f, int i, Tampon_TOF *buf)
+void EcrireDir_TOF(fichier_TOF *f, int i, Tampon_TOF buf)
 {
     rewind(f->fichier);
     fseek(f->fichier, sizeof(entete_TOF) + (i - 1) * sizeof(Tampon_TOF), SEEK_SET);
-    fwrite(buf, sizeof(Tampon_TOF), 1, f->fichier);
+    fwrite(&buf, sizeof(Tampon_TOF), 1, f->fichier);
 }
 
 /********************************************|
@@ -1571,18 +1571,18 @@ void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trou
 */
 /***********************************************|
 |                                               |
-|  COPIER LA CHAINE str DANS LA CHAINE tableau  |
-|         A PARTIR DE LA POSITION pos           |
+|    copier la chaine "Chaine" dans  Le Buf     |
+|          a partir de la pos "pos"             |
 |                                               |
 |***********************************************/
 
-void ins_string(char tableau[B], int pos, char str[B]) // module à utilisé pour l'insertion
+void Insert_string_TOVnC(Tampon_TOVnC *Buf, int *pos, char chaine[]) // module à utiliser pour l'insertion
 {
     int i = 0;
-    while (i < strlen(str))
+    while (i < strlen(chaine))
     {
-        tableau[pos] = str[i];
-        pos++;
+        Buf->tableau[*pos] = chaine[i];
+        *pos = *pos + 1;
         i++;
     }
 }
@@ -1688,7 +1688,7 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
 {
 
     int i, j,            // l'emplacement ou on va inserer le matereil(i:le bloc , j: la posistion)
-        l, k, cpt,       // des variables seront utilisés pour le decalage
+        k, counter,      // des variables seront utilisés pour le decalage
         taille_materiel, // la taille de tout l'enregistrement a inserer
         taille_chaines,  // la taille des chaine qui vont deborder et seront inseres dans le prochain buffer
         trouv,           // boolean utilisé pour la recherche du materiel qu'on veut inserer
@@ -1754,18 +1754,15 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
             |************************************************************************************************************************/
             if ((B - Buf.nb) >= taille_materiel)
             { // l'éspace libre est plus grand ou egale à la taille du materiel qu'on veut l'inserer
-                l = Buf.nb;
-                k = Buf.nb + taille_materiel;
-                cpt = 1;
-                while (cpt <= Buf.nb)
+                k = Buf.nb + taille_materiel - 1;
+                counter = 0;
+                while (counter < Buf.nb - j)
                 {
-                    Buf.tableau[k] = Buf.tableau[l]; // on fait le decalage des materiaux qui viennent juste apres le materiel qu'on va l'inserer
+                    Buf.tableau[k] = Buf.tableau[k - taille_materiel]; // on fait le decalage des materiaux qui viennent juste apres le materiel qu'on va l'inserer
                     k--;
-                    l--;
-                    cpt++;
+                    counter++;
                 }
                 Ecrire_chaine_TOVnC(&f, Destination, &i, &j, &Buf); // insertion du materiel
-                Buf.nb = Buf.nb + taille_materiel;                  // mise à jour de la position libre dans un bloc (buf.nb)
                 EcrireDir_TOVnC(&f, i, Buf);                        // ecrire le buffer
                 stop = 1;                                           // arreter le process de l'insertion
             }
@@ -1807,9 +1804,9 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
                 {
                     taille_chaines = (Buf.nb - j);
                     extraire_chaine_TOVnC(Chaine_debordantes, &j, taille_chaines, &Buf);
-                    ins_string(Buf.tableau, j, Destination); // on insere le materiel
-                    Buf.nb = j + taille_materiel;            // mise à jour la position libre (buf.nb)
-                    EcrireDir_TOVnC(&f, i, Buf);             // ecrire le buffer da sla MS
+                    ins_string_TOVnC(&Buf, &j, Destination); // on insere le materiel
+                    Buf.nb = j + 1;                          // mise à jour la position libre (buf.nb)
+                    EcrireDir_TOVnC(&f, i, Buf);             // ecrire le buffer dans la MS
                     strcpy(Destination, Chaine_debordantes); // le nouveau materiel qui va etre inserer dans le prochain bloc (chaine reçoit Chaine_debordantes)
                     i++;                                     // aller au bloc prochain
                     j = 0;                                   // se mettre au debut du bloc prochain
@@ -1828,11 +1825,11 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
         |                                                                                                                        |
         |************************************************************************************************************************/
 
-        if (i > Entete_TOVnC(&f, 1))
+        if (i > Entete_TOVnC(&f, 1) && !stop)
         {
-            i == Alloc_bloc_TOVnC(&f);
+            i = Alloc_bloc_TOVnC(&f);                // allouer un nouveau bloc
             strcpy(Buf.tableau, Chaine_debordantes); // insertion chaine
-            Buf.nb == taille_chaines;                // mise à jour de la position libre dans un bloc (buf.nb)
+            Buf.nb = taille_chaines;                 // mise à jour de la position libre dans un bloc (buf.nb)
             EcrireDir_TOVnC(&f, i, Buf);             // ecrire le buffer
         }
 
@@ -2035,8 +2032,8 @@ void Inserer_Enreg_TOF(fichier_TOF *f, Tenreg_TOF Enregistrement_TOF, int *i, in
     if (*j > MAX_ENREG)
     {
         Buf->nombre_enreg = MAX_ENREG;
-        EcrireDir_TOF(f, *i, Buf); // ecrire le buf i                                                                                      // incrementer le i
-        *i = Alloc_bloc_TOF(f);    // nouveau bloc + mise a jour de l'entete
+        EcrireDir_TOF(f, *i, *Buf); // ecrire le buf i                                                                                      // incrementer le i
+        *i = Alloc_bloc_TOF(f);     // nouveau bloc + mise a jour de l'entete
         *j = 0;
     }
     strcpy(Buf->tab[*j].Identifiant, Enregistrement_TOF.Identifiant); // mise a jour du Buf: champs identifiant
@@ -2131,7 +2128,7 @@ void Generation_fichiers_Materiel(char nom_fichier[])
 
     for (k = 0; k < NB_TYPE_MATERIEL; k++) // fermiture de tous les fichier TOFs
     {
-        EcrireDir_TOF(&(Files[k].f), Files[k].i, &(Files[k].Buf));
+        EcrireDir_TOF(&(Files[k].f), Files[k].i, (Files[k].Buf));
         Fermer_TOF(&(Files[k].f));
     }
 
