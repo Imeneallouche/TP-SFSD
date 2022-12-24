@@ -31,15 +31,16 @@ int main(void)
         printf("    10-  Afficher fichier TOF resultant des generations\n");
         printf("    11-  Requette a interval selon le prix dans le fichier LOVC (Materiel en panne)\n");
         printf("    12-  Creation table Index et fichier index de TOVnC\n");
-        printf("    13-  Afficher Table Index\n");
-        printf("    14-  Afficher fichier Index strcuture sous forme TOF\n");
-        printf("    15-  Insertion materiel a la fin du fichier TOVnC,dans la table index et fichier index\n");
-        printf("    16-  Quitter le programme");
+        printf("    13-  Chargement de table index\n");
+        printf("    14-  Afficher Table Index\n");
+        printf("    15-  Afficher fichier Index strcuture sous forme TOF\n");
+        printf("    16-  Insertion materiel a la fin du fichier TOVnC,dans la table index et fichier index\n");
+        printf("    17-  Quitter le programme");
 
         // le choix des options
         printf("\n\n    saisissez le numero de votre option: ");
         scanf(" %i", &int_answers);
-        while (int_answers < 1 || int_answers > 16)
+        while (int_answers < 1 || int_answers > 17)
         {
             printf("    pas d'option correspondante a un tel numero, saisissez un autre: ");
             scanf("%i", &int_answers);
@@ -205,6 +206,16 @@ int main(void)
 
             printf("\n\n    *************************************************\n");
             printf("    *                                               *\n");
+            printf("    *        Chargement de la table d'Index         *\n");
+            printf("    *                                               *\n");
+            printf("    *************************************************\n\n");
+            Chargement_Table_Index_TOF(FICHIER_INDEX);
+            break;
+
+        case 14:
+
+            printf("\n\n    *************************************************\n");
+            printf("    *                                               *\n");
             printf("    *              Afficher Table Index             *\n");
             printf("    *                                               *\n");
             printf("    *                                               *\n");
@@ -212,7 +223,7 @@ int main(void)
             Afficher_Table_Index(Index);
             break;
 
-        case 14:
+        case 15:
 
             printf("\n\n    *************************************************\n");
             printf("    *                                               *\n");
@@ -223,7 +234,7 @@ int main(void)
             afficher_fichier_Index_TOF(FICHIER_INDEX);
             break;
 
-        case 15:
+        case 16:
 
             printf("\n\n    *************************************************\n");
             printf("    *                                               *\n");
@@ -234,7 +245,7 @@ int main(void)
             Insertion_TnOVnC(FICHIER_ORIGINAL);
             break;
 
-        case 16:
+        case 17:
             printf("\n\n    *************************************************\n");
             printf("    *                                               *\n");
             printf("    *             QUITTER LE PROGRAMME              *\n");

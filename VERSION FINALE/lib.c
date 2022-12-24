@@ -435,11 +435,12 @@ void afficher_fichier_TOVC(char nom_fichier[])
         | Identifiant | Type materiel |   Prix    |   taille   |    Description     |
         |  (5 bytes)  |   (12 bytes)  | (6 bytes) |  (3 bytes) |    (variable)      |
         |***************************************************************************/
-        extraire_chaine_TOVC(&f, Identifiant, &i, &j, TAILLE_IDENTIFIANT, &Buf);
-        extraire_chaine_TOVC(&f, Materiel, &i, &j, TAILLE_MATERIEL - 1, &Buf);
-        extraire_chaine_TOVC(&f, Prix, &i, &j, TAILLE_PRIX, &Buf);
-        extraire_chaine_TOVC(&f, Taille, &i, &j, TAILLE_TAILLE, &Buf);
-        extraire_chaine_TOVC(&f, Description, &i, &j, atoi(Taille), &Buf);
+
+        extraire_chaine_TOVC(&f, Identifiant, &i, &j, TAILLE_IDENTIFIANT, &Buf); // extraire le champs Identifiant
+        extraire_chaine_TOVC(&f, Materiel, &i, &j, TAILLE_MATERIEL - 1, &Buf);   // extraire le champs type du materiel
+        extraire_chaine_TOVC(&f, Prix, &i, &j, TAILLE_PRIX, &Buf);               // extraire le champs Prix
+        extraire_chaine_TOVC(&f, Taille, &i, &j, TAILLE_TAILLE, &Buf);           // extraire le champs Taille de description
+        extraire_chaine_TOVC(&f, Description, &i, &j, atoi(Taille), &Buf);       // extraire le champs Description
 
         printf("\n.........................\n");
         printf(".                       .\n");
@@ -684,11 +685,11 @@ void afficher_fichier_LOVC(char nom_fichier[])
         | Identifiant | Type materiel |   Prix    |   taille   |    Description     |
         |  (5 bytes)  |   (12 bytes)  | (6 bytes) |  (3 bytes) |    (variable)      |
         |***************************************************************************/
-        extraire_chaine_LOVC(&f, Identifiant, &i, &j, TAILLE_IDENTIFIANT, &Buf);
-        extraire_chaine_LOVC(&f, Materiel, &i, &j, TAILLE_MATERIEL - 1, &Buf);
-        extraire_chaine_LOVC(&f, Prix, &i, &j, TAILLE_PRIX, &Buf);
-        extraire_chaine_LOVC(&f, Taille, &i, &j, TAILLE_TAILLE, &Buf);
-        extraire_chaine_LOVC(&f, Description, &i, &j, atoi(Taille), &Buf);
+        extraire_chaine_LOVC(&f, Identifiant, &i, &j, TAILLE_IDENTIFIANT, &Buf); // extraire le champs Identifiant
+        extraire_chaine_LOVC(&f, Materiel, &i, &j, TAILLE_MATERIEL - 1, &Buf);   // extraire le champs type du materiel
+        extraire_chaine_LOVC(&f, Prix, &i, &j, TAILLE_PRIX, &Buf);               // extraire le champs Prix
+        extraire_chaine_LOVC(&f, Taille, &i, &j, TAILLE_TAILLE, &Buf);           // extraire le champs Taille de description
+        extraire_chaine_LOVC(&f, Description, &i, &j, atoi(Taille), &Buf);       // extraire le champs Description
 
         printf("\n.........................\n");
         printf(".                       .\n");
@@ -1399,7 +1400,7 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
         Generer_Chaine(Identifiant, TAILLE_IDENTIFIANT, 10 * k);                 // generer l'identifiant sous forme de chaine sur 5 positions
         strcpy(Materiel, MATERIAL_LIST[Random_Number(0, NB_TYPE_MATERIEL - 1)]); // tirer un materiel de la liste  des materiels selon index genere aleartoirement
         Generer_Chaine(Prix, TAILLE_PRIX, Random_Number(0, PRIX_MAX));           // generer le prix du materiel aleartoirement
-        l = Random_Number(1, TAILLE_MAX_DESCRIPTION / 2);                        // generer la taille de la description aleatoirement
+        l = Random_Number(1, TAILLE_MAX_DESCRIPTION / 2);                        // generer la taille de la description aleatoirement [1 ; B/2]
         Random_String(l, Description);                                           // generer la description de taille l aleatoirement
         Generer_Chaine(Taille, TAILLE_TAILLE, l);                                // transformer le chaps taille de description a une chaine de caracteres
 
@@ -1453,8 +1454,8 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
 |****************************************************/
 void Recherche_TOVnC(char nom_fichier[], char Identifiant_Recherche[], int *trouv, int *i, int *j)
 {
-    fichier_TOVnC f;
-    Ouvrir_TOVnC(&f, nom_fichier, 'A');
+    fichier_TOVnC f;                             // fichier de type TOVnC don't on recherchera
+    Ouvrir_TOVnC(&f, nom_fichier, 'A');          // ouvrir le fichier dont on effectuera la recherche
     int binf = 1,                                // le premier bloc
         bsup = Entete_TOVnC(&f, 1),              // le dernier bloc
         temp_j,                                  // sauvegarder la pos dans le bloc avant de se deplacer
@@ -1617,6 +1618,7 @@ void Demande_Information_Utilisateur(char *Fonctionnement, char *Materiel, char 
     int answers, trouv, counter;
 
     /*__________________________________
+    |                                   |
     |    CHAMPS 02 : FONCTIONNEMENT     |
     |___________________________________*/
     printf("\n\n---------------- Collection des infos : 2-Etat fonctionnement -------------------\n");
@@ -1636,6 +1638,7 @@ void Demande_Information_Utilisateur(char *Fonctionnement, char *Materiel, char 
         strcpy(Fonctionnement, "n");
 
     /*_____________________________
+    |                             |
     |    CHAMPS 03 : MATERIEL     |
     |____________________________*/
     printf("\n\n---------------- Collection des infos : 3-Type du materiel -------------------\n");
@@ -1655,6 +1658,7 @@ void Demande_Information_Utilisateur(char *Fonctionnement, char *Materiel, char 
     strcpy(Materiel, MATERIAL_LIST[answers - 1]); // remplir le champs materiel
 
     /*_____________________________
+    |                             |
     |    CHAMPS 04 : PRIX         |
     |____________________________*/
     printf("\n\n---------------- Collection des infos : 4- Prix -------------------\n");
@@ -1662,7 +1666,9 @@ void Demande_Information_Utilisateur(char *Fonctionnement, char *Materiel, char 
     scanf("%i", &answers);                            // demander le prix
     Generer_Chaine(Prix, TAILLE_PRIX, answers);
     printf("-------------------------------------------------------------------\n\n");
+
     /*_____________________________
+    |                             |
     |   CHAMPS 05 : DESCRIPTION   |
     |____________________________*/
     printf("\n\n---------------- Collection des infos : 5- Description -------------------\n");
@@ -1991,7 +1997,7 @@ void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fich
             extraire_chaine_TOVnC(Taille, &j, TAILLE_TAILLE, &Buf);             // extraire le champs taille de description
             extraire_chaine_TOVnC(Description, &j, atoi(Taille), &Buf);         // extraire le champs description
 
-            concatenate(Destination, Identifiant, "", Materiel, Prix, Taille, Description);
+            concatenate(Destination, Identifiant, "", Materiel, Prix, Taille, Description); // concatener tous les champs (sauf fonctionement enleve)
 
             /*********************************************************************************|
             |  Identifiant |  Type materiel |   Prix    |   taille   | Description (variable) |
@@ -2007,15 +2013,16 @@ void Reorganisation_TOVnC(char nom_fichier[], char nom_fichier1[], char nom_fich
                 Ecrire_Chaine_LOVC(&f2, &i2, &j2, Destination, &Buf2);
             }
         }
-        j = 0;
-        i++;
+        i++;   // passer au prochain bloc
+        j = 0; // se positionner au debut de ce dernier
     }
 
     EcrireDir_TOVC(&f1, i1, Buf1);  // ecrire dernier buffer du fichier des materiaux en marche
     ecrireDir_LOVC(&f2, i2, &Buf2); // ecrire dernier buffer du fichier des materiaux en marche
-    Fermer_TOVC(&f1);
-    fermer_LOVC(&f2);
-    Fermer_TOVnC(&f);
+
+    Fermer_TOVC(&f1); // fermer le fichier Materiel_informatique_TOVnC.bin          (fichier original du depart)
+    fermer_LOVC(&f2); // fermer le fichier Materiel_informatique_en_marche_TOVC.bin (fichier du materiel en marche)
+    Fermer_TOVnC(&f); // fermer le fichier Materiel_informatique_en_panne_LOVC.bin  (fichier du materiel en panne)
 }
 
 /*
@@ -2193,28 +2200,31 @@ void Generation_fichiers_Materiel(char nom_fichier[])
 |**************************************************/
 void Choix_affichage_fichier_materiel()
 {
-    int counter;
-    char Materiel[TAILLE_MATERIEL];
-    char nom_fichier[MAX_NOM_FICHIER];
+    int counter;                       // utilise pour afficher tous les types de materiel
+    char Materiel[TAILLE_MATERIEL];    // utilise pour choisir quel type de materiel dont on affichera le fichier correspondant
+    char nom_fichier[MAX_NOM_FICHIER]; // le nom du fichier qui sera affiche
 
     printf("    -> Le fichier a afficher:  \n\n");            // demander le type du materiel
     for (counter = 1; counter <= NB_TYPE_MATERIEL; counter++) // la liste des matreiel a proposer sur l'utilisateur
     {
         printf("     %i - %s\n", counter, MATERIAL_LIST[counter - 1]);
     }
-    printf("\n    votre choix: ");
-    scanf("%i", &counter); // le numero du materiel
-    while (counter < 1 || counter > NB_TYPE_MATERIEL)
-    {
+
+    printf("\n    votre choix: "); // demander le choix du materiel pour afficher le fichier qui lui correspond
+    scanf("%i", &counter);         // le numero du materiel
+
+    while (counter < 1 || counter > NB_TYPE_MATERIEL) // tant que le numero est errone
+    {                                                 // demander un autre
         printf("    numero inexistant, veuillez entrer un autre entre [%i, %i]: ", 1, NB_TYPE_MATERIEL);
         scanf("%i", &counter);
     }
-    strcpy(Materiel, MATERIAL_LIST[counter - 1]); // remplir le champs materiel
 
+    strcpy(Materiel, MATERIAL_LIST[counter - 1]);                                        // remplir le champs materiel
     sprintf(nom_fichier, "Materiel_en_marche_%s_TOF.bin\0", MATERIAL_LIST[counter - 1]); // generer le nom du fichier selon le nom du materiel
-    printf("    Nom fichier: %s", nom_fichier);
 
-    afficher_fichier_TOF(nom_fichier);
+    printf("    Nom fichier: %s", nom_fichier); // assurer le nom du fichier a afficher
+
+    afficher_fichier_TOF(nom_fichier); // afficher le fichier finalement
 }
 /*
 
@@ -2369,34 +2379,35 @@ void Insertion_TnOVnC(char nom_fichier[])
 
         taille_materiel = TAILLE_IDENTIFIANT + TAILLE_FONCTIONNEMENT + TAILLE_MATERIEL - 1 + TAILLE_PRIX + TAILLE_TAILLE + strlen(Description); // la taille de l'enreg
 
+        /********************************************************************************************|
+        |                                                                                            |
+        |           Entete_TOVnC(&f, 1) correspond au dernier bloc dans le fichier TOVnC  et         |
+        |            Buf.nb de ce bloc correspondera a la premiere pos libre dans ce dernier         |
+        |                                                                                            |                                                                                                                      |
+        |********************************************************************************************/
+        i = Entete_TOVnC(&f, 1);                            // le dernier bloc dans le fichier TOVnC
+        LireDir_TOVnC(&f, i, &Buf);                         // Lire le dernier bloc pour troubver la 1ere pos libre dans ce dernier
+        j = Buf.nb;                                         // la 1ere pos libre dans le dernier bloc du fichier TOVnC
+        Ecrire_chaine_TOVnC(&f, Destination, &i, &j, &Buf); // inserer le nouvel element a la fin du fichier TOVnC
+        EcrireDir_TOVnC(&f, i, Buf);                        // ecrire le dernier bloc dans le fichier
+        Fermer_TOVnC(&f);                                   // fermer le fichier TOVnC
+
+        printf("\n\n---------------------------------------------------------------------------------------\n");
+        printf("| l'identifiant et ses infos ont ete inserees a la fin du fichier TOVnC i=%i j=%i      |\n", i, j);
+        printf("---------------------------------------------------------------------------------------\n\n");
+
         /*************************************************************************|
         |                                                                         |
         |      preparation de l'enregistrement a inserer dans la table d'index    |
         |                                                                         |                                                                                                                      |
         |*************************************************************************/
-        strcpy(enregistrement_index.Identifiant, Identifiant);  // remplir le champs identifiant du nouvel enreg de l'index
-        enregistrement_index.NumBloc = Entete_TOVnC(&f, 1);     // remplir le champs numero du bloc du nouve enreg de l'index
-        enregistrement_index.Deplacement = Entete_TOVnC(&f, 3); // remplir le champs deplacement du nouvel enreg de l'index
-        Insertion_Table_Index(enregistrement_index, k);         // inserer dans la table d'index
+        strcpy(enregistrement_index.Identifiant, Identifiant); // remplir le champs identifiant du nouvel enreg de l'index
+        enregistrement_index.NumBloc = i;                      // remplir le champs numero du bloc du nouvel enreg de l'index
+        enregistrement_index.Deplacement = j;                  // remplir le champs deplacement du nouvel enreg de l'index
+        Insertion_Table_Index(enregistrement_index, k);        // inserer dans la table d'index
 
         printf("\n\n-------------------------------------------------------------------------------\n");
         printf("|   < l'identifiant , i=%i , j=%i>    ont ete inserees dans la table d'index  |\n", enregistrement_index.NumBloc, enregistrement_index.Deplacement);
-        printf("-------------------------------------------------------------------------------\n\n");
-
-        /********************************************************************************************|
-        |                                                                                            |
-        |           Entete_TOVnC(&f, 1) correspond au dernier bloc dans le fichier TOVnC  et         |
-        |     Entete_TOVnC(&f, 3) a la 1ere position libe dans le dernier bloc du fichier TOVnC      |
-        |                                                                                            |                                                                                                                      |
-        |********************************************************************************************/
-        i = Entete_TOVnC(&f, 1);                            // le dernier bloc dans le fichier TOVnC
-        j = Entete_TOVnC(&f, 3);                            // la 1ere pos libre dans le dernier fichier TOVnC
-        Ecrire_chaine_TOVnC(&f, Destination, &i, &j, &Buf); // inserer le nouvel element a la fin du fichier TOVnC
-        EcrireDir_TOVnC(&f, i, Buf);                        // ecrire le dernier bloc dans le fichier
-        Fermer_TOVnC(&f);                                   // fermer le fichier TOVnC
-
-        printf("\n\n-------------------------------------------------------------------------------\n");
-        printf("| l'identifiant et ses infos ont ete inserees a la fin du fichier TOVnC       |\n");
         printf("-------------------------------------------------------------------------------\n\n");
 
         /*________________________________________________________________________________________|
@@ -2464,12 +2475,12 @@ void Creer_Index(char nom_fichier_TOVnC[])
             | Identifiant | champs fonctionne | Type materiel |    Prix   |   taille   | Description (variable) |
             |  (5 bytes)  |   (1 bytes)       |  (12 bytes)   | (6 bytes) |  (3 bytes) |  (max sur 273 bytes)   |
             |***************************************************************************************************/
-            extraire_chaine_TOVnC(Identifiant, &j, TAILLE_IDENTIFIANT, &Buf);
-            extraire_chaine_TOVnC(Fonctionne, &j, TAILLE_FONCTIONNEMENT, &Buf);
-            extraire_chaine_TOVnC(Materiel, &j, TAILLE_MATERIEL - 1, &Buf);
-            extraire_chaine_TOVnC(Prix, &j, TAILLE_PRIX, &Buf);
-            extraire_chaine_TOVnC(Taille, &j, TAILLE_TAILLE, &Buf);
-            extraire_chaine_TOVnC(Description, &j, atoi(Taille), &Buf);
+            extraire_chaine_TOVnC(Identifiant, &j, TAILLE_IDENTIFIANT, &Buf);   // extraire le champs Identifiant
+            extraire_chaine_TOVnC(Fonctionne, &j, TAILLE_FONCTIONNEMENT, &Buf); // extraire le champs Fonctionnement
+            extraire_chaine_TOVnC(Materiel, &j, TAILLE_MATERIEL - 1, &Buf);     // extraire le champs type du materiel
+            extraire_chaine_TOVnC(Prix, &j, TAILLE_PRIX, &Buf);                 // extraire le champs Prix
+            extraire_chaine_TOVnC(Taille, &j, TAILLE_TAILLE, &Buf);             // extraire le champs Taille de la description
+            extraire_chaine_TOVnC(Description, &j, atoi(Taille), &Buf);         // extraire le champs Description
 
             if (strcmp(Fonctionne, "f") == 0)
             {
@@ -2528,6 +2539,40 @@ void Creer_Index(char nom_fichier_TOVnC[])
 |**************************************************/
 void Afficher_Table_Index()
 {
+    fichier_TOF fichier_Index;
+    fichier_TOVnC f;
+
+    /*_________________________________________________
+    |                                                 |
+    |  si la table d'index n'a pas encore ete generee |
+    |_________________________________________________*/
+    if (Index.nombre_enreg_inseres == 0)
+    {
+        Ouvrir_TOF(&fichier_Index, FICHIER_INDEX, 'A');
+        /*______________________________________________________________________________________________
+        |                                                                                              |
+        |   si fichier Index a deja ete genere ,alors charger la table d'index a partir de celui ci    |
+        |______________________________________________________________________________________________*/
+        if (fichier_Index.fichier != NULL)
+        {
+            Chargement_Table_Index_TOF(FICHIER_INDEX); // charger la table d'index a partir du fichier d'index
+        }
+
+        /*______________________________________________________________________________________________
+        |                                                                                              |
+        |  s'il n'a pas encore ete genere, on cree la table d'index a partir du fichier original TOVnC |
+        |______________________________________________________________________________________________*/
+        else
+        {
+            Creer_Index(FICHIER_ORIGINAL); // creer la table d'index a partir du fichier original TOVnC
+        }
+    }
+
+    /*____________________________________________________________________________________________
+    |                                                                                            |
+    |   Maintenant qu'on a assure la presence de la table d'index, commençons le travail :)      |
+    |____________________________________________________________________________________________*/
+
     int k; // pour le parcours de la table d'index
     printf("Nombre d'enregs dans table Index: %i", Index.nombre_enreg_inseres);
     for (k = 0; k < Index.nombre_enreg_inseres; k++)
@@ -2572,6 +2617,7 @@ void Recherche_Dichotomique_Table_Index_TOF(char Cle[], int *trouv, int *k)
     |                                                 |
     |  si la table d'index n'a pas encore ete generee |
     |_________________________________________________*/
+
     if (Index.nombre_enreg_inseres == 0)
     {
         Ouvrir_TOF(&fichier_Index, FICHIER_INDEX, 'A');
@@ -2704,28 +2750,44 @@ void Insertion_Table_Index(Tenreg_INDEX enregistrement_index, int k)
 |************************************************************/
 void Chargement_Table_Index_TOF(char nom_fichier_index[])
 {
+
     fichier_TOF fichier_Index;
     Ouvrir_TOF(&fichier_Index, nom_fichier_index, 'A'); // ouvrir le fichier index d'ou charger
-    int i = 1,                                          // pour le parcours du fichier Index par bloc
-        j = 0,                                          // pour le parcours inter-bloc dans le fichier Index
-        ind = 0;                                        // pour le parcours et le remplissage de la table d'index
-    Tampon_INDEX Buf;                                   // le buffer speciale pour les lecture de MS vers MC deu fichier Index
 
-    while (i <= Entete_TOF(&fichier_Index, 1)) // tant qu'on est pas arrive a la fin du fichier
+    /*__________________________________________________________
+    |                                                          |
+    |  si le fichier TOF existe bien, charger la table d'index |
+    |_________________________________________________________*/
+
+    if (fichier_Index.fichier != NULL)
     {
-        LireDir_Index_TOF(&fichier_Index, i, &Buf); // lire le bloc courant
-        j = 0;                                      // placer le deplacement dans le bloc dans sa 1ere position
-        while (j < Buf.nombre_enreg)                // tant que on est pas arrive a la fin du bloc
+        int i = 1,        // pour le parcours du fichier Index par bloc
+            j = 0,        // pour le parcours inter-bloc dans le fichier Index
+            ind = 0;      // pour le parcours et le remplissage de la table d'index
+        Tampon_INDEX Buf; // le buffer speciale pour les lecture de MS vers MC deu fichier Index
+
+        while (i <= Entete_TOF(&fichier_Index, 1)) // tant qu'on est pas arrive a la fin du fichier
         {
-            strcpy(Index.table_Index[ind].Identifiant, Buf.tab_INDEX[j].Identifiant); // mise a jour de l'identifiant dans la table d'index
-            Index.table_Index[ind].NumBloc = i;                                       // mise a jour de la 1ere coordonne de l'adresse de l'identifiant (numero de bloc) dans la table d'index
-            Index.table_Index[ind].Deplacement = j;                                   // mise a jour de la 2eme coordonne de l'adresse de l'identifiant (deplacement dans le bloc) dans la table d'index
-            ind++;                                                                    // mise a jour du prochain placement vide dans la table d'index pour inserer
-            j++;                                                                      // mise a jour du prochain enregistrement a lire dans le bloc i dans le fichier index
-            Index.nombre_enreg_inseres = ind;                                         // mise a jour du nombre d'enregs inseres dans la table d'index
+            LireDir_Index_TOF(&fichier_Index, i, &Buf); // lire le bloc courant
+            j = 0;                                      // placer le deplacement dans le bloc dans sa 1ere position
+            while (j < Buf.nombre_enreg)                // tant que on est pas arrive a la fin du bloc
+            {
+                strcpy(Index.table_Index[ind].Identifiant, Buf.tab_INDEX[j].Identifiant); // mise a jour de l'identifiant dans la table d'index
+                Index.table_Index[ind].NumBloc = Buf.tab_INDEX[j].NumBloc;                // mise a jour de la 1ere coordonne de l'adresse de l'identifiant (numero de bloc) dans la table d'index
+                Index.table_Index[ind].Deplacement = Buf.tab_INDEX[j].Deplacement;        // mise a jour de la 2eme coordonne de l'adresse de l'identifiant (deplacement dans le bloc) dans la table d'index
+                ind++;                                                                    // mise a jour du prochain placement vide dans la table d'index pour inserer
+                j++;                                                                      // mise a jour du prochain enregistrement a lire dans le bloc i dans le fichier index
+                Index.nombre_enreg_inseres = ind;                                         // mise a jour du nombre d'enregs inseres dans la table d'index
+            }
+            i++; // passer au prochain bloc
         }
-        i++; // passer au prochain bloc
     }
+
+    /*_______________________________________________________________________________________________________
+    |                                                                                                       |
+    |  sinon, rien faire,le but de la procedure est de charger la table d'index a partir du fichier index   |                                        |
+    |       donc on ne cherche pas a la creer a partir du fichier TOVnC ( pas le but de la procedure)       |
+    |_______________________________________________________________________________________________________*/
 
     Fermer_TOF(&fichier_Index);
 }
@@ -2755,7 +2817,21 @@ void Chargement_Table_Index_TOF(char nom_fichier_index[])
 void Sauvegarde_Table_Index_TOF(char nom_fichier_index[])
 {
 
-    fichier_TOF fichier_Index;
+    /*_________________________________________________________________________________________________
+    |                                                                                                 |
+    |  si la table d'index n'a pas encore ete generee, on l'a cree a partir du fichier original TOVnC |
+    |_________________________________________________________________________________________________*/
+    if (Index.nombre_enreg_inseres == 0)
+    {
+        Creer_Index(FICHIER_ORIGINAL); // creer la table d'index a partir du fichier original TOVnC
+    }
+
+    /*____________________________________________________________________________________________
+    |                                                                                            |
+    |   Maintenant qu'on a assure la presence de la table d'index, commençons le travail :)      |
+    |____________________________________________________________________________________________*/
+
+    fichier_TOF fichier_Index;                          // le fichier index dont on sauvegardera la table d'index
     Ouvrir_TOF(&fichier_Index, nom_fichier_index, 'N'); // ouvrir le fichier index d'ou charger
     int i = Alloc_bloc_TOF(&fichier_Index),             // pour le parcours du fichier Index par bloc
         j = 0,                                          // pour le parcours inter-bloc dans le fichier Index
@@ -2764,9 +2840,9 @@ void Sauvegarde_Table_Index_TOF(char nom_fichier_index[])
 
     while (ind < Index.nombre_enreg_inseres) // tant qu'on a pas parcourru tous les enregs de la table d'index
     {
-        if (j >= MAX_ENREG)
+        if (j >= MAX_ENREG) // Si le bloc est plein
         {
-            Buf.nombre_enreg = MAX_ENREG;
+            Buf.nombre_enreg = MAX_ENREG;                 // mettre a jour le nombre de buf dans le bloc
             EcrireDir_Index_TOF(&fichier_Index, i, &Buf); // ecrire le buf i                                                                                      // incrementer le i
             i = Alloc_bloc_TOF(&fichier_Index);           // nouveau bloc + mise a jour de l'entete
             j = 0;                                        // remettre la pos dans le bloc au debut
@@ -2802,20 +2878,26 @@ void Sauvegarde_Table_Index_TOF(char nom_fichier_index[])
 
 int main(void)
 {
-    Index.nombre_enreg_inseres = 0;
+    Index.nombre_enreg_inseres = 0; // initialiser le nombre d'enregs dans la table d'index a 0
 
-    int int_answers, quit = 0;
-    char char_answers[B];
-    int trouv, i, j, k;
+    int int_answers, // variable pour scanner les inputs de l'utilisateur de type entier
+        quit = 0,    // pour arreter le programme lors de la demande de l'utilisateur
+        trouv,       // variable pour la recherche
+        i,           // variable pour adresse du bloc (demandee par quelques modules)
+        j,           // variable pour adresse du positionnement dans le (demandee par quelques modules)
+        k;           // variable pour adresse du bloc demandee par quelques modules
+
+    char char_answers[B]; // variable pour scanner les inputs de l'utilisateur de type chaine de caracteres
 
     while (!quit)
     {
 
-        printf("\n\n    *************************************************\n");
-        printf("    *                                               *\n");
-        printf("    *   Bienvenu sur notre programme fascinant!     *\n");
-        printf("    *                                               *\n");
-        printf("    *************************************************\n\n");
+        printf("\n\n    *****************************************************\n");
+        printf("    *                                                   *\n");
+        printf("    *           Bienvenu sur notre programme            *\n");
+        printf("    *   Realise par: Imene ALLOUCHE et Ibtissam SEFFAH  *\n");
+        printf("    *                                                   *\n");
+        printf("    *****************************************************\n\n");
 
         printf("    veuillez consulter nos diverses fonctions et en choisir une:\n\n");
         printf("    01-  Chargement initial aleatoire d'un fichier TOVnC\n");
@@ -2830,15 +2912,16 @@ int main(void)
         printf("    10-  Afficher fichier TOF resultant des generations\n");
         printf("    11-  Requette a interval selon le prix dans le fichier LOVC (Materiel en panne)\n");
         printf("    12-  Creation table Index et fichier index de TOVnC\n");
-        printf("    13-  Afficher Table Index\n");
-        printf("    14-  Afficher fichier Index strcuture sous forme TOF\n");
-        printf("    15-  Insertion materiel a la fin du fichier TOVnC,dans la table index et fichier index\n");
-        printf("    16-  Quitter le programme");
+        printf("    13-  Chargement de table index\n");
+        printf("    14-  Afficher Table Index\n");
+        printf("    15-  Afficher fichier Index strcuture sous forme TOF\n");
+        printf("    16-  Insertion materiel a la fin du fichier TOVnC,dans la table index et fichier index\n");
+        printf("    17-  Quitter le programme");
 
         // le choix des options
         printf("\n\n    saisissez le numero de votre option: ");
-        scanf("%i", &int_answers);
-        while (int_answers < 1 || int_answers > 16)
+        scanf(" %i", &int_answers);
+        while (int_answers < 1 || int_answers > 17)
         {
             printf("    pas d'option correspondante a un tel numero, saisissez un autre: ");
             scanf("%i", &int_answers);
@@ -3004,6 +3087,16 @@ int main(void)
 
             printf("\n\n    *************************************************\n");
             printf("    *                                               *\n");
+            printf("    *        Chargement de la table d'Index         *\n");
+            printf("    *                                               *\n");
+            printf("    *************************************************\n\n");
+            Chargement_Table_Index_TOF(FICHIER_INDEX);
+            break;
+
+        case 14:
+
+            printf("\n\n    *************************************************\n");
+            printf("    *                                               *\n");
             printf("    *              Afficher Table Index             *\n");
             printf("    *                                               *\n");
             printf("    *                                               *\n");
@@ -3011,7 +3104,7 @@ int main(void)
             Afficher_Table_Index(Index);
             break;
 
-        case 14:
+        case 15:
 
             printf("\n\n    *************************************************\n");
             printf("    *                                               *\n");
@@ -3022,7 +3115,7 @@ int main(void)
             afficher_fichier_Index_TOF(FICHIER_INDEX);
             break;
 
-        case 15:
+        case 16:
 
             printf("\n\n    *************************************************\n");
             printf("    *                                               *\n");
@@ -3033,7 +3126,7 @@ int main(void)
             Insertion_TnOVnC(FICHIER_ORIGINAL);
             break;
 
-        case 16:
+        case 17:
             printf("\n\n    *************************************************\n");
             printf("    *                                               *\n");
             printf("    *             QUITTER LE PROGRAMME              *\n");
