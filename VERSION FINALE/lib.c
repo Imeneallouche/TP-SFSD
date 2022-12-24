@@ -1619,16 +1619,17 @@ void Demande_Information_Utilisateur(char *Fonctionnement, char *Materiel, char 
     /*__________________________________
     |    CHAMPS 02 : FONCTIONNEMENT     |
     |___________________________________*/
-    printf("|    -> etat du materiel : \n");
-    printf("    1 - en marche\n");
-    printf("    2 - en panne\n");
-    printf("    votre choix: ");
-    scanf("%i", answers); // le numero du materiel
+    printf("\n\n---------------- Collection des infos : 2-Etat fonctionnement -------------------\n");
+    printf("|    1 - en marche\n");
+    printf("|    2 - en panne\n");
+    printf("|    votre choix: ");
+    scanf("%i", &answers); // le numero du materiel
     while (answers < 1 || answers > 2)
     {
-        printf("    choix inexistant, veuillez entrer 1 ou 2: ");
-        scanf("%i", answers);
+        printf("|    choix inexistant, veuillez entrer 1 ou 2: ");
+        scanf("%i", &answers);
     }
+    printf("---------------------------------------------------------------------------------\n\n");
     if (answers == 1)
         strcpy(Fonctionnement, "f");
     else
@@ -1637,30 +1638,34 @@ void Demande_Information_Utilisateur(char *Fonctionnement, char *Materiel, char 
     /*_____________________________
     |    CHAMPS 03 : MATERIEL     |
     |____________________________*/
-    printf("|    -> Le type materiel : \n");                  // demander le type du materiel
+    printf("\n\n---------------- Collection des infos : 3-Type du materiel -------------------\n");
+    printf("|    -> Le type materiel : \n\n");                // demander le type du materiel
     for (counter = 1; counter <= NB_TYPE_MATERIEL; counter++) // la liste des matreiel a proposer sur l'utilisateur
     {
-        printf("    %i - %s\n", counter, MATERIAL_LIST[counter - 1]);
+        printf("|    %i - %s\n", counter, MATERIAL_LIST[counter - 1]);
     }
-    printf("    votre choix: ");
-    scanf("%i", answers); // le numero du materiel
+    printf("\n|    votre choix: ");
+    scanf("%i", &answers); // le numero du materiel
     while (answers < 1 || answers > NB_TYPE_MATERIEL)
     {
-        printf("    numero inexistant, veuillez rentrer un autre entre [%i, %i]: ", 1, NB_TYPE_MATERIEL);
-        scanf("%i", answers);
+        printf("|    numero inexistant, veuillez rentrer un autre entre [%i, %i]: ", 1, NB_TYPE_MATERIEL);
+        scanf("%i", &answers);
     }
+    printf("------------------------------------------------------------------------------\n\n");
     strcpy(Materiel, MATERIAL_LIST[answers - 1]); // remplir le champs materiel
 
     /*_____________________________
     |    CHAMPS 04 : PRIX         |
     |____________________________*/
+    printf("\n\n---------------- Collection des infos : 4- Prix -------------------\n");
     printf("|    -> Le prix d'achat du materiel : "); // demander le prix
-    scanf("%i", answers);                             // demander le prix
+    scanf("%i", &answers);                            // demander le prix
     Generer_Chaine(Prix, TAILLE_PRIX, answers);
-
+    printf("-------------------------------------------------------------------\n\n");
     /*_____________________________
     |   CHAMPS 05 : DESCRIPTION   |
     |____________________________*/
+    printf("\n\n---------------- Collection des infos : 5- Description -------------------\n");
     printf("|    -> La Description : "); // demander la description
     scanf("%s", Description);            // demander la description
     printf("---------------------------------------------------------------------------------------------\n\n");
@@ -1704,29 +1709,29 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
         Prix[TAILLE_PRIX + 1],                       // le ptix du materiel
         Taille[TAILLE_TAILLE + 1],                   // taille du champs description
         Description[TAILLE_MAX_DESCRIPTION + 1],     // la description (caracteristiques) du materiel
-        Destination[B + 1],                          // la chaine complete a inserer
-        Chaine_debordantes[2 * B];                   /// les chaine qui seront exclues du buffer en cas de decalage et seront inserees dans les buffers qui suivent
+        Destination[2 * B],                          // la chaine complete a inserer
+        Chaine_debordantes[B];                       /// les chaine qui seront exclues du buffer en cas de decalage et seront inserees dans les buffers qui suivent
 
     fichier_TOVnC f;
     Tbloc_TOVnC Buf;
 
     // collecter les informations necessaires sur le nouveau mateirel a insere
-    printf("\n\n---------------- Collection des information sur le materiel a inserer -------------------\n");
-
     /*_____________________________
     |    CHAMPS 01 : IDENTIFIANT  |
     |____________________________*/
-    printf("|    -> L'identifiant : ");                       // demander l'identifiant
-    scanf("%i", answers);                                     // recevoir l'identifiant
+    printf("\n\n---------------- Collection des infos : 1-Identifiant -------------------\n");
+    printf("|    -> L'identifiant : "); // demander l'identifiant
+    scanf("%i", &answers);              // recevoir l'identifiant
+    printf("-------------------------------------------------------------------------\n");
     Generer_Chaine(Identifiant, TAILLE_IDENTIFIANT, answers); // generer la chaine identifiant pour la rechercher dans la table d'index
 
     Recherche_TOVnC(nom_fichier, Identifiant, &trouv, &i, &j); // rechercher l'idenfiant
 
     if (trouv) // si l'identifiant existe deja dans la table d'index et donc dans le fichier index egalement
     {          // on insere pas le nouveau materiel
-        printf("---------------------------------------------------------------------------------------------\n\n");
+
         printf("\n\n-------------------------------------------------------------------------\n");
-        printf("| l'identifiant exste deja dans le fichier, aucune insertion n'a eu lieu |");
+        printf("| l'identifiant exste deja dans le fichier, aucune insertion n'a eu lieu |\n");
         printf("-------------------------------------------------------------------------\n\n");
     }
 
@@ -1765,9 +1770,10 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
                     k--;
                     counter++;
                 }
-                Ecrire_chaine_TOVnC(&f, Destination, &i, &j, &Buf); // insertion du materiel
-                EcrireDir_TOVnC(&f, i, Buf);                        // ecrire le buffer
-                stop = 1;                                           // arreter le process de l'insertion
+                Insert_string_TOVnC(&Buf, &j, Destination); // insertion du materiel
+                Buf.nb += taille_materiel;                  // mettre a jour le nombre de caracteres dans le bloc i
+                EcrireDir_TOVnC(&f, i, Buf);                // ecrire le buffer
+                stop = 1;                                   // arreter le process de l'insertion
             }
 
             /************************************************************************************************************************|
@@ -1788,9 +1794,9 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
                 if ((j + taille_materiel) > B)
                 {
                     taille_chaines = (Buf.nb - j);                                       // la taille des enregistrements qui viennent juste apres le meteril qu'on veut l'inserer
+                    Buf.nb = j;                                                          // mise à jour de la position libre dans un bloc (buf.nb)
                     extraire_chaine_TOVnC(Chaine_debordantes, &j, taille_chaines, &Buf); // on fait sortir ces derniers enregistrements du bloc pour les inserer avec le materiel
                                                                                          // qu'on veut l'inserer
-                    Buf.nb = j;                                                          // mise à jour de la position libre dans un bloc (buf.nb)
                     EcrireDir_TOVnC(&f, i, Buf);
                     strcat(Destination, Chaine_debordantes); // nouveau materiel à inserer (chaine) dans le prochain bloc = materiel qu'on veut inserer (chaine)+ les materierls
                                                              // qui viennent  apres ce dernier(Chaine_debordantes)
@@ -1801,12 +1807,14 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
                 /************************************************************************************************************************|
                 |                                                                                                                        |
                 |                       si la taille du materiel + position ou il faut l'inserer(j) =< B                                 |
+                |               on prend les chaines qui viennent apres comme la nouvelle chaine a inserer apres                         |
                 |                                                                                                                        |
                 |************************************************************************************************************************/
                 else
                 {
-                    taille_chaines = (Buf.nb - j);
+                    taille_chaines = (Buf.nb - j); // la taille des chaines qui vont deborder (les chaine qui viennent aprés la pos ou la nouvel chaine doit etre inseree)
                     extraire_chaine_TOVnC(Chaine_debordantes, &j, taille_chaines, &Buf);
+                    j -= taille_chaines;                        // faire retourner le j en arriere (a cause de son avancement dans extraire_chaine_TOVnC)
                     Insert_string_TOVnC(&Buf, &j, Destination); // on insere le materiel
                     Buf.nb = j + 1;                             // mise à jour la position libre (buf.nb)
                     EcrireDir_TOVnC(&f, i, Buf);                // ecrire le buffer dans la MS
@@ -2747,11 +2755,11 @@ int main(void)
 
         // le choix des options
         printf("\n\n    saisissez le numero de votre option: ");
-        scanf(" %i", &int_answers);
+        scanf("%i", &int_answers);
         while (int_answers < 1 || int_answers > 16)
         {
             printf("    pas d'option correspondante a un tel numero, saisissez un autre: ");
-            scanf(" %i", &int_answers);
+            scanf("%i", &int_answers);
         }
 
         switch (int_answers)
