@@ -1797,11 +1797,32 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
                     Buf.nb = j;                                                          // mise à jour de la position libre dans un bloc (buf.nb)
                     extraire_chaine_TOVnC(Chaine_debordantes, &j, taille_chaines, &Buf); // on fait sortir ces derniers enregistrements du bloc pour les inserer avec le materiel
                                                                                          // qu'on veut l'inserer
-                    EcrireDir_TOVnC(&f, i, Buf);
-                    strcat(Destination, Chaine_debordantes); // nouveau materiel à inserer (chaine) dans le prochain bloc = materiel qu'on veut inserer (chaine)+ les materierls
-                                                             // qui viennent  apres ce dernier(Chaine_debordantes)
-                    i = i + 1;                               //  l'insertion se fera à la prochaine itération du TQ , dans le prochain bloc
-                    j = 0;                                   // à la premiere position
+                    EcrireDir_TOVnC(&f, i, Buf);                                         // ecrire le Buffer i dans la MS
+
+                    /***************************************************************************************************|
+                    |                                                                                                   |
+                    |     si la taille de la chaine a inserer + les chaine debordante depasse a taille max d'un bloc    |
+                    |                               lors ils doivent  etre repartis en 2 blocs distincts                |
+                    |                                                                                                   |
+                    |***************************************************************************************************/
+                    if (taille_materiel + taille_chaines > B)
+                    {
+                        printf("en cours ....");
+                    }
+
+                    /***************************************************************************************************|
+                    |                                                                                                   |
+                    |         sinon si la somme de leur taille peut etre contenue dans un seul bloc, donc on peut       |
+                    |        les fusionner et les declarer comme la prochaine chaine qu'on desir inserer dans i+1       |
+                    |                                                                                                   |
+                    |***************************************************************************************************/
+                    else
+                    {
+                        strcat(Destination, Chaine_debordantes); // nouveau materiel à inserer (chaine) dans le prochain bloc = materiel qu'on veut inserer (chaine)+ les materierls
+                                                                 // qui viennent  apres ce dernier(Chaine_debordantes)
+                        i = i + 1;                               //  l'insertion se fera à la prochaine itération du TQ , dans le prochain bloc
+                        j = 0;                                   // à la premiere position
+                    }
                 }
 
                 /************************************************************************************************************************|
