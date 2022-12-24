@@ -1415,6 +1415,7 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
             printf("Fonctionne : OUI\n");
         else
             printf("Fonctionne : NON\n");
+
         printf("prix: %.6s DA\n", Prix);
         printf("taille de description: %.3s\n", Taille);
         printf("description: %s\n", Description);
@@ -1425,10 +1426,19 @@ void Chargement_initial_TOVnC(char nom_fichier[], int n)
         printf("l'element sera insere sous cette forme: %s\n", Enreg);
         Ecrire_chaine_TOVnC(F, Enreg, &i, &j, &buf);
 
-        if (strcmp(Fonctionne, "f") == 0) // generer le champs fonctionnement (suppression) en alternative
-            strcpy(Fonctionne, "n");      // afin d'equilibrer les fichiers LOVC et TOVC apres fragmentation
-        else                              // si le materiel precedent fonctionnait alors le prochain ne fonctionnera pas
-            strcpy(Fonctionne, "f");      // si le materiel precedent ne fonctionnait pas alors le prochain fonctionnera
+        /*________________________________________________________________________
+        |                                                                        |
+        |       generer le champs fonctionnement (suppression) en alternative    |
+        |      afin d'equilibrer les fichiers LOVC et TOVC apres fragmentation   |
+        |________________________________________________________________________*/
+
+        if (strcmp(Fonctionne, "f") == 0) // si le materiel precedent fonctionnait
+            strcpy(Fonctionne, "n");      // alors le prochain ne fonctionnera pas
+        else
+        {
+            strcpy(Fonctionne, "f");                        // si le materiel precedent ne fonctionnait pas alors le prochain fonctionnera
+            Aff_Entete_TOVnC(F, 3, Entete_TOVnC(F, 3) + l); // mettre a jour l'entete: le nombre de caracteres supprime dans le fichier
+        }
     }
     EcrireDir_TOVnC(F, i, buf); // ecrire le dernier buffer meme si il n'etait pas plein
     Fermer_TOVnC(F);            // fermer le fichier
@@ -1702,6 +1712,7 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
 {
 
     int i, j,            // l'emplacement ou on va inserer le matereil(i:le bloc , j: la posistion)
+        reverse,         // variable utilise pour le traitement de decalage
         k, counter,      // des variables seront utilisés pour le decalage
         taille_materiel, // la taille de tout l'enregistrement a inserer
         taille_chaines,  // la taille des chaine qui vont deborder et seront inseres dans le prochain buffer
@@ -1719,7 +1730,7 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
         Chaine_debordantes[B];                       /// les chaine qui seront exclues du buffer en cas de decalage et seront inserees dans les buffers qui suivent
 
     fichier_TOVnC f;
-    Tbloc_TOVnC Buf, Buf_temp;
+    Tbloc_TOVnC Buf;
 
     // collecter les informations necessaires sur le nouveau mateirel a insere
     /*_____________________________
@@ -1807,21 +1818,45 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
                     i = i + 1;                                                           //  l'insertion se fera à la prochaine itération du TQ , dans le prochain bloc
                     j = 0;                                                               // à la premiere position
 
-                    /***************************************************************************************************|
-                    |                                                                                                   |
-                    |     si la taille de la chaine a inserer + les chaine debordante depasse a taille max d'un bloc    |
-                    |                               lors ils doivent  etre repartis en 2 blocs distincts                |
-                    |                                                                                                   |
-                    |***************************************************************************************************/
+                    /***********************************************************************************************************|
+                    |                                                                                                           |
+                    |        si la taille (chaine a inserer + les chaines debordantes) depasse a taille max d'un bloc           |
+                    |           alors ils seront repartis en 2 blocs distincts (on fera des decalages de 2 blocs)               |
+                    |  Faisons le chemin inverse (de fin jusqu'au bloc i) afin que les buffers ne puissent s'ecraser entre eux  |
+                    |                                                                                                           |
+                    |************************************************************************************************************/
                     if (taille_materiel + taille_chaines > B)
                     {
-                        LireDir_TOVnC(&f, i, &Buf_temp);                    // lire le prochain bloc dans un buf temporaire pour faire le decalage
-                        Ecrire_chaine_TOVnC(&f, Destination, &i, &j, &Buf); // ecrire la chaine destination dans le buf (elle sera toute seule la bas)
-                        EcrireDir_TOVnC(&f, i, Buf);                        // ecrire le buf ou la chaine (nouveau materiel) inseree existe (toute seule)
-                        while (i <= Entete_TOVnC(&f, 1))
-                        {
-                            printf("en cours ....");
-                        }
+                        reverse = Entete_TOVnC(&f, 1);             // nombre de blocs
+                        while (reverse >= i)                       // on fera le chemain inverse
+                        {                                          // de la fin du fichier jusqu'a i
+                            LireDir_TOVnC(&f, reverse, &Buf);      // on le le buffer
+                            EcrireDir_TOVnC(&f, reverse + 2, Buf); // on lui change l'emplacement (se decale de deux positions)
+                            reverse--;                             // on passe au buffer d'avant (chemin inverse afin de ne pas ecraser les buffers entre eux)
+                        }                                          // apres avoir decale les nb-i buffers on insere les 2 buffers i et i+1
+
+                        /*__________________________________________________________________________________________________
+                        |                                                                                                  |
+                        | Inserer le Buf qui contient le nouveau materiel (dans la chaine destination) dans le i eme bloc  |
+                        ___________________________________________________________________________________________________*/
+                        j = 0;                                              // se positionner au debut du bloc
+                        Ecrire_chaine_TOVnC(&f, Destination, &i, &j, &Buf); // ecrire la chaine destination (nouveau materiel) dans le Buf
+                        EcrireDir_TOVnC(&f, i, Buf);                        // ecrire le i eme bloc (contenant que le materile insere seulement) dans la MS
+                        /*__________________________________________________________________________________________________
+                       |                                                                                                  |
+                       |  Inserer le Buf qui contient les chaines debordantes dans le (i+1) eme bloc                      |
+                       ___________________________________________________________________________________________________*/
+                        i++;                                                       // aller au prochain bloc
+                        j = 0;                                                     // se positionner au debut du bloc
+                        Ecrire_chaine_TOVnC(&f, Chaine_debordantes, &i, &j, &Buf); // ecrire les chaines debordantes dans le Buf
+                        EcrireDir_TOVnC(&f, i, Buf);                               // ecrire le (i+1) bloc (contenant que les chaines debordantes)dans la MS
+
+                        /*_______________________________________________________________________________
+                        |                                                                               |
+                        |  Mises a jour de nombre de blocs dan sle fichier et de la condition d'arret   |
+                        ________________________________________________________________________________*/
+                        Aff_Entete_TOVnC(&f, 1, Entete_TOVnC(&f, 1) + 2); // mise a jour de l'entete: nombre de bloc (incrementer avec 2)
+                        stop = 1;                                         // arreter le processus de l'insertion avec success :)
                     }
 
                     /***************************************************************************************************|
@@ -1855,10 +1890,10 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
                     i++;                                        // aller au bloc prochain
                     j = 0;                                      // se mettre au debut du bloc prochain
 
-                    /*_____________________________________________________________________________________________________
-                            REMARQUE: on a voulu laiser de vide dans le bloc pour faciliter les prochaines insertions
-                                                        ( évitant les décalages  )
-                     ______________________________________________________________________________________________________*/
+                    /*______________________________________________________________________________________________________
+                    |        REMARQUE: on a voulu laiser de vide dans le bloc pour faciliter les prochaines insertions     |
+                    |                                    ( évitant les décalages  )                                        |
+                    | _____________________________________________________________________________________________________*/
                 }
             }
         }
@@ -1878,7 +1913,8 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
         }
 
         Aff_Entete_TOVnC(&f, 2, Entete_TOVnC(&f, 2) + taille_materiel); // Entete_TOVnC(f,2) : nb d'insertion  , on incrémente le compteur d'insertions
-        Fermer_TOVnC(&f);                                               // fermer le fichier finally
+
+        Fermer_TOVnC(&f); // fermer le fichier finally
     }
 }
 
