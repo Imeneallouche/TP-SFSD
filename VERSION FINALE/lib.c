@@ -1816,7 +1816,7 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
                     extraire_chaine_TOVnC(Chaine_debordantes, &j, taille_chaines, &Buf);
                     j -= taille_chaines;                        // faire retourner le j en arriere (a cause de son avancement dans extraire_chaine_TOVnC)
                     Insert_string_TOVnC(&Buf, &j, Destination); // on insere le materiel
-                    Buf.nb = j + 1;                             // mise à jour la position libre (buf.nb)
+                    Buf.nb = j;                                 // mise à jour la position libre (buf.nb)
                     EcrireDir_TOVnC(&f, i, Buf);                // ecrire le buffer dans la MS
                     strcpy(Destination, Chaine_debordantes);    // le nouveau materiel qui va etre inserer dans le prochain bloc (chaine reçoit Chaine_debordantes)
                     i++;                                        // aller au bloc prochain
