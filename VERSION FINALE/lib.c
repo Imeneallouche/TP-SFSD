@@ -1777,18 +1777,18 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
             |     si l'espace libre dans le Buf peut contenir le materiel, on décale si nécessaire puis on insere le materiel        |
             |                                                                                                                        |
             |************************************************************************************************************************/
-            if ((B - Buf.nb) >= taille_materiel)
+            if ((B - Buf.nb) >= strlen(Destination))
             { // l'éspace libre est plus grand ou egale à la taille du materiel qu'on veut l'inserer
-                k = Buf.nb + taille_materiel - 1;
+                k = Buf.nb + strlen(Destination) - 1;
                 counter = 0;
                 while (counter < Buf.nb - j)
                 {
-                    Buf.tableau[k] = Buf.tableau[k - taille_materiel]; // on fait le decalage
-                    k--;                                               // des materiaux
-                    counter++;                                         // qui viennent juste apres le materiel qu'on va inserer
+                    Buf.tableau[k] = Buf.tableau[k - strlen(Destination)]; // on fait le decalage
+                    k--;                                                   // des materiaux
+                    counter++;                                             // qui viennent juste apres le materiel qu'on va inserer
                 }
                 Insert_string_TOVnC(&Buf, &j, Destination); // insertion du materiel
-                Buf.nb += taille_materiel;                  // mettre a jour le nombre de caracteres dans le bloc i
+                Buf.nb += strlen(Destination);              // mettre a jour le nombre de caracteres dans le bloc i
                 EcrireDir_TOVnC(&f, i, Buf);                // ecrire le buffer
                 stop = 1;                                   // arreter le process de l'insertion
             }
@@ -1808,7 +1808,7 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
                 |                                                                                                                        |
                 |************************************************************************************************************************/
 
-                if ((j + taille_materiel) > B)
+                if ((j + strlen(Destination)) > B)
                 {
                     taille_chaines = (Buf.nb - j);                                       // la taille des enregistrements qui viennent juste apres le meteril qu'on veut l'inserer
                     Buf.nb = j;                                                          // mise à jour de la position libre dans un bloc (buf.nb)
@@ -1825,7 +1825,7 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
                     |  Faisons le chemin inverse (de fin jusqu'au bloc i) afin que les buffers ne puissent s'ecraser entre eux  |
                     |                                                                                                           |
                     |************************************************************************************************************/
-                    if (taille_materiel + taille_chaines > B)
+                    if (strlen(Destination) + taille_chaines > B)
                     {
                         reverse = Entete_TOVnC(&f, 1);             // nombre de blocs
                         while (reverse >= i)                       // on fera le chemain inverse
@@ -1912,9 +1912,10 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
             EcrireDir_TOVnC(&f, i, Buf);             // ecrire le buffer
         }
 
-        Aff_Entete_TOVnC(&f, 2, Entete_TOVnC(&f, 2) + taille_materiel); // Entete_TOVnC(f,2) : nb d'insertion  , on incrémente le compteur d'insertions
-
-        Fermer_TOVnC(&f); // fermer le fichier finally
+        Aff_Entete_TOVnC(&f, 2, Entete_TOVnC(&f, 2) + taille_materiel);     // mettre a jour le nombre de caracteres inseres
+        if (strcmp(Fonctionne, "n") == 0)                                   // si le materiel ne fonctionne pas
+            Aff_Entete_TOVnC(&f, 3, Entete_TOVnC(&f, 3) + taille_materiel); // mettre a jour le nombre de caracteres supprimes
+        Fermer_TOVnC(&f);                                                   // fermer le fichier finally
     }
 }
 
@@ -1965,10 +1966,14 @@ void Suppression_TOVnC(char nom_fichier[], char identifiant_a_supprimer[])
         Aff_Entete_TOVnC(&F, 3, Entete_TOVnC(&F, 3) + Nombre_chars_supprime); // mettre le nombre de char supprime dans le fichier a jour
         EcrireDir_TOVnC(&F, i, buf);                                          // ecrire le buffer ne MS aprés la mise a jour du champs supprimer
         Fermer_TOVnC(&F);                                                     // fermer le fichier
-        printf("\nle materiel a ete supprime");                               // pour informer l'audience
-    }                                                                         // mais
-    else                                                                      // si le materiel n'existe pas d'origine
-    {
+
+        printf("\n\n----------------------------------------------------------------\n");
+        printf("|           le materiel a ete supprime avec success             |\n");
+        printf("----------------------------------------------------------------\n\n");
+    }
+
+    else // si le materiel n'existe pas d'origine
+    {    // alors informer mon audience qu'aucune suppression n'a eu lieu
         printf("\n\n----------------------------------------------------------------\n");
         printf("|   le materiel n'existe pas, aucune suppression n'a eu lieu    |\n"); // alors informer mon audience qu'aucune suppression n'a eu lieu
         printf("----------------------------------------------------------------\n\n");
@@ -2421,12 +2426,14 @@ void Insertion_TnOVnC(char nom_fichier[])
         |            Buf.nb de ce bloc correspondera a la premiere pos libre dans ce dernier         |
         |                                                                                            |                                                                                                                      |
         |********************************************************************************************/
-        i = Entete_TOVnC(&f, 1);                            // le dernier bloc dans le fichier TOVnC
-        LireDir_TOVnC(&f, i, &Buf);                         // Lire le dernier bloc pour troubver la 1ere pos libre dans ce dernier
-        j = Buf.nb;                                         // la 1ere pos libre dans le dernier bloc du fichier TOVnC
-        Ecrire_chaine_TOVnC(&f, Destination, &i, &j, &Buf); // inserer le nouvel element a la fin du fichier TOVnC
-        EcrireDir_TOVnC(&f, i, Buf);                        // ecrire le dernier bloc dans le fichier
-        Fermer_TOVnC(&f);                                   // fermer le fichier TOVnC
+        i = Entete_TOVnC(&f, 1);                                            // le dernier bloc dans le fichier TOVnC
+        LireDir_TOVnC(&f, i, &Buf);                                         // Lire le dernier bloc pour troubver la 1ere pos libre dans ce dernier
+        j = Buf.nb;                                                         // la 1ere pos libre dans le dernier bloc du fichier TOVnC
+        Ecrire_chaine_TOVnC(&f, Destination, &i, &j, &Buf);                 // inserer le nouvel element a la fin du fichier TOVnC (nb de chars inseres est mis a jour dans la fonction)
+        EcrireDir_TOVnC(&f, i, Buf);                                        // ecrire le dernier bloc dans le fichier
+        if (strcmp(Fonctionne, "n") == 0)                                   // si le materile est en panne (supprime)
+            Aff_Entete_TOVnC(&f, 3, Entete_TOVnC(&f, 3) + taille_materiel); // mettre a jour le nombre de caracteres supprimes dans le fichier
+        Fermer_TOVnC(&f);                                                   // fermer le fichier TOVnC
 
         printf("\n\n---------------------------------------------------------------------------------------\n");
         printf("| l'identifiant et ses infos ont ete inserees a la fin du fichier TOVnC i=%i j=%i      |\n", i, j);
