@@ -605,7 +605,7 @@ void Afficher_Table_Index();
 void afficher_fichier_Index_TOF(char nom_fichier[]);
 void Recherche_Dichotomique_Table_Index_TOF(char Cle[], int *trouv, int *k);
 void Insertion_Table_Index(Tenreg_INDEX enregistrement_index, int k);
-void Chargement_Table_Index_TOF(char nom_fichier_index[], Table_Index *Index);
+void Chargement_Table_Index_TOF(char nom_fichier_index[]);
 void Sauvegarde_Table_Index_TOF(char nom_fichier_index[]);
 
 /*******************************|

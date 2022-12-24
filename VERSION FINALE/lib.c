@@ -1709,11 +1709,11 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
         Prix[TAILLE_PRIX + 1],                       // le ptix du materiel
         Taille[TAILLE_TAILLE + 1],                   // taille du champs description
         Description[TAILLE_MAX_DESCRIPTION + 1],     // la description (caracteristiques) du materiel
-        Destination[2 * B],                          // la chaine complete a inserer
+        Destination[B],                              // la chaine complete a inserer
         Chaine_debordantes[B];                       /// les chaine qui seront exclues du buffer en cas de decalage et seront inserees dans les buffers qui suivent
 
     fichier_TOVnC f;
-    Tbloc_TOVnC Buf;
+    Tbloc_TOVnC Buf, Buf_temp;
 
     // collecter les informations necessaires sur le nouveau mateirel a insere
     /*_____________________________
@@ -1798,6 +1798,8 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
                     extraire_chaine_TOVnC(Chaine_debordantes, &j, taille_chaines, &Buf); // on fait sortir ces derniers enregistrements du bloc pour les inserer avec le materiel
                                                                                          // qu'on veut l'inserer
                     EcrireDir_TOVnC(&f, i, Buf);                                         // ecrire le Buffer i dans la MS
+                    i = i + 1;                                                           //  l'insertion se fera à la prochaine itération du TQ , dans le prochain bloc
+                    j = 0;                                                               // à la premiere position
 
                     /***************************************************************************************************|
                     |                                                                                                   |
@@ -1807,7 +1809,13 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
                     |***************************************************************************************************/
                     if (taille_materiel + taille_chaines > B)
                     {
-                        printf("en cours ....");
+                        LireDir_TOVnC(&f, i, &Buf_temp);                    // lire le prochain bloc dans un buf temporaire pour faire le decalage
+                        Ecrire_chaine_TOVnC(&f, Destination, &i, &j, &Buf); // ecrire la chaine destination dans le buf (elle sera toute seule la bas)
+                        EcrireDir_TOVnC(&f, i, Buf);                        // ecrire le buf ou la chaine (nouveau materiel) inseree existe (toute seule)
+                        while (i <= Entete_TOVnC(&f, 1))
+                        {
+                            printf("en cours ....");
+                        }
                     }
 
                     /***************************************************************************************************|
@@ -1820,8 +1828,6 @@ void Insertion_TOVnC(char nom_fichier[]) // procédure pour inserer une chaine d
                     {
                         strcat(Destination, Chaine_debordantes); // nouveau materiel à inserer (chaine) dans le prochain bloc = materiel qu'on veut inserer (chaine)+ les materierls
                                                                  // qui viennent  apres ce dernier(Chaine_debordantes)
-                        i = i + 1;                               //  l'insertion se fera à la prochaine itération du TQ , dans le prochain bloc
-                        j = 0;                                   // à la premiere position
                     }
                 }
 
@@ -2328,19 +2334,23 @@ void Insertion_TnOVnC(char nom_fichier[])
     Tbloc_TOVnC Buf;
 
     // collecter les informations necessaires sur le nouveau mateirel a insere
-    printf("\n\n---------------- Collection des information sur le materiel a inserer -------------------\n");
-    printf("|    -> L'identifiant : ");                       // demander l'identifiant
-    scanf("%i", answers);                                     // recevoir l'identifiant
+    /*_____________________________
+    |    CHAMPS 01 : IDENTIFIANT  |
+    |____________________________*/
+    printf("\n\n---------------- Collection des infos : 1-Identifiant -------------------\n");
+    printf("|    -> L'identifiant : "); // demander l'identifiant
+    scanf("%i", &answers);              // recevoir l'identifiant
+    printf("-------------------------------------------------------------------------\n");
     Generer_Chaine(Identifiant, TAILLE_IDENTIFIANT, answers); // generer la chaine identifiant pour la rechercher dans la table d'index
 
     Recherche_Dichotomique_Table_Index_TOF(Identifiant, &trouv, &k); // rechercher de l'identifiant dans la table d'index
 
     if (trouv) // si l'identifiant existe deja dans la table d'index et donc dans le fichier index egalement
     {          // on insere pas le nouvel element
-        printf("---------------------------------------------------------------------------------------------\n\n");
-        printf("\n\n-------------------------------------------------------------------------\n");
-        printf("| l'identifiant exste deja dans le fichier, aucune insertion n'a eu lieu |");
-        printf("-------------------------------------------------------------------------\n\n");
+
+        printf("\n\n--------------------------------------------------------------------------\n");
+        printf("| l'identifiant existe deja dans le fichier, aucune insertion n'a eu lieu |\n");
+        printf("--------------------------------------------------------------------------\n\n");
     }
 
     else // si l'identifiant n'existe pas deja dans la table d'index donc aussi dans le fichier
@@ -2369,6 +2379,10 @@ void Insertion_TnOVnC(char nom_fichier[])
         enregistrement_index.Deplacement = Entete_TOVnC(&f, 3); // remplir le champs deplacement du nouvel enreg de l'index
         Insertion_Table_Index(enregistrement_index, k);         // inserer dans la table d'index
 
+        printf("\n\n-------------------------------------------------------------------------------\n");
+        printf("|   < l'identifiant , i=%i , j=%i>    ont ete inserees dans la table d'index  |\n", enregistrement_index.NumBloc, enregistrement_index.Deplacement);
+        printf("-------------------------------------------------------------------------------\n\n");
+
         /********************************************************************************************|
         |                                                                                            |
         |           Entete_TOVnC(&f, 1) correspond au dernier bloc dans le fichier TOVnC  et         |
@@ -2380,6 +2394,10 @@ void Insertion_TnOVnC(char nom_fichier[])
         Ecrire_chaine_TOVnC(&f, Destination, &i, &j, &Buf); // inserer le nouvel element a la fin du fichier TOVnC
         EcrireDir_TOVnC(&f, i, Buf);                        // ecrire le dernier bloc dans le fichier
         Fermer_TOVnC(&f);                                   // fermer le fichier TOVnC
+
+        printf("\n\n-------------------------------------------------------------------------------\n");
+        printf("| l'identifiant et ses infos ont ete inserees a la fin du fichier TOVnC       |\n");
+        printf("-------------------------------------------------------------------------------\n\n");
 
         /*________________________________________________________________________________________|
         |                                                                                         |
@@ -2453,22 +2471,25 @@ void Creer_Index(char nom_fichier_TOVnC[])
             extraire_chaine_TOVnC(Taille, &j, TAILLE_TAILLE, &Buf);
             extraire_chaine_TOVnC(Description, &j, atoi(Taille), &Buf);
 
-            /*____________________________________
-            |                                    |
-            | remplissage d'enregistrement index |
-            |____________________________________*/
-            strcpy(indexEnreg.Identifiant, Identifiant); // remplir le champs: Identifiant (cle unique) dans l'enregistrement Index
-            indexEnreg.NumBloc = i;                      // remplir le champs: Numero du bloc dans l'enregistrement Index
-            indexEnreg.Deplacement = j1;                 // remplir le champs: Deplacement dans bloc dans l'enregistrement Index
+            if (strcmp(Fonctionne, "f") == 0)
+            {
+                /*____________________________________
+                |                                    |
+                | remplissage d'enregistrement index |
+                |____________________________________*/
+                strcpy(indexEnreg.Identifiant, Identifiant); // remplir le champs: Identifiant (cle unique) dans l'enregistrement Index
+                indexEnreg.NumBloc = i;                      // remplir le champs: Numero du bloc dans l'enregistrement Index
+                indexEnreg.Deplacement = j1;                 // remplir le champs: Deplacement dans bloc dans l'enregistrement Index
 
-            /*____________________________________
-            |                                    |
-            |   remplissage de la table d'index  |
-            |____________________________________*/
+                /*____________________________________
+                |                                    |
+                |   remplissage de la table d'index  |
+                |____________________________________*/
 
-            Index.table_Index[k] = indexEnreg; // affecter l'enregistrement prepare a la pos,k dan sla table d'index
-            k++;                               // incrementer la pos libre dans k pour la prochaine insertion dans la table
-            Index.nombre_enreg_inseres = k;    // mettre a jour le nombre d'enreg inseres dans la table d'index
+                Index.table_Index[k] = indexEnreg; // affecter l'enregistrement prepare a la pos,k dan sla table d'index
+                k++;                               // incrementer la pos libre dans k pour la prochaine insertion dans la table
+                Index.nombre_enreg_inseres = k;    // mettre a jour le nombre d'enreg inseres dans la table d'index
+            }
         }
 
         i++; // passer au prochain bloc
@@ -2544,14 +2565,49 @@ void Afficher_Table_Index()
 |************************************************************/
 void Recherche_Dichotomique_Table_Index_TOF(char Cle[], int *trouv, int *k)
 {
-    *trouv = 0;                           // booleen pour indiquer si on a trouve l'identifiant ou pas
-    int inf = 0,                          // l'inf dans la table d'index pendant la recherche dichotomique
-        sup = Index.nombre_enreg_inseres; // le sup dans la table d'index pendant la recherche dichotomique
+    fichier_TOF fichier_Index;
+    fichier_TOVnC f;
 
-    while (!trouv && inf <= sup)
+    /*_________________________________________________
+    |                                                 |
+    |  si la table d'index n'a pas encore ete generee |
+    |_________________________________________________*/
+    if (Index.nombre_enreg_inseres == 0)
     {
+        Ouvrir_TOF(&fichier_Index, FICHIER_INDEX, 'A');
+        /*______________________________________________________________________________________________
+        |                                                                                              |
+        |   si fichier Index a deja ete genere ,alors charger la table d'index a partir de celui ci    |
+        |______________________________________________________________________________________________*/
+        if (fichier_Index.fichier != NULL)
+        {
+            Chargement_Table_Index_TOF(FICHIER_INDEX); // charger la table d'index a partir du fichier d'index
+        }
+
+        /*______________________________________________________________________________________________
+        |                                                                                              |
+        |  s'il n'a pas encore ete genere, on cree la table d'index a partir du fichier original TOVnC |
+        |______________________________________________________________________________________________*/
+        else
+        {
+            Creer_Index(FICHIER_ORIGINAL); // creer la table d'index a partir du fichier original TOVnC
+        }
+    }
+
+    /*____________________________________________________________________________________________
+    |                                                                                            |
+    |   Maintenant qu'on a assure la presence de la table d'index, commençons le travail :)      |
+    |____________________________________________________________________________________________*/
+
+    *trouv = 0;                               // booleen pour indiquer si on a trouve l'identifiant ou pas
+    int inf = 0,                              // l'inf dans la table d'index pendant la recherche dichotomique
+        sup = Index.nombre_enreg_inseres - 1; // le sup dans la table d'index pendant la recherche dichotomique
+
+    while (!(*trouv) && inf <= sup)
+    {
+
         *k = (inf + sup) / 2;                                    // diviser la recherche sur 2 intervalles
-        if (strcpy(Index.table_Index[*k].Identifiant, Cle) == 0) // si la cle recherche = la cle courante de la pos k
+        if (strcmp(Index.table_Index[*k].Identifiant, Cle) == 0) // si la cle recherche = la cle courante de la pos k
         {                                                        // donc la cle existe deja dans la table d'index
             *trouv = 1;                                          // dans l'emplacement *k
         }                                                        // donc dans le fichier TOVnC egalement (i,j) peuvent etre extraits de l'enreg k dans la tabel d'index
@@ -2559,7 +2615,7 @@ void Recherche_Dichotomique_Table_Index_TOF(char Cle[], int *trouv, int *k)
         else // si la cle recherche est differente de la cle courrante
         {    // decouper l'espace de recherche again
 
-            if (strcpy(Cle, Index.table_Index[*k].Identifiant) > 0) // si la cle recherche > la cle courante
+            if (strcmp(Cle, Index.table_Index[*k].Identifiant) > 0) // si la cle recherche > la cle courante
             {                                                       // regler l'inf
                 inf = *k + 1;
             }
@@ -2568,6 +2624,10 @@ void Recherche_Dichotomique_Table_Index_TOF(char Cle[], int *trouv, int *k)
                 sup = *k - 1;
             }
         }
+    }
+    if (inf > sup)
+    {
+        *k = inf;
     }
 }
 /*
@@ -2597,7 +2657,7 @@ void Insertion_Table_Index(Tenreg_INDEX enregistrement_index, int k)
 {
     int temp = Index.nombre_enreg_inseres; // variable temp pour faire le decalage avec
 
-    if (temp + 1 <= MAX_ENREG_INDEX) // si la table d'index nest pas encore pleine
+    if (temp < MAX_ENREG_INDEX) // si la table d'index nest pas encore pleine
     {
 
         while (temp > k)
@@ -2642,7 +2702,7 @@ void Insertion_Table_Index(Tenreg_INDEX enregistrement_index, int k)
 |        de tupe TOF vers la MC dans la variable Index       |
 |                                                            |
 |************************************************************/
-void Chargement_Table_Index_TOF(char nom_fichier_index[], Table_Index *Index)
+void Chargement_Table_Index_TOF(char nom_fichier_index[])
 {
     fichier_TOF fichier_Index;
     Ouvrir_TOF(&fichier_Index, nom_fichier_index, 'A'); // ouvrir le fichier index d'ou charger
@@ -2655,16 +2715,16 @@ void Chargement_Table_Index_TOF(char nom_fichier_index[], Table_Index *Index)
     {
         LireDir_Index_TOF(&fichier_Index, i, &Buf); // lire le bloc courant
         j = 0;                                      // placer le deplacement dans le bloc dans sa 1ere position
-        while (j <= Buf.nombre_enreg)               // tant que on est pas arrive a la fin du bloc
+        while (j < Buf.nombre_enreg)                // tant que on est pas arrive a la fin du bloc
         {
-            strcpy(Index->table_Index[ind].Identifiant, Buf.tab_INDEX[j].Identifiant); // mise a jour de l'identifiant dans la table d'index
-            Index->table_Index[ind].NumBloc = i;                                       // mise a jour de la 1ere coordonne de l'adresse de l'identifiant (numero de bloc) dans la table d'index
-            Index->table_Index[ind].Deplacement = j;                                   // mise a jour de la 2eme coordonne de l'adresse de l'identifiant (deplacement dans le bloc) dans la table d'index
-            ind++;                                                                     // mise a jour du prochain placement vide dans la table d'index pour inserer
-            j++;                                                                       // mise a jour du prochain enregistrement a lire dans le bloc i dans le fichier index
-            Index->nombre_enreg_inseres = ind;                                         // mise a jour du nombre d'enregs inseres dans la table d'index
+            strcpy(Index.table_Index[ind].Identifiant, Buf.tab_INDEX[j].Identifiant); // mise a jour de l'identifiant dans la table d'index
+            Index.table_Index[ind].NumBloc = i;                                       // mise a jour de la 1ere coordonne de l'adresse de l'identifiant (numero de bloc) dans la table d'index
+            Index.table_Index[ind].Deplacement = j;                                   // mise a jour de la 2eme coordonne de l'adresse de l'identifiant (deplacement dans le bloc) dans la table d'index
+            ind++;                                                                    // mise a jour du prochain placement vide dans la table d'index pour inserer
+            j++;                                                                      // mise a jour du prochain enregistrement a lire dans le bloc i dans le fichier index
+            Index.nombre_enreg_inseres = ind;                                         // mise a jour du nombre d'enregs inseres dans la table d'index
         }
-        i++;
+        i++; // passer au prochain bloc
     }
 
     Fermer_TOF(&fichier_Index);
@@ -2694,15 +2754,15 @@ void Chargement_Table_Index_TOF(char nom_fichier_index[], Table_Index *Index)
 |************************************************************/
 void Sauvegarde_Table_Index_TOF(char nom_fichier_index[])
 {
-    printf("\n le nom du fichier: %s", nom_fichier_index);
+
     fichier_TOF fichier_Index;
     Ouvrir_TOF(&fichier_Index, nom_fichier_index, 'N'); // ouvrir le fichier index d'ou charger
     int i = Alloc_bloc_TOF(&fichier_Index),             // pour le parcours du fichier Index par bloc
         j = 0,                                          // pour le parcours inter-bloc dans le fichier Index
         ind = 0;                                        // pour le parcours et le remplissage de la table d'index
     Tampon_INDEX Buf;                                   // le buffer speciale pour les lecture de MS vers MC deu fichier Index
-    printf("\n  Nombre d'enreg dans la table d'index: %i", Index.nombre_enreg_inseres);
-    while (ind < Index.nombre_enreg_inseres)
+
+    while (ind < Index.nombre_enreg_inseres) // tant qu'on a pas parcourru tous les enregs de la table d'index
     {
         if (j >= MAX_ENREG)
         {
@@ -2719,6 +2779,7 @@ void Sauvegarde_Table_Index_TOF(char nom_fichier_index[])
         Buf.nombre_enreg = j; // mise a jour du Buf: nombre d'enreg dans le buf
         ind++;                // aller a la prochaine position dans la table d'index
     }
+    EcrireDir_Index_TOF(&fichier_Index, i, &Buf);                  // ecrire le dernier bloc dans la MS
     Aff_Entete_TOF(&fichier_Index, 2, Index.nombre_enreg_inseres); // mise a jour de l'entete: nombre d'enregistrement inseres
     Fermer_TOF(&fichier_Index);                                    // fermer le fichier afin de sauvegarder l'entete
 }
