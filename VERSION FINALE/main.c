@@ -3,6 +3,8 @@
 
 int main(void)
 {
+    Index.nombre_enreg_inseres = 0;
+
     int int_answers, quit = 0;
     char char_answers[B];
     int trouv, i, j, k;
@@ -248,7 +250,7 @@ int main(void)
             |     AND THATS THE RIGHT TIME TO DO SO, WE REACHED THE END OF OUR PROGRAM SAUVEGARDONS LA AVANT DE QUITTER !     |                                                           |                                                                                                                      |
             |________________________________________________________________________________________________________________*/
 
-            Sauvegarde_Table_Index_TOF(FICHIER_INDEX, Index);
+            Sauvegarde_Table_Index_TOF(FICHIER_INDEX);
             quit = 1;
             break;
         }

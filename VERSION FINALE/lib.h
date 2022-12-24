@@ -601,12 +601,12 @@ void Choix_affichage_fichier_materiel();
 |   (5 bytes)   |  (integer)  |    (integer)     |
 |************************************************/
 void Creer_Index(char nom_fichier_TOVnC[]);
-void Afficher_Table_Index(Table_Index Index);
+void Afficher_Table_Index();
 void afficher_fichier_Index_TOF(char nom_fichier[]);
 void Recherche_Dichotomique_Table_Index_TOF(char Cle[], int *trouv, int *k);
 void Insertion_Table_Index(Tenreg_INDEX enregistrement_index, int k);
 void Chargement_Table_Index_TOF(char nom_fichier_index[], Table_Index *Index);
-void Sauvegarde_Table_Index_TOF(char nom_fichier_index[], Table_Index Index);
+void Sauvegarde_Table_Index_TOF(char nom_fichier_index[]);
 
 /*******************************|
 |                               |
