@@ -5,7 +5,7 @@ Type: Project
 Theme: manipulating File structures and Data Structures
 Language used: C language
 Competences to achieve:
-  - TOVĈ and TOF structures
+  - TOVĈ , TOVC , LOVC and TOF structures
   - Index manipulation
 ```
 
