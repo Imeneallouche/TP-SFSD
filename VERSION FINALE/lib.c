@@ -1614,7 +1614,7 @@ void Insert_string_TOVnC(Tampon_TOVnC *Buf, int *pos, char chaine[]) // module √
 |***********************************************/
 void Demande_Information_Utilisateur(char *Fonctionnement, char *Materiel, char *Prix, char *Description)
 {
-    int answers, trouv, i, counter, j, k;
+    int answers, trouv, counter;
 
     /*__________________________________
     |    CHAMPS 02 : FONCTIONNEMENT     |
@@ -1667,7 +1667,7 @@ void Demande_Information_Utilisateur(char *Fonctionnement, char *Materiel, char 
     |____________________________*/
     printf("\n\n---------------- Collection des infos : 5- Description -------------------\n");
     printf("|    -> La Description : "); // demander la description
-    scanf("%s", Description);            // demander la description
+    scanf(" %[^\n]", Description);       // demander la description
     printf("---------------------------------------------------------------------------------------------\n\n");
 }
 
@@ -1766,9 +1766,9 @@ void Insertion_TOVnC(char nom_fichier[]) // proc√©dure pour inserer une chaine d
                 counter = 0;
                 while (counter < Buf.nb - j)
                 {
-                    Buf.tableau[k] = Buf.tableau[k - taille_materiel]; // on fait le decalage des materiaux qui viennent juste apres le materiel qu'on va l'inserer
-                    k--;
-                    counter++;
+                    Buf.tableau[k] = Buf.tableau[k - taille_materiel]; // on fait le decalage
+                    k--;                                               // des materiaux
+                    counter++;                                         // qui viennent juste apres le materiel qu'on va inserer
                 }
                 Insert_string_TOVnC(&Buf, &j, Destination); // insertion du materiel
                 Buf.nb += taille_materiel;                  // mettre a jour le nombre de caracteres dans le bloc i
