@@ -2582,9 +2582,9 @@ void Creer_Index(char nom_fichier_TOVnC[])
 |**************************************************/
 void Afficher_Table_Index()
 {
-    fichier_TOF fichier_Index;
-    fichier_TOVnC f;
-
+    fichier_TOF fichier_Index; // fichier INDEX a partir duquel on chargera la table d'index dans le cas ou elle n'a pas ete generee
+    fichier_TOVnC f;           // fichier original TOVnC a partir duquel on cree la table d'index dans le cas ou ni
+                               // la table d'index et ni le fichier index n'ont ete generes
     /*_________________________________________________
     |                                                 |
     |  si la table d'index n'a pas encore ete generee |
@@ -2794,7 +2794,7 @@ void Insertion_Table_Index(Tenreg_INDEX enregistrement_index, int k)
 void Chargement_Table_Index_TOF(char nom_fichier_index[])
 {
 
-    fichier_TOF fichier_Index;
+    fichier_TOF fichier_Index;                          // le fichier INDEX a partir duquel on chargera notre table d'index
     Ouvrir_TOF(&fichier_Index, nom_fichier_index, 'A'); // ouvrir le fichier index d'ou charger
 
     /*__________________________________________________________

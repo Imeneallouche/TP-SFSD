@@ -3,20 +3,26 @@
 
 int main(void)
 {
-    Index.nombre_enreg_inseres = 0;
+    Index.nombre_enreg_inseres = 0; // initialiser le nombre d'enregs dans la table d'index a 0
 
-    int int_answers, quit = 0;
-    char char_answers[B];
-    int trouv, i, j, k;
+    int int_answers, // variable pour scanner les inputs de l'utilisateur de type entier
+        quit = 0,    // pour arreter le programme lors de la demande de l'utilisateur
+        trouv,       // variable pour la recherche
+        i,           // variable pour adresse du bloc (demandee par quelques modules)
+        j,           // variable pour adresse du positionnement dans le (demandee par quelques modules)
+        k;           // variable pour adresse du bloc demandee par quelques modules
+
+    char char_answers[B]; // variable pour scanner les inputs de l'utilisateur de type chaine de caracteres
 
     while (!quit)
     {
 
-        printf("\n\n    *************************************************\n");
-        printf("    *                                               *\n");
-        printf("    *   Bienvenu sur notre programme fascinant!     *\n");
-        printf("    *                                               *\n");
-        printf("    *************************************************\n\n");
+        printf("\n\n    *****************************************************\n");
+        printf("    *                                                   *\n");
+        printf("    *           Bienvenu sur notre programme            *\n");
+        printf("    *   Realise par: Imene ALLOUCHE et Ibtissam SEFFAH  *\n");
+        printf("    *                                                   *\n");
+        printf("    *****************************************************\n\n");
 
         printf("    veuillez consulter nos diverses fonctions et en choisir une:\n\n");
         printf("    01-  Chargement initial aleatoire d'un fichier TOVnC\n");
