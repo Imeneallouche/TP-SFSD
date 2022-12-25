@@ -2886,7 +2886,7 @@ void Sauvegarde_Table_Index_TOF(char nom_fichier_index[])
         if (j >= MAX_ENREG) // Si le bloc est plein
         {
             Buf.nombre_enreg = MAX_ENREG;                 // mettre a jour le nombre de buf dans le bloc
-            EcrireDir_Index_TOF(&fichier_Index, i, &Buf); // ecrire le buf i                                                                                      // incrementer le i
+            EcrireDir_Index_TOF(&fichier_Index, i, &Buf); // ecrire le buf i
             i = Alloc_bloc_TOF(&fichier_Index);           // nouveau bloc + mise a jour de l'entete
             j = 0;                                        // remettre la pos dans le bloc au debut
         }
